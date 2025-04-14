@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/empty.proto";
+
+option csharp_namespace = "CodeDesignPlus.Net.Microservice.Users.gRpc.Test";
+
+package Users;
+
+
+service Users {
+  rpc GetUsers (stream GetUsersRequest) returns (stream GetUsersResponse);
+}
+
+message GetUsersRequest {
+  string Id = 1;
+}
+
+message GetUsersResponse {
+
+}
