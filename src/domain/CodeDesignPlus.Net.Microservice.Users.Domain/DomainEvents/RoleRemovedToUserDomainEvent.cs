@@ -1,7 +1,7 @@
 namespace CodeDesignPlus.Net.Microservice.Users.Domain.DomainEvents;
 
-[EventKey<UsersAggregate>(1, "RoleRemovedDomainEvent")]
-public class RoleRemovedDomainEvent(
+[EventKey<UsersAggregate>(1, "RoleRemovedToUser")]
+public class RoleRemovedToUserDomainEvent(
      Guid aggregateId,
      string displayName,
      string role,
@@ -12,8 +12,8 @@ public class RoleRemovedDomainEvent(
 {
     public string DisplayName { get; } = displayName;
     public string Role { get; } = role;
-    public static RoleRemovedDomainEvent Create(Guid aggregateId, string displayName, string role)
+    public static RoleRemovedToUserDomainEvent Create(Guid aggregateId, string displayName, string role)
     {
-        return new RoleRemovedDomainEvent(aggregateId, displayName, role);
+        return new RoleRemovedToUserDomainEvent(aggregateId, displayName, role);
     }
 }

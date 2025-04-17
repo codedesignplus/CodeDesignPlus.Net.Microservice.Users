@@ -1,16 +1,16 @@
 namespace CodeDesignPlus.Net.Microservice.Users.Domain.DomainEvents;
 
-[EventKey<UsersAggregate>(1, "UsersDeletedDomainEvent")]
-public class UsersDeletedDomainEvent(
+[EventKey<UsersAggregate>(1, "UserDeletedDomainEvent")]
+public class UserDeletedDomainEvent(
      Guid aggregateId,
      Guid? eventId = null,
      Instant? occurredAt = null,
      Dictionary<string, object>? metadata = null
 ) : UserBaseDomainEvent(aggregateId, eventId, occurredAt, metadata)
 {
-    public static UsersDeletedDomainEvent Create(Guid aggregateId, string firstName, string lastName, string email, string phone, string? displayName, bool isActive)
+    public static UserDeletedDomainEvent Create(Guid aggregateId, string firstName, string lastName, string email, string phone, string? displayName, bool isActive)
     {
-        return new UsersDeletedDomainEvent(aggregateId)
+        return new UserDeletedDomainEvent(aggregateId)
         {
             FirtName = firstName,
             LastName = lastName,

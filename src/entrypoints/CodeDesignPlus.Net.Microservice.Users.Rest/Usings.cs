@@ -30,3 +30,6 @@ global using CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.Ad
 global using CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.RemoveTenant;
 global using CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.AddRole;
 global using CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.RemoveRole;
+global using CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.UpdateProfile;
+global using CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.UpdateJob;
+global using CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.UpdateContact;

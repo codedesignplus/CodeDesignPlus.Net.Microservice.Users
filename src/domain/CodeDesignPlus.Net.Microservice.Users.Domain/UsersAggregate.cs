@@ -1,4 +1,6 @@
+using CodeDesignPlus.Net.Core.Abstractions.Options;
 using CodeDesignPlus.Net.Microservice.Users.Domain.Entities;
+using CodeDesignPlus.Net.Microservice.Users.Domain.ValueObjects;
 
 namespace CodeDesignPlus.Net.Microservice.Users.Domain;
 
@@ -11,6 +13,8 @@ public class UsersAggregate(Guid id) : AggregateRootBase(id)
     public string? DisplayName { get; private set; } = null!;
     public List<TenantEntity> Tenants { get; private set; } = [];
     public string[] Roles { get; private set; } = null!;
+    public ContactInfo Contact { get; private set; } = null!;
+    public JobInfo Job { get; private set; } = null!;
 
     public UsersAggregate(Guid id, string firstName, string lastName, string email, string phone, string displayName, string[] roles) : this(id)
     {
@@ -63,7 +67,7 @@ public class UsersAggregate(Guid id) : AggregateRootBase(id)
         UpdatedBy = updatedBy;
         UpdatedAt = SystemClock.Instance.GetCurrentInstant();
 
-        UsersUpdatedDomainEvent.Create(Id, FirstName, LastName, Email, Phone, DisplayName, IsActive);
+        UserUpdatedDomainEvent.Create(Id, FirstName, LastName, Email, Phone, DisplayName, IsActive);
     }
 
     public void AddTenant(Guid tenantId, string name, Guid updateBy)
@@ -111,7 +115,7 @@ public class UsersAggregate(Guid id) : AggregateRootBase(id)
         UpdatedBy = updatedBy;
         UpdatedAt = SystemClock.Instance.GetCurrentInstant();
 
-        RoleAddedDomainEvent.Create(Id, DisplayName, role);
+        RoleAddedToUserDomainEvent.Create(Id, DisplayName, role);
     }
     public void RemoveRole(string role, Guid updateBy)
     {
@@ -131,6 +135,48 @@ public class UsersAggregate(Guid id) : AggregateRootBase(id)
     {
         DomainGuard.GuidIsEmpty(idUser, Errors.IdUserIsRequired);
 
-        UsersDeletedDomainEvent.Create(Id, FirstName, LastName, Email, Phone, DisplayName, IsActive);
+        UserDeletedDomainEvent.Create(Id, FirstName, LastName, Email, Phone, DisplayName, IsActive);
+    }
+
+    public void UpdateContactInfo(string address, string city, string state, string country, string postalCode, string phone, string[] email, Guid updatedBy)
+    {
+        Contact = ContactInfo.Create(address, city, state, country, postalCode, phone, email);
+
+        UpdatedBy = updatedBy;
+        UpdatedAt = SystemClock.Instance.GetCurrentInstant();
+
+        ContactInfoUpdatedDomainEvent.Create(Id, Contact);
+    }
+
+    public void UpdateJobInfo(string jobTitle, string companyName, string department, string employeeId, string employeeType, Instant employHireDate, string officeLocation, Guid updatedBy)
+    {
+        Job = JobInfo.Create(jobTitle, companyName, department, employeeId, employeeType, employHireDate, officeLocation);
+
+        UpdatedBy = updatedBy;
+        UpdatedAt = SystemClock.Instance.GetCurrentInstant();
+
+        JobInfoUpdatedDomainEvent.Create(Id, Job);
+    }
+
+    public void UpdateProfile(string firstName, string lastName, string email, string phone, string? displayName, bool isActive, ContactInfo contact, JobInfo job, Guid updatedBy)
+    {
+        DomainGuard.IsNullOrEmpty(firstName, Errors.FirstNameRequired);
+        DomainGuard.IsNullOrEmpty(lastName, Errors.LastNameRequired);
+        DomainGuard.IsNullOrEmpty(email, Errors.EmailRequired);
+        DomainGuard.IsNullOrEmpty(phone, Errors.PhoneRequired);
+        DomainGuard.GuidIsEmpty(updatedBy, Errors.UpdateByInvalid);
+
+        FirstName = firstName;
+        LastName = lastName;
+        Email = email;
+        Phone = phone;
+        DisplayName = displayName;
+        IsActive = isActive;
+        Contact = contact;
+        Job = job;
+        UpdatedBy = updatedBy;
+        UpdatedAt = SystemClock.Instance.GetCurrentInstant();
+
+        ProfileUpdatedDomainEvent.Create(Id, FirstName, LastName, Email, Phone, DisplayName, IsActive, Contact, Job);
     }
 }

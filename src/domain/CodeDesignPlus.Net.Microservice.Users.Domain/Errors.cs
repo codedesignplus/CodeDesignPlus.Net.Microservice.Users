@@ -14,4 +14,5 @@ public class Errors: IErrorCodes
     public static string TenantAlreadyExists { get; internal set; }
     public static string TenantNotFound { get; internal set; }
     public static string RoleAlreadyExists { get; internal set; }
+    public static string AddressRequired { get; internal set; }
 }
