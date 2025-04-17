@@ -1,9 +1,9 @@
-namespace CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.UpdateUsers;
+namespace CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.UpdateUser;
 
 [DtoGenerator]
-public record UpdateUsersCommand(Guid Id, string FirstName, string LastName, string? DisplayName, string Email, string Phone, bool IsActive) : IRequest;
+public record UpdateUserCommand(Guid Id, string FirstName, string LastName, string? DisplayName, string Email, string Phone, bool IsActive) : IRequest;
 
-public class Validator : AbstractValidator<UpdateUsersCommand>
+public class Validator : AbstractValidator<UpdateUserCommand>
 {
     public Validator()
     {

@@ -1,9 +1,9 @@
-namespace CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.CreateUsers;
+namespace CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.CreateUser;
 
 [DtoGenerator]
-public record CreateUsersCommand(Guid Id, string FirstName, string LastName, string? DisplayName, string Email, string Phone) : IRequest;
+public record CreateUserCommand(Guid Id, string FirstName, string LastName, string? DisplayName, string Email, string Phone) : IRequest;
 
-public class Validator : AbstractValidator<CreateUsersCommand>
+public class Validator : AbstractValidator<CreateUserCommand>
 {
     public Validator()
     {

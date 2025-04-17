@@ -1,8 +1,8 @@
-namespace CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.CreateUsers;
+namespace CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.CreateUser;
 
-public class CreateUsersCommandHandler(IUsersRepository repository, IUserContext user, IPubSub pubsub) : IRequestHandler<CreateUsersCommand>
+public class CreateUserCommandHandler(IUsersRepository repository, IUserContext user, IPubSub pubsub) : IRequestHandler<CreateUserCommand>
 {
-    public async Task Handle(CreateUsersCommand request, CancellationToken cancellationToken)
+    public async Task Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
         ApplicationGuard.IsNull(request, Errors.InvalidRequest);
         

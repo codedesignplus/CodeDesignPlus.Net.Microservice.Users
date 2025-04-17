@@ -1,8 +1,8 @@
-namespace CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.UpdateUsers;
+namespace CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.UpdateUser;
 
-public class UpdateUsersCommandHandler(IUsersRepository repository, IUserContext user, IPubSub pubsub) : IRequestHandler<UpdateUsersCommand>
+public class UpdateUserCommandHandler(IUsersRepository repository, IUserContext user, IPubSub pubsub) : IRequestHandler<UpdateUserCommand>
 {
-    public async Task Handle(UpdateUsersCommand request, CancellationToken cancellationToken)
+    public async Task Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
         ApplicationGuard.IsNull(request, Errors.InvalidRequest);
 

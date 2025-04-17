@@ -1,12 +1,15 @@
-﻿using CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.AddProductToUsers;
-using CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.CancelUsers;
-using CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.CreateUsers;
-using CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.UpdateQuantityProduct;
-using CodeDesignPlus.Net.Microservice.Users.Domain.ValueObjects;
+﻿using CodeDesignPlus.Microservice.Api.Dtos;
+using CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.CreateUser;
+using CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.UpdateUser;
 
 namespace CodeDesignPlus.Net.Microservice.Users.Application.Setup;
 
 public static class MapsterConfigUsers
 {
-    public static void Configure() { }
+    public static void Configure() { 
+
+        TypeAdapterConfig<CreateUserDto, CreateUserCommand>.NewConfig();
+        TypeAdapterConfig<UpdateUserDto, UpdateUserCommand>.NewConfig();
+        TypeAdapterConfig<UsersAggregate, UsersDto>.NewConfig();
+    }
 }

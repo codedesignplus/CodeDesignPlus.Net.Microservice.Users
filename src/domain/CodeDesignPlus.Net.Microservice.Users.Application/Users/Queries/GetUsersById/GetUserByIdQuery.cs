@@ -1,4 +1,4 @@
 namespace CodeDesignPlus.Net.Microservice.Users.Application.Users.Queries.GetUsersById;
 
-public record GetUsersByIdQuery(Guid Id) : IRequest<UsersDto>;
+public record GetUserByIdQuery(Guid Id) : IRequest<UsersDto>;
 

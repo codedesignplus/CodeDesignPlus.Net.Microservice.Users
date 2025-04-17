@@ -21,9 +21,9 @@ global using NodaTime;
 
 
 
-global using CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.CreateUsers;
-global using CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.UpdateUsers;
-global using CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.DeleteUsers;
+global using CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.CreateUser;
+global using CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.UpdateUser;
+global using CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.DeleteUser;
 global using CodeDesignPlus.Net.Microservice.Users.Application.Users.Queries.GetUsersById;
 global using CodeDesignPlus.Net.Microservice.Users.Application.Users.Queries.GetAllUsers;
 global using CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.AddTenant;

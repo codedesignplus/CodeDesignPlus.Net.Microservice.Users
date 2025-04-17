@@ -1,9 +1,15 @@
+using CodeDesignPlus.Net.Core.Abstractions.Models.Pager;
+
 namespace CodeDesignPlus.Net.Microservice.Users.Application.Users.Queries.GetAllUsers;
 
-public class GetAllUsersQueryHandler(IUsersRepository repository, IMapper mapper, IUserContext user) : IRequestHandler<GetAllUsersQuery, UsersDto>
+public class GetAllUsersQueryHandler(IUsersRepository repository, IMapper mapper) : IRequestHandler<GetAllUsersQuery, Pagination<UsersDto>>
 {
-    public Task<UsersDto> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
+    public async Task<Pagination<UsersDto>> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
     {
-        return Task.FromResult<UsersDto>(default!);
+        ApplicationGuard.IsNull(request, Errors.InvalidRequest);
+
+        var users = await repository.MatchingAsync<UsersAggregate>(request.Criteria, cancellationToken);
+
+        return mapper.Map<Pagination<UsersDto>>(users);
     }
 }

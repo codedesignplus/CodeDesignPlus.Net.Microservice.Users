@@ -1,8 +1,8 @@
-namespace CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.DeleteUsers;
+namespace CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.DeleteUser;
 
-public class DeleteUsersCommandHandler(IUsersRepository repository, IUserContext user, IPubSub pubsub) : IRequestHandler<DeleteUsersCommand>
+public class DeleteUserCommandHandler(IUsersRepository repository, IUserContext user, IPubSub pubsub) : IRequestHandler<DeleteUserCommand>
 {
-    public async Task Handle(DeleteUsersCommand request, CancellationToken cancellationToken)
+    public async Task Handle(DeleteUserCommand request, CancellationToken cancellationToken)
     {
         ApplicationGuard.IsNull(request, Errors.InvalidRequest);
 
