@@ -64,7 +64,7 @@ public class UpdateProfileCommandTest
     [Fact]
     public void Validator_Should_Have_Error_When_Contact_Is_Null()
     {
-        var command = new UpdateProfileCommand(Guid.NewGuid(), "image", "FirstName", "LastName", "DisplayName", "email@example.com", "1234567890", true, null, new JobInfo());
+        var command = new UpdateProfileCommand(Guid.NewGuid(), "image", "FirstName", "LastName", "DisplayName", "email@example.com", "1234567890", true, null!, new JobInfo());
         var result = validator.TestValidate(command);
         result.ShouldHaveValidationErrorFor(x => x.Contact);
     }

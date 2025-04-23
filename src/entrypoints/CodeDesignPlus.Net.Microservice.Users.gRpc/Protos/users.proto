@@ -10,13 +10,22 @@ package Users;
 
 
 service Users {
-  rpc GetUsers (stream GetUsersRequest) returns (stream GetUsersResponse);
+  rpc AddTenantToUser (stream AddTenantRequest) returns (google.protobuf.Empty);
+  rpc AddGroupToUser (stream AddGroupRequest) returns (google.protobuf.Empty);
 }
 
-message GetUsersRequest {
+message AddGroupRequest {
   string Id = 1;
+  string Role = 2;
 }
 
-message GetUsersResponse {
-
+message AddTenantRequest {
+  string Id = 1;
+  Tenant Tenant = 2;
 }
+
+message Tenant {
+  string Id = 1;
+  string Name = 2;
+}
+

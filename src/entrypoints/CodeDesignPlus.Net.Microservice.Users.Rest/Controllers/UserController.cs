@@ -157,7 +157,7 @@ public class UserController(IMediator mediator, IMapper mapper) : ControllerBase
     /// <param name="data">Data for updating the contact information.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>HTTP status code 204 (No Content).</returns>
-    [HttpPost("{id}/contact")]
+    [HttpPatch("{id}/contact")]
     public async Task<IActionResult> UpdateContact(Guid id, [FromBody] UpdateContactDto data, CancellationToken cancellationToken)
     {
         data.Id = id;
@@ -174,7 +174,7 @@ public class UserController(IMediator mediator, IMapper mapper) : ControllerBase
     /// <param name="data">Data for updating the job information.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>HTTP status code 204 (No Content).</returns>
-    [HttpPost("{id}/job")]
+    [HttpPatch("{id}/job")]
     public async Task<IActionResult> UpdateJob(Guid id, [FromBody] UpdateJobDto data, CancellationToken cancellationToken)
     {
         data.Id = id;
@@ -191,7 +191,7 @@ public class UserController(IMediator mediator, IMapper mapper) : ControllerBase
     /// <param name="data">>Data for updating the profile information.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>>HTTP status code 204 (No Content).</returns>
-    [HttpPost("{id}/profile")]
+    [HttpPut("{id}/profile")]
     public async Task<IActionResult> UpdateProfile(Guid id, [FromBody] UpdateProfileDto data, CancellationToken cancellationToken)
     {
         data.Id = id;

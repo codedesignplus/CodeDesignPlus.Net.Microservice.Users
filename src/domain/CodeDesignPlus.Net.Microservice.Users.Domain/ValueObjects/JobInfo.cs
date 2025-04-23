@@ -1,9 +1,9 @@
+using System.Text.Json.Serialization;
+
 namespace CodeDesignPlus.Net.Microservice.Users.Domain.ValueObjects;
 
-public sealed partial class JobInfo
+public sealed class JobInfo
 {
-
-
     public string? JobTitle { get; private set; }
     public string? CompanyName { get; private set; }
     public string? Department { get; private set; }
@@ -17,7 +17,8 @@ public sealed partial class JobInfo
 
     }
 
-    public JobInfo(string jobTitle, string companyName, string department, string employeeId, string employeeType, Instant employHireDate, string officeLocation)
+    [JsonConstructor]
+    public JobInfo(string jobTitle, string companyName, string department, string employeeId, string employeeType, Instant? employHireDate, string officeLocation)
     {
         JobTitle = jobTitle;
         CompanyName = companyName;
@@ -27,8 +28,8 @@ public sealed partial class JobInfo
         EmployHireDate = employHireDate;
         OfficeLocation = officeLocation;
     }
-    
-    public static JobInfo Create(string jobTitle, string companyName, string department, string employeeId, string employeeType, Instant employHireDate, string officeLocation)
+
+    public static JobInfo Create(string jobTitle, string companyName, string department, string employeeId, string employeeType, Instant? employHireDate, string officeLocation)
     {
         return new JobInfo(jobTitle, companyName, department, employeeId, employeeType, employHireDate, officeLocation);
     }
