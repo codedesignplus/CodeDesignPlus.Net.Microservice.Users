@@ -37,7 +37,6 @@
   </ItemGroup>
   <ItemGroup Label="Protos">
     <Protobuf Include="Protos\users.proto" GrpcServices="Client" />
-    <Protobuf Include="Protos\users.proto" GrpcServices="Server" />
   </ItemGroup>
   <ItemGroup>
     <Using Include="Xunit" />

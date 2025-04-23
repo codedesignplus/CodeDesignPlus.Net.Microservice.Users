@@ -1,6 +1,7 @@
 
 using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.AddRole;
 using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.AddTenant;
+using CodeDesignPlus.Net.Microservice.Users.Application.User.DataTransferObjects;
 using CodeDesignPlus.Net.Microservice.Users.gRpc.Services;
 using Google.Protobuf.WellKnownTypes;
 using MediatR;
@@ -8,132 +9,91 @@ using Moq;
 
 namespace CodeDesignPlus.Net.Microservice.Users.gRpc.Test.Services;
 
-public class UserServiceTest
+[Collection(ServerCollectionFixture<Program>.Collection)]
+public class UserServiceTest : ServerBase<Program>
 {
-    private readonly Mock<IMediator> _mediatorMock;
-    private readonly UserService _userService;
-
-    public UserServiceTest()
+    public UserServiceTest(ServerCollectionFixture<Program> fixture) : base(fixture.Container)
     {
-        _mediatorMock = new Mock<IMediator>();
-        _userService = new UserService(_mediatorMock.Object);
-    }
-
-    [Fact]
-    public async Task AddGroupToUser_ValidRequest_SendsCommand()
-    {
-        // Arrange
-        var requests = new List<gRpc.AddGroupRequest>
+        fixture.Container.InMemoryCollection = (x) =>
         {
-            new() { Id = Guid.NewGuid().ToString(), Role = "Admin" }
+            x.Add("Vault:Enable", "false");
+            x.Add("Vault:Address", "http://localhost:8200");
+            x.Add("Vault:Token", "root");
+            x.Add("Solution", "CodeDesignPlus");
+            x.Add("AppName", "my-test");
+            x.Add("RabbitMQ:UserName", "guest");
+            x.Add("RabbitMQ:Password", "guest");
+            x.Add("Security:ValidAudiences:0", Guid.NewGuid().ToString());
         };
-
-        var requestStreamMock = new Mock<IAsyncStreamReader<gRpc.AddGroupRequest>>();
-        requestStreamMock.SetupSequence(x => x.MoveNext(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(true)
-            .ReturnsAsync(false);
-        requestStreamMock.Setup(x => x.Current).Returns(() => requests[0]);
-
-        var context = new Mock<ServerCallContext>();
-
-        // Act
-        var result = await _userService.AddGroupToUser(requestStreamMock.Object, context.Object);
-
-        // Assert
-        _mediatorMock.Verify(m => m.Send(It.IsAny<AddRoleCommand>(), It.IsAny<CancellationToken>()), Times.Once);
-        Assert.IsType<Empty>(result);
     }
 
-    [Fact]
-    public async Task AddGroupToUser_InvalidId_ThrowsRpcException()
-    {
-        // Arrange
-        var requestStreamMock = new Mock<IAsyncStreamReader<gRpc.AddGroupRequest>>();
-        var requests = new List<gRpc.AddGroupRequest>
-        {
-            new() { Id = "InvalidGuid", Role = "Admin" }
-        };
-        requestStreamMock.SetupSequence(x => x.MoveNext(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(true)
-            .ReturnsAsync(false);
-        requestStreamMock.Setup(x => x.Current).Returns(() => requests[0]);
-
-        var context = new Mock<ServerCallContext>();
-
-        // Act & Assert
-        await Assert.ThrowsAsync<RpcException>(() => _userService.AddGroupToUser(requestStreamMock.Object, context.Object));
-    }
 
     [Fact]
-    public async Task AddTenantToUser_ValidRequest_SendsCommand()
+    public async Task AddTenant_ClientStreaming_ReturnEmpty()
     {
-        // Arrange
-        var requestStreamMock = new Mock<IAsyncStreamReader<gRpc.AddTenantRequest>>();
-        var requests = new List<gRpc.AddTenantRequest>
+        var idTenant = Guid.NewGuid();
+        var nameTenant = "Tenant 1";
+        var userClient = new Users.UsersClient(Channel);
+
+        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", Guid.NewGuid());
+
+        var repository = Services.GetRequiredService<IUserRepository>();
+
+        await repository.CreateAsync(aggregate, CancellationToken.None);
+
+        using var streamingCall = userClient.AddTenantToUser();
+
+        await streamingCall.RequestStream.WriteAsync(new AddTenantRequest
         {
-            new() {
-                Id = Guid.NewGuid().ToString(),
-                Tenant = new gRpc.Tenant { Id = Guid.NewGuid().ToString(), Name = "TenantName" }
+            Id = aggregate.Id.ToString(),
+            Tenant = new Tenant
+            {
+                Id = idTenant.ToString(),
+                Name = nameTenant
             }
-        };
-        requestStreamMock.SetupSequence(x => x.MoveNext(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(true)
-            .ReturnsAsync(false);
-        requestStreamMock.Setup(x => x.Current).Returns(() => requests[0]);
+        });
 
-        var context = new Mock<ServerCallContext>();
+        await Task.Delay(2000);
 
-        // Act
-        var result = await _userService.AddTenantToUser(requestStreamMock.Object, context.Object);
+        await streamingCall.RequestStream.CompleteAsync();
 
-        // Assert
-        _mediatorMock.Verify(m => m.Send(It.IsAny<AddTenantCommand>(), It.IsAny<CancellationToken>()), Times.Once);
-        Assert.IsType<Empty>(result);
+        var user = await repository.FindAsync<UserAggregate>(aggregate.Id, CancellationToken.None);
+
+        var tenant = user.Tenants.FirstOrDefault(x => x.Id == idTenant);
+
+        Assert.NotNull(tenant);
+        Assert.Equal(idTenant, tenant.Id);
+        Assert.Equal(nameTenant, tenant.Name);
     }
 
+    
     [Fact]
-    public async Task AddTenantToUser_InvalidId_ThrowsRpcException()
+    public async Task AddGroup_ClientStreaming_ReturnEmpty()
     {
-        // Arrange
-        var requestStreamMock = new Mock<IAsyncStreamReader<gRpc.AddTenantRequest>>();
-        var requests = new List<gRpc.AddTenantRequest>
+        var group = "Admin";
+        var userClient = new Users.UsersClient(Channel);
+
+        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", Guid.NewGuid());
+
+        var repository = Services.GetRequiredService<IUserRepository>();
+
+        await repository.CreateAsync(aggregate, CancellationToken.None);
+
+        using var streamingCall = userClient.AddGroupToUser();
+
+        await streamingCall.RequestStream.WriteAsync(new AddGroupRequest
         {
-            new() {
-                Id = "InvalidGuid",
-                Tenant = new gRpc.Tenant { Id = Guid.NewGuid().ToString(), Name = "TenantName" }
-            }
-        };
-        requestStreamMock.SetupSequence(x => x.MoveNext(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(true)
-            .ReturnsAsync(false);
-        requestStreamMock.Setup(x => x.Current).Returns(() => requests[0]);
+            Id = aggregate.Id.ToString(),
+            Role = group
+        });
 
-        var context = new Mock<ServerCallContext>();
+        await Task.Delay(2000);
 
-        // Act & Assert
-        await Assert.ThrowsAsync<RpcException>(() => _userService.AddTenantToUser(requestStreamMock.Object, context.Object));
-    }
+        await streamingCall.RequestStream.CompleteAsync();
 
-    [Fact]
-    public async Task AddTenantToUser_InvalidTenantId_ThrowsRpcException()
-    {
-        // Arrange
-        var requestStreamMock = new Mock<IAsyncStreamReader<gRpc.AddTenantRequest>>();
-        var requests = new List<gRpc.AddTenantRequest>
-        {
-            new() {
-                Id = Guid.NewGuid().ToString(),
-                Tenant = new gRpc.Tenant { Id = "InvalidGuid", Name = "TenantName" }
-            }
-        };
-        requestStreamMock.SetupSequence(x => x.MoveNext(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(true)
-            .ReturnsAsync(false);
-        requestStreamMock.Setup(x => x.Current).Returns(() => requests[0]);
+        var user = await repository.FindAsync<UserAggregate>(aggregate.Id, CancellationToken.None);
 
-        var context = new Mock<ServerCallContext>();
-
-        // Act & Assert
-        await Assert.ThrowsAsync<RpcException>(() => _userService.AddTenantToUser(requestStreamMock.Object, context.Object));
+        Assert.NotNull(user);
+        Assert.Contains(user.Roles, x => x == group);
     }
 }
