@@ -2,29 +2,40 @@ using CodeDesignPlus.Net.Microservice.Users.Domain.ValueObjects;
 
 namespace CodeDesignPlus.Net.Microservice.Users.Domain.DomainEvents;
 
-[EventKey<UsersAggregate>(1, "ProfileUpdatedDomainEvent")]
-public class ProfileUpdatedDomainEvent(
-     Guid aggregateId,
-     ContactInfo contact,
-     JobInfo job,
-     Guid? eventId = null,
-     Instant? occurredAt = null,
-     Dictionary<string, object>? metadata = null
-) :  UserBaseDomainEvent(aggregateId, eventId, occurredAt, metadata)
+[EventKey<UserAggregate>(1, "ProfileUpdatedDomainEvent")]
+public class ProfileUpdatedDomainEvent : UserBaseDomainEvent
 {
-    public ContactInfo Contact { get; } = contact;
-    public JobInfo Job { get; } = job;
+    public ContactInfo Contact { get; }
+    public JobInfo Job { get; }
 
-    public static ProfileUpdatedDomainEvent Create(Guid aggregateId, string firstName, string lastName, string email, string phone, string? displayName, bool isActive, ContactInfo contact, JobInfo job)
+    public ProfileUpdatedDomainEvent(
+        Guid aggregateId,
+        string image,
+        string firstName,
+        string lastName,
+        string email,
+        string phone,
+        string? displayName,
+        bool isActive,
+        ContactInfo contact,
+        JobInfo job,
+        Guid? eventId = null,
+        Instant? occurredAt = null,
+        Dictionary<string, object>? metadata = null
+    ) : base(aggregateId, eventId, occurredAt, metadata)
     {
-        return new ProfileUpdatedDomainEvent(aggregateId, contact, job)
-        {
-            FirtName = firstName,
-            LastName = lastName,
-            Email = email,
-            Phone = phone,
-            DisplayName = displayName,
-            IsActive = isActive,
-        };
+        this.FirstName = firstName;
+        this.LastName = lastName;
+        this.Email = email;
+        this.Phone = phone;
+        this.DisplayName = displayName;
+        this.IsActive = isActive;
+        this.Contact = contact;
+        this.Job = job;
+    }
+
+    public static ProfileUpdatedDomainEvent Create(Guid aggregateId, string image, string firstName, string lastName, string email, string phone, string? displayName, bool isActive, ContactInfo contact, JobInfo job)
+    {
+        return new ProfileUpdatedDomainEvent(aggregateId, image, firstName, lastName, email, phone, displayName, isActive, contact, job);
     }
 }

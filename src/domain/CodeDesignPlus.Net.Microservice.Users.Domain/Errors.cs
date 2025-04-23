@@ -4,15 +4,19 @@ public class Errors: IErrorCodes
 {    
     public const string UnknownError = "100 : UnknownError";
 
-    public static string FirstNameRequired { get; internal set; }
-    public static string IdUserIsRequired { get; internal set; }
-    public static string LastNameRequired { get; internal set; }
-    public static string EmailRequired { get; internal set; }
-    public static string PhoneRequired { get; internal set; }
-    public static string RolesRequired { get; internal set; }
-    public static string UpdateByInvalid { get; internal set; }
-    public static string TenantAlreadyExists { get; internal set; }
-    public static string TenantNotFound { get; internal set; }
-    public static string RoleAlreadyExists { get; internal set; }
-    public static string AddressRequired { get; internal set; }
+    public const string FirstNameRequired = "101 : The first name is required.";
+    public const string IdUserIsRequired = "102 : The user ID is required.";
+    public const string LastNameRequired = "103 : The last name is required.";
+    public const string EmailRequired = "104 : The email is required.";
+    public const string PhoneRequired = "105 : The phone number is required.";
+    public const string RolesRequired = "106 : The roles are required.";
+    public const string UpdateByInvalid = "107 : The updated by ID is invalid.";
+    public const string TenantAlreadyExists = "108 : The tenant already exists.";
+    public const string TenantNotFound = "109 : The tenant was not found.";
+    public const string RoleAlreadyExists = "110 : The role already exists.";
+    public const string AddressRequired = "111 : The address is required.";
+
+    public const string ImageRequired = "112 : The image profile is required.";
+
+    public const string RoleNotFound = "113 : The role was not found.";
 }

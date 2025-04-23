@@ -21,15 +21,15 @@ global using NodaTime;
 
 
 
-global using CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.CreateUsers;
-global using CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.UpdateUsers;
-global using CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.DeleteUsers;
-global using CodeDesignPlus.Net.Microservice.Users.Application.Users.Queries.GetUsersById;
-global using CodeDesignPlus.Net.Microservice.Users.Application.Users.Queries.GetAllUsers;
-global using CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.AddTenant;
-global using CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.RemoveTenant;
-global using CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.AddRole;
-global using CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.RemoveRole;
-global using CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.UpdateProfile;
-global using CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.UpdateJob;
-global using CodeDesignPlus.Net.Microservice.Users.Application.Users.Commands.UpdateContact;
+global using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.CreateUser;
+global using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.UpdateUser;
+global using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.DeleteUser;
+global using CodeDesignPlus.Net.Microservice.Users.Application.User.Queries.GetUsersById;
+global using CodeDesignPlus.Net.Microservice.Users.Application.User.Queries.GetAllUsers;
+global using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.AddTenant;
+global using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.RemoveTenant;
+global using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.AddRole;
+global using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.RemoveRole;
+global using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.UpdateProfile;
+global using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.UpdateJob;
+global using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.UpdateContact;

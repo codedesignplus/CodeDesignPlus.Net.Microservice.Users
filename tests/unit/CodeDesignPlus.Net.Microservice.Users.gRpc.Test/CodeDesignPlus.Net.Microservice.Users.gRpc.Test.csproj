@@ -31,9 +31,6 @@
     <Using Include="Xunit" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Core/Mapster/" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\..\src\entrypoints\CodeDesignPlus.Net.Microservice.Users.gRpc\CodeDesignPlus.Net.Microservice.Users.gRpc.csproj" />
   </ItemGroup>
 </Project>

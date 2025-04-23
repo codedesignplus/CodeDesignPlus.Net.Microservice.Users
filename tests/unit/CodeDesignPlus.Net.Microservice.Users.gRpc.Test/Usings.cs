@@ -11,4 +11,4 @@ global using CodeDesignPlus.Net.Microservice.Users.gRpc.Services;
 global using Grpc.Core.Testing;
 global using CodeDesignPlus.Net.Serializers;
 
-global using CodeDesignPlus.Net.Microservice.Users.Application.Users.DataTransferObjects;
+global using CodeDesignPlus.Net.Microservice.Users.Application.User.DataTransferObjects;
