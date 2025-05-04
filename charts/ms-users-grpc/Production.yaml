@@ -3,13 +3,13 @@ ms-base:
   replicaCount: 1
 
   image:
-    repository: codedesignplus/ms-archetype-rest
+    repository: codedesignplus/ms-users-grpc
     pullPolicy: IfNotPresent
     tag: "v0.1.0-alpha.100"
 
   imagePullSecrets: []
-  fullnameOverride: "ms-archetype-rest"
-  nameOverride: "ms-archetype-rest"
+  fullnameOverride: "ms-users-grpc"
+  nameOverride: "ms-users-grpc"
 
   serviceAccount:
     create: true
@@ -92,21 +92,4 @@ ms-base:
   affinity: {}
 
   virtualService: 
-    create: true
-    namespace: istio-ingress
-    hosts:
-      - services.codedesignplus.com
-    gateways:
-      - istio-ingress/services-gateway
-    http:
-    - name: ms-users
-      match:
-      - uri:
-          prefix: /ms-users/
-      rewrite:
-        uri: /
-      route:
-      - destination:
-          host: ms-users-rest.urbancore.svc.cluster.local
-          port:
-            number: 5000
+    create: false

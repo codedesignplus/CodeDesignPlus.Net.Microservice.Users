@@ -3,13 +3,13 @@ ms-base:
   replicaCount: 1
 
   image:
-    repository: codedesignplus/ms-archetype-rest
+    repository: codedesignplus/ms-users-rest
     pullPolicy: IfNotPresent
     tag: "v0.1.0-alpha.100"
 
   imagePullSecrets: []
-  fullnameOverride: "ms-archetype-rest"
-  nameOverride: "ms-archetype-rest"
+  fullnameOverride: "ms-users-rest"
+  nameOverride: "ms-users-rest"
 
   serviceAccount:
     create: true
@@ -97,7 +97,7 @@ ms-base:
     hosts:
       - services.codedesignplus.com
     gateways:
-      - istio-ingress/services-gateway
+      - istio-ingress/istio-gateway
     http:
     - name: ms-users
       match:
