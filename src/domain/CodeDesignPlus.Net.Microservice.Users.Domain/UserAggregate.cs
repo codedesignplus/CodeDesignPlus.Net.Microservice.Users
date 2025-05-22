@@ -35,7 +35,7 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         CreatedAt = SystemClock.Instance.GetCurrentInstant();
         IsActive = true;
 
-        UserCreatedDomainEvent.Create(Id, FirstName, LastName, Email, Phone, DisplayName, IsActive);
+        this.AddEvent(UserCreatedDomainEvent.Create(Id, FirstName, LastName, Email, Phone, DisplayName, IsActive));
     }
 
     public static UserAggregate Create(Guid id, string firstName, string lastName, string email, string phone, string? displayName, Guid createdBy)
@@ -60,7 +60,7 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         UpdatedBy = updatedBy;
         UpdatedAt = SystemClock.Instance.GetCurrentInstant();
 
-        UserUpdatedDomainEvent.Create(Id, FirstName, LastName, Email, Phone, DisplayName, IsActive);
+        this.AddEvent(UserUpdatedDomainEvent.Create(Id, FirstName, LastName, Email, Phone, DisplayName, IsActive));
     }
 
     public void AddTenant(Guid tenantId, string name, Guid updateBy)
@@ -81,7 +81,7 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         UpdatedBy = updateBy;
         UpdatedAt = SystemClock.Instance.GetCurrentInstant();
 
-        TenantAddedDomainEvent.Create(Id, DisplayName, tenant);
+        this.AddEvent(TenantAddedDomainEvent.Create(Id, DisplayName, tenant));
     }
     public void RemoveTenant(Guid tenantId, Guid updateBy)
     {
@@ -95,7 +95,7 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         UpdatedBy = updateBy;
         UpdatedAt = SystemClock.Instance.GetCurrentInstant();
 
-        TenantRemovedDomainEvent.Create(Id, DisplayName, tenant);
+        this.AddEvent(TenantRemovedDomainEvent.Create(Id, DisplayName, tenant));
     }
     public void AddRole(string role, Guid updatedBy)
     {
@@ -108,7 +108,7 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         UpdatedBy = updatedBy;
         UpdatedAt = SystemClock.Instance.GetCurrentInstant();
 
-        RoleAddedToUserDomainEvent.Create(Id, DisplayName, role);
+        this.AddEvent(RoleAddedToUserDomainEvent.Create(Id, DisplayName, role));
     }
     public void RemoveRole(string role, Guid updateBy)
     {
@@ -122,13 +122,15 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
 
         UpdatedBy = updateBy;
         UpdatedAt = SystemClock.Instance.GetCurrentInstant();
+
+        this.AddEvent(RoleRemovedToUserDomainEvent.Create(Id, DisplayName, role));
     }
 
     public void Delete(Guid idUser)
     {
         DomainGuard.GuidIsEmpty(idUser, Errors.IdUserIsRequired);
 
-        UserDeletedDomainEvent.Create(Id, FirstName, LastName, Email, Phone, DisplayName, IsActive);
+        this.AddEvent(UserDeletedDomainEvent.Create(Id, FirstName, LastName, Email, Phone, DisplayName, IsActive));
     }
 
     public void UpdateContactInfo(string address, string city, string state, string country, string postalCode, string phone, string[] email, Guid updatedBy)
@@ -138,7 +140,7 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         UpdatedBy = updatedBy;
         UpdatedAt = SystemClock.Instance.GetCurrentInstant();
 
-        ContactInfoUpdatedDomainEvent.Create(Id, Contact);
+        this.AddEvent(ContactInfoUpdatedDomainEvent.Create(Id, Contact));
     }
 
     public void UpdateJobInfo(string jobTitle, string companyName, string department, string employeeId, string employeeType, Instant employHireDate, string officeLocation, Guid updatedBy)
@@ -148,7 +150,7 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         UpdatedBy = updatedBy;
         UpdatedAt = SystemClock.Instance.GetCurrentInstant();
 
-        JobInfoUpdatedDomainEvent.Create(Id, Job);
+        this.AddEvent(JobInfoUpdatedDomainEvent.Create(Id, Job));
     }
 
     public void UpdateProfile(string image, string firstName, string lastName, string email, string phone, string? displayName, bool isActive, ContactInfo contact, JobInfo job, Guid updatedBy)
@@ -172,6 +174,6 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         UpdatedBy = updatedBy;
         UpdatedAt = SystemClock.Instance.GetCurrentInstant();
 
-        ProfileUpdatedDomainEvent.Create(Id, Image, FirstName, LastName, Email, Phone, DisplayName, IsActive, Contact, Job);
+        this.AddEvent(ProfileUpdatedDomainEvent.Create(Id, Image, FirstName, LastName, Email, Phone, DisplayName, IsActive, Contact, Job));
     }
 }
