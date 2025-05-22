@@ -36,7 +36,7 @@ public class UpdateProfileCommandHandlerTest
         var pubSubMock = new Mock<IPubSub>();
         var handler = new UpdateProfileCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object);
 
-        var command = new UpdateProfileCommand(Guid.NewGuid(), "https://localhost/image.png", "John", "Doe", "JD", "joe@fake.com", "1234567890", true, ContactInfo.Create("Cll 3", "City", "State", "Country", "12345", "+57 3107565142", ["joe@fake.com"]), JobInfo.Create("Developer", "Microsoft", "IT", "1234567890", "Custom", SystemClock.Instance.GetCurrentInstant(), "Office Location"));
+        var command = new UpdateProfileCommand(Guid.NewGuid(), "John", "Doe", "JD", "joe@fake.com", "1234567890", true, ContactInfo.Create("Cll 3", "City", "State", "Country", "12345", "+57 3107565142", ["joe@fake.com"]), JobInfo.Create("Developer", "Microsoft", "IT", "1234567890", "Custom", SystemClock.Instance.GetCurrentInstant(), "Office Location"));
         repositoryMock.Setup(r => r.FindAsync<UserAggregate>(command.Id, It.IsAny<CancellationToken>()))
                       .ReturnsAsync((UserAggregate)null!);
 
@@ -57,7 +57,7 @@ public class UpdateProfileCommandHandlerTest
         var pubSubMock = new Mock<IPubSub>();
         var handler = new UpdateProfileCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object);
 
-        var command = new UpdateProfileCommand(Guid.NewGuid(), "https://localhost/image.png", "John", "Doe", "JD", "joe@fake.com", "1234567890", true, ContactInfo.Create("Cll 3", "City", "State", "Country", "12345", "+57 3107565142", ["joe@fake.com"]), JobInfo.Create("Developer", "Microsoft", "IT", "1234567890", "Custom", SystemClock.Instance.GetCurrentInstant(), "Office Location"));
+        var command = new UpdateProfileCommand(Guid.NewGuid(), "John", "Doe", "JD", "joe@fake.com", "1234567890", true, ContactInfo.Create("Cll 3", "City", "State", "Country", "12345", "+57 3107565142", ["joe@fake.com"]), JobInfo.Create("Developer", "Microsoft", "IT", "1234567890", "Custom", SystemClock.Instance.GetCurrentInstant(), "Office Location"));
 
         var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", Guid.NewGuid());
 

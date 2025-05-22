@@ -11,7 +11,7 @@ public class UpdateProfileCommandHandler(IUserRepository repository, IUserContex
 
         ApplicationGuard.IsNull(aggregate, Errors.UserNotFound);
 
-        aggregate.UpdateProfile(request.Image, request.FirstName, request.LastName, request.Email, request.Phone, request.DisplayName, request.IsActive, request.Contact, request.Job, user.IdUser);
+        aggregate.UpdateProfile(request.FirstName, request.LastName, request.Email, request.Phone, request.DisplayName, request.IsActive, request.Contact, request.Job, user.IdUser);
 
         await repository.UpdateAsync(aggregate, cancellationToken);
 

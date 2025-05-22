@@ -32,6 +32,6 @@ public static class MapsterConfigUsers
 
         TypeAdapterConfig<UpdateProfileDto,UpdateProfileCommand>
             .NewConfig()
-            .MapWith(src => new UpdateProfileCommand(src.Id, src.Image, src.FirstName, src.LastName, src.DisplayName, src.Email, src.Phone, src.IsActive, src.Contact, src.Job));
+            .MapWith(src => new UpdateProfileCommand(src.Id, src.FirstName, src.LastName, src.DisplayName, src.Email, src.Phone, src.IsActive, src.Contact, src.Job));
     }
 }

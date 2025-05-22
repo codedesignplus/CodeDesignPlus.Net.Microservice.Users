@@ -416,8 +416,7 @@ public class UserControllerTest : ServerBase<Program>, IClassFixture<Server<Prog
             Email = "bart@fake.com",
             IsActive = true,
             Contact = dataContact,
-            Job = dataJob,
-            Image = "https://example.com/image.jpg",
+            Job = dataJob
         };
 
         var json = System.Text.Json.JsonSerializer.Serialize(data, this.options);
@@ -437,7 +436,6 @@ public class UserControllerTest : ServerBase<Program>, IClassFixture<Server<Prog
         Assert.Equal(data.Email, user.Email);
         Assert.Equal(data.Phone, user.Phone);
         Assert.Equal(data.DisplayName, user.DisplayName);
-        Assert.Equal(data.Image, user.Image);
         
         Assert.Equal(dataContact.Address, user.Contact.Address);
         Assert.Equal(dataContact.City, user.Contact.City);

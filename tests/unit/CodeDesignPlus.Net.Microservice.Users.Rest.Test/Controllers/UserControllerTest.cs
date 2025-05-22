@@ -368,7 +368,6 @@ public class UserControllerTest
         var updateProfileDto = new CodeDesignPlus.Microservice.Api.Dtos.UpdateProfileDto
         {
             Id = Guid.NewGuid(),
-            Image = "https://localhost/image.png",
             FirstName = "John",
             LastName = "Doe",
             DisplayName = "JD",
@@ -380,7 +379,6 @@ public class UserControllerTest
         };
         var updateProfileCommand = new UpdateProfileCommand(
             updateProfileDto.Id,
-            updateProfileDto.Image,
             updateProfileDto.FirstName,
             updateProfileDto.LastName,
             updateProfileDto.DisplayName,
