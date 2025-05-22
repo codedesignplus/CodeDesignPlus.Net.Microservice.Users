@@ -4,6 +4,7 @@ using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.AddTenant;
 using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.CreateUser;
 using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.UpdateContact;
 using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.UpdateJob;
+using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.UpdatePicture;
 using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.UpdateProfile;
 using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.UpdateUser;
 using CodeDesignPlus.Net.Microservice.Users.Domain.Entities;
@@ -19,6 +20,8 @@ public static class MapsterConfigUsers
 
         TypeAdapterConfig<CreateUserDto, CreateUserCommand>.NewConfig();
         TypeAdapterConfig<UpdateUserDto, UpdateUserCommand>.NewConfig();
+        TypeAdapterConfig<UpdatePictureDto, UpdatePictureCommand>.NewConfig();
+
 
         TypeAdapterConfig<AddRoleDto, AddRoleCommand>.NewConfig();
 

@@ -6,7 +6,7 @@ namespace CodeDesignPlus.Net.Microservice.Users.Domain;
 
 public class UserAggregate(Guid id) : AggregateRootBase(id)
 {
-    public string Image { get; private set; } = null!;
+    public UserPicture? Picture { get; private set; } = null!;
     public string FirstName { get; private set; } = null!;
     public string LastName { get; private set; } = null!;
     public string Email { get; private set; } = null!;
@@ -57,10 +57,26 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         Phone = phone;
         DisplayName = displayName;
         IsActive = isActive;
+        Picture = Picture;
         UpdatedBy = updatedBy;
         UpdatedAt = SystemClock.Instance.GetCurrentInstant();
 
         this.AddEvent(UserUpdatedDomainEvent.Create(Id, FirstName, LastName, Email, Phone, DisplayName, IsActive));
+    }
+
+    public void UpdatePicture(Guid id, string name, string target, Guid updatedBy)
+    {
+        DomainGuard.GuidIsEmpty(id, Errors.IdUserIsRequired);
+        DomainGuard.IsNullOrEmpty(name, Errors.ImageRequired);
+        DomainGuard.IsNullOrEmpty(target, Errors.ImageRequired);
+        DomainGuard.GuidIsEmpty(updatedBy, Errors.UpdateByInvalid);
+        
+        Picture = UserPicture.Create(id, name, target);;
+
+        UpdatedBy = updatedBy;
+        UpdatedAt = SystemClock.Instance.GetCurrentInstant();
+
+        this.AddEvent(UserPictureUpdatedDomainEvent.Create(Id, Picture.Name, Picture.Target));
     }
 
     public void AddTenant(Guid tenantId, string name, Guid updateBy)
@@ -153,16 +169,14 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         this.AddEvent(JobInfoUpdatedDomainEvent.Create(Id, Job));
     }
 
-    public void UpdateProfile(string image, string firstName, string lastName, string email, string phone, string? displayName, bool isActive, ContactInfo contact, JobInfo job, Guid updatedBy)
+    public void UpdateProfile(string firstName, string lastName, string email, string phone, string? displayName, bool isActive, ContactInfo contact, JobInfo job, Guid updatedBy)
     {
-        DomainGuard.IsNullOrEmpty(image, Errors.ImageRequired);
         DomainGuard.IsNullOrEmpty(firstName, Errors.FirstNameRequired);
         DomainGuard.IsNullOrEmpty(lastName, Errors.LastNameRequired);
         DomainGuard.IsNullOrEmpty(email, Errors.EmailRequired);
         DomainGuard.IsNullOrEmpty(phone, Errors.PhoneRequired);
         DomainGuard.GuidIsEmpty(updatedBy, Errors.UpdateByInvalid);
 
-        Image = image;
         FirstName = firstName;
         LastName = lastName;
         Email = email;
@@ -174,6 +188,6 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         UpdatedBy = updatedBy;
         UpdatedAt = SystemClock.Instance.GetCurrentInstant();
 
-        this.AddEvent(ProfileUpdatedDomainEvent.Create(Id, Image, FirstName, LastName, Email, Phone, DisplayName, IsActive, Contact, Job));
+        this.AddEvent(ProfileUpdatedDomainEvent.Create(Id, FirstName, LastName, Email, Phone, DisplayName, IsActive, Contact, Job));
     }
 }

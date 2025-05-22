@@ -10,7 +10,6 @@ public class ProfileUpdatedDomainEvent : UserBaseDomainEvent
 
     public ProfileUpdatedDomainEvent(
         Guid aggregateId,
-        string image,
         string firstName,
         string lastName,
         string email,
@@ -34,8 +33,8 @@ public class ProfileUpdatedDomainEvent : UserBaseDomainEvent
         this.Job = job;
     }
 
-    public static ProfileUpdatedDomainEvent Create(Guid aggregateId, string image, string firstName, string lastName, string email, string phone, string? displayName, bool isActive, ContactInfo contact, JobInfo job)
+    public static ProfileUpdatedDomainEvent Create(Guid aggregateId,  string firstName, string lastName, string email, string phone, string? displayName, bool isActive, ContactInfo contact, JobInfo job)
     {
-        return new ProfileUpdatedDomainEvent(aggregateId, image, firstName, lastName, email, phone, displayName, isActive, contact, job);
+        return new ProfileUpdatedDomainEvent(aggregateId, firstName, lastName, email, phone, displayName, isActive, contact, job);
     }
 }

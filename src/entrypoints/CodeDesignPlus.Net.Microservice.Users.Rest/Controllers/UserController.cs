@@ -1,3 +1,5 @@
+using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.UpdatePicture;
+
 namespace CodeDesignPlus.Net.Microservice.Users.Rest.Controllers;
 
 /// <summary>
@@ -197,6 +199,23 @@ public class UserController(IMediator mediator, IMapper mapper) : ControllerBase
         data.Id = id;
 
         await mediator.Send(mapper.Map<UpdateProfileCommand>(data), cancellationToken);
+
+        return NoContent();
+    }
+
+    /// <summary>
+    /// Update the picture of a User.
+    /// </summary>
+    /// <param name="id">The unique identifier of the User.</param>
+    /// <param name="data">Data for updating the picture.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>>HTTP status code 204 (No Content).</returns>
+    [HttpPatch("{id}/picture")]
+    public async Task<IActionResult> UpdatePicture(Guid id, [FromBody] UpdatePictureDto data, CancellationToken cancellationToken)
+    {
+        data.Id = id;
+
+        await mediator.Send(mapper.Map<UpdatePictureCommand>(data), cancellationToken);
 
         return NoContent();
     }
