@@ -14,5 +14,5 @@ public class UserDto : IDtoBase
     public string[] Roles { get; set; } = null!;
     public ContactInfo Contact { get; set; } = null!;
     public JobInfo Job { get; set; } = null!;
-    public string Image { get; set; } = null!;
+    public UserPicture? Picture { get; set; } = null!;
 }
