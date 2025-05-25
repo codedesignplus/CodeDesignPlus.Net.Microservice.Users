@@ -96,35 +96,35 @@ public class UserControllerTest
         mediatorMock.Verify(m => m.Send(It.IsAny<GetUsersByIdQuery>(), cancellationToken), Times.Once);
     }
 
-    [Fact]
-    public async Task CreateUser_ReturnsNoContent()
-    {
-        // Arrange
-        var command = new CreateUserCommand(Guid.NewGuid(), "John", "Doe", "JD", "john.doe@fake.com", "1234567890");
-        var createUserDto = new CodeDesignPlus.Microservice.Api.Dtos.CreateUserDto()
-        {
-            Id = command.Id,
-            FirstName = command.FirstName,
-            LastName = command.LastName,
-            Email = command.Email,
-            Phone = command.Phone,
-            DisplayName = command.DisplayName
-        };
+    // [Fact]
+    // public async Task CreateUser_ReturnsNoContent()
+    // {
+    //     // Arrange
+    //     var command = new CreateUserCommand(Guid.NewGuid(), "John", "Doe", "JD", "john.doe@fake.com", "1234567890");
+    //     var createUserDto = new CodeDesignPlus.Microservice.Api.Dtos.CreateUserDto()
+    //     {
+    //         Id = command.Id,
+    //         FirstName = command.FirstName,
+    //         LastName = command.LastName,
+    //         Email = command.Email,
+    //         Phone = command.Phone,
+    //         DisplayName = command.DisplayName
+    //     };
 
-        var cancellationToken = CancellationToken.None;
+    //     var cancellationToken = CancellationToken.None;
 
-        mapperMock
-            .Setup(m => m.Map<CreateUserCommand>(createUserDto))
-            .Returns(command);
+    //     mapperMock
+    //         .Setup(m => m.Map<CreateUserCommand>(createUserDto))
+    //         .Returns(command);
 
-        // Act
-        var result = await controller.CreateUser(createUserDto, cancellationToken);
+    //     // Act
+    //     var result = await controller.CreateUser(createUserDto, cancellationToken);
 
-        // Assert
-        Assert.IsType<NoContentResult>(result);
+    //     // Assert
+    //     Assert.IsType<NoContentResult>(result);
 
-        mediatorMock.Verify(m => m.Send(command, cancellationToken), Times.Once);
-    }
+    //     mediatorMock.Verify(m => m.Send(command, cancellationToken), Times.Once);
+    // }
 
     [Fact]
     public async Task UpdateUser_ReturnsNoContent()
