@@ -38,7 +38,7 @@ public class CreateUserCommandHandlerTest
     public async Task Handle_UserAlreadyExists_ThrowsUserAlreadyExistsException()
     {
         // Arrange
-        var request = new CreateUserCommand(Guid.NewGuid(), "John", "Doe", "JD", "john.doe@fake.com", "1234567890");
+        var request = new CreateUserCommand(Guid.NewGuid(), "John", "Doe", "JD", "john.doe@fake.com", "1234567890", true);
         var cancellationToken = CancellationToken.None;
 
         repositoryMock
@@ -57,7 +57,7 @@ public class CreateUserCommandHandlerTest
     public async Task Handle_ValidRequest_CreatesUserAndPublishesEvents()
     {
         // Arrange
-        var request = new CreateUserCommand(Guid.NewGuid(), "John", "Doe", "JD", "john.doe@fake.com", "1234567890");
+        var request = new CreateUserCommand(Guid.NewGuid(), "John", "Doe", "JD", "john.doe@fake.com", "1234567890", true);
 
         var cancellationToken = CancellationToken.None;
 
@@ -74,6 +74,5 @@ public class CreateUserCommandHandlerTest
 
         // Assert
         repositoryMock.Verify(repo => repo.CreateAsync(It.IsAny<UserAggregate>(), cancellationToken), Times.Once);
-        pubSubMock.Verify(pubsub => pubsub.PublishAsync(It.IsAny<List<UserCreatedDomainEvent>>(), cancellationToken), Times.AtMostOnce);
     }
 }

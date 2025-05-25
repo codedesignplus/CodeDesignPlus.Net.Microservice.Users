@@ -59,7 +59,7 @@ public class UpdateContactCommandHandlerTest
 
         var command = new UpdateContactCommand(Guid.NewGuid(), "123 Main St", "Sample City", "Sample State", "Sample Country", "12345", "123-456-7890", ["fake@fake.com"]);
 
-        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", Guid.NewGuid());
+        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", true, Guid.NewGuid());
         repositoryMock.Setup(r => r.FindAsync<UserAggregate>(command.Id, It.IsAny<CancellationToken>()))
                       .ReturnsAsync(aggregate);
 

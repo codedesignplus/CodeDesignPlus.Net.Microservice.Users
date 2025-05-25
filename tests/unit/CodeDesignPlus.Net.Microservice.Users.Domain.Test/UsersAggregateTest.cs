@@ -24,7 +24,7 @@ public class UserAggregateTest
         var createdBy = Guid.NewGuid();
 
         // Act
-        var user = UserAggregate.Create(id, firstName, lastName, email, phone, displayName, createdBy);
+        var user = UserAggregate.Create(id, firstName, lastName, email, phone, displayName, true, createdBy);
 
         // Assert
         Assert.Equal(id, user.Id);
@@ -41,7 +41,7 @@ public class UserAggregateTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var user = UserAggregate.Create(id, "John", "Doe", "john.doe@example.com", "1234567890", null, Guid.NewGuid());
+        var user = UserAggregate.Create(id, "John", "Doe", "john.doe@example.com", "1234567890", null, true, Guid.NewGuid());
         var updatedBy = Guid.NewGuid();
 
         // Act
@@ -61,7 +61,7 @@ public class UserAggregateTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var user = UserAggregate.Create(id, "John", "Doe", "john.doe@example.com", "1234567890", null, Guid.NewGuid());
+        var user = UserAggregate.Create(id, "John", "Doe", "john.doe@example.com", "1234567890", null, true, Guid.NewGuid());
         var tenantId = Guid.NewGuid();
         var tenantName = "Tenant1";
         var updatedBy = Guid.NewGuid();
@@ -80,7 +80,7 @@ public class UserAggregateTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var user = UserAggregate.Create(id, "John", "Doe", "john.doe@example.com", "1234567890", null, Guid.NewGuid());
+        var user = UserAggregate.Create(id, "John", "Doe", "john.doe@example.com", "1234567890", null, true, Guid.NewGuid());
         var tenantId = Guid.NewGuid();
         user.AddTenant(tenantId, "Tenant1", Guid.NewGuid());
 
@@ -96,7 +96,7 @@ public class UserAggregateTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var user = UserAggregate.Create(id, "John", "Doe", "john.doe@example.com", "1234567890", null, Guid.NewGuid());
+        var user = UserAggregate.Create(id, "John", "Doe", "john.doe@example.com", "1234567890", null, true, Guid.NewGuid());
         var role = "Admin";
         var updatedBy = Guid.NewGuid();
 
@@ -112,7 +112,7 @@ public class UserAggregateTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var user = UserAggregate.Create(id, "John", "Doe", "john.doe@example.com", "1234567890", null, Guid.NewGuid());
+        var user = UserAggregate.Create(id, "John", "Doe", "john.doe@example.com", "1234567890", null, true, Guid.NewGuid());
         var role = "Admin";
         user.AddRole(role, Guid.NewGuid());
 
@@ -128,11 +128,11 @@ public class UserAggregateTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var user = UserAggregate.Create(id, "John", "Doe", "john.doe@example.com", "1234567890", null, Guid.NewGuid());
+        var user = UserAggregate.Create(id, "John", "Doe", "john.doe@example.com", "1234567890", null, true, Guid.NewGuid());
         var updatedBy = Guid.NewGuid();
 
         // Act
-        user.UpdateContactInfo("123 Street", "City", "State", "Country", "12345", "1234567890", new[] { "contact@example.com" }, updatedBy);
+        user.UpdateContactInfo("123 Street", "City", "State", "Country", "12345", "1234567890", ["contact@example.com"], updatedBy);
 
         // Assert
         Assert.Equal("123 Street", user.Contact.Address);
@@ -144,7 +144,7 @@ public class UserAggregateTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var user = UserAggregate.Create(id, "John", "Doe", "john.doe@example.com", "1234567890", null, Guid.NewGuid());
+        var user = UserAggregate.Create(id, "John", "Doe", "john.doe@example.com", "1234567890", null, true, Guid.NewGuid());
         var updatedBy = Guid.NewGuid();
 
         // Act

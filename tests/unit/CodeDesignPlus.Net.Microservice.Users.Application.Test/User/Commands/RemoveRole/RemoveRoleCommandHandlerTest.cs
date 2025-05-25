@@ -57,7 +57,7 @@ public class RemoveRoleCommandHandlerTest
         var pubSubMock = new Mock<IPubSub>();
         var handler = new RemoveRoleCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object);
 
-        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", Guid.NewGuid());
+        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", true, Guid.NewGuid());
 
         aggregate.AddRole("Admin", Guid.NewGuid());
 

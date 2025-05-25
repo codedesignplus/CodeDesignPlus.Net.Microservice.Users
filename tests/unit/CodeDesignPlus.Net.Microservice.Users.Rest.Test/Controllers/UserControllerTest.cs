@@ -39,7 +39,7 @@ public class UserControllerTest
         mapperMock = new Mock<IMapper>();
         controller = new UserController(mediatorMock.Object, mapperMock.Object);
 
-        this.aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", Guid.NewGuid());
+        this.aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", true, Guid.NewGuid());
         this.userDto = new()
         {
             Id = aggregate.Id,

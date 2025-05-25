@@ -1,1 +1,5 @@
 src\entrypoints\CodeDesignPlus.Net.Microservice.Users.Rest\Usings.cs skip
+src/entrypoints/CodeDesignPlus.Net.Microservice.Users.AsyncWorker/appsettings.json skip
+src/domain/CodeDesignPlus.Net.Microservice.Users.Domain/UserAggregate.cs skip
+src/domain/CodeDesignPlus.Net.Microservice.Users.Application/User/Commands/CreateUser/CreateUserCommand.cs skip
+src/domain/CodeDesignPlus.Net.Microservice.Users.Application/User/Commands/CreateUser/CreateUserCommandHandler.cs skip

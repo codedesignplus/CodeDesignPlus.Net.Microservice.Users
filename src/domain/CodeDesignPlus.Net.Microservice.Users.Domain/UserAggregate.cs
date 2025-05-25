@@ -17,7 +17,7 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
     public ContactInfo Contact { get; private set; } = null!;
     public JobInfo Job { get; private set; } = null!;
 
-    public UserAggregate(Guid id, string firstName, string lastName, string email, string phone, string? displayName, Guid createdBy) : this(id)
+    public UserAggregate(Guid id, string firstName, string lastName, string email, string phone, string? displayName, bool isActive, Guid createdBy) : this(id)
     {
         DomainGuard.GuidIsEmpty(id, Errors.IdUserIsRequired);
         DomainGuard.IsNullOrEmpty(firstName, Errors.FirstNameRequired);
@@ -33,14 +33,12 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
 
         CreatedBy = createdBy;
         CreatedAt = SystemClock.Instance.GetCurrentInstant();
-        IsActive = true;
-
-        //this.AddEvent(UserCreatedDomainEvent.Create(Id, FirstName, LastName, Email, Phone, DisplayName, IsActive));
+        IsActive = isActive;
     }
 
-    public static UserAggregate Create(Guid id, string firstName, string lastName, string email, string phone, string? displayName, Guid createdBy)
+    public static UserAggregate Create(Guid id, string firstName, string lastName, string email, string phone, string? displayName, bool isActive, Guid createdBy)
     {
-        return new UserAggregate(id, firstName, lastName, email, phone, displayName, createdBy);
+        return new UserAggregate(id, firstName, lastName, email, phone, displayName, isActive, createdBy);
     }
 
     public void Update(string firstName, string lastName, string email, string phone, string? displayName, bool isActive, Guid updatedBy)

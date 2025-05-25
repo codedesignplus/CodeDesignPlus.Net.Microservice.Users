@@ -77,7 +77,7 @@ public class UpdateJobCommandHandlerTest
            OfficeLocation: "HQ"
        );
 
-        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", Guid.NewGuid());
+        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", true, Guid.NewGuid());
 
         repositoryMock.Setup(r => r.FindAsync<UserAggregate>(request.Id, It.IsAny<CancellationToken>()))
                       .ReturnsAsync(aggregate);
