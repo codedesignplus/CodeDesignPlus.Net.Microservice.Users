@@ -1,6 +1,6 @@
 namespace CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.CreateUser;
 
-public class CreateUserCommandHandler(IUserRepository repository, IUserContext user, IPubSub pubsub) : IRequestHandler<CreateUserCommand>
+public class CreateUserCommandHandler(IUserRepository repository, IPubSub pubsub) : IRequestHandler<CreateUserCommand>
 {
     public async Task Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
@@ -10,7 +10,7 @@ public class CreateUserCommandHandler(IUserRepository repository, IUserContext u
 
         ApplicationGuard.IsTrue(exist, Errors.UserAlreadyExists);
 
-        var aggregate = UserAggregate.Create(request.Id, request.FirstName, request.LastName, request.Email, request.Phone, request.DisplayName, request.IsActive, user.IdUser);
+        var aggregate = UserAggregate.Create(request.Id, request.FirstName, request.LastName, request.Email, request.Phone, request.DisplayName, request.IsActive);
 
         await repository.CreateAsync(aggregate, cancellationToken);
 

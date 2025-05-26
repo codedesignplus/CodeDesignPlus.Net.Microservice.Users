@@ -55,7 +55,7 @@ public class UpdateUserCommandHandlerTest
         // Arrange
         var request = new UpdateUserCommand(Guid.NewGuid(), "John U", "Doe U", "JDU", "john@fake.com", "1234567890", true);
 
-        var aggregate = UserAggregate.Create(request.Id, "John", "Doe", "john@fake.com", "1234567890", "JD", true, Guid.NewGuid());
+        var aggregate = UserAggregate.Create(request.Id, "John", "Doe", "john@fake.com", "1234567890", "JD", true);
 
         repositoryMock
             .Setup(repo => repo.FindAsync<UserAggregate>(request.Id, It.IsAny<CancellationToken>()))

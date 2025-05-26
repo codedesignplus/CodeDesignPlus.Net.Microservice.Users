@@ -6,17 +6,15 @@ namespace CodeDesignPlus.Net.Microservice.Users.Application.Test.User.Commands.C
 public class CreateUserCommandHandlerTest
 {
     private readonly Mock<IUserRepository> repositoryMock;
-    private readonly Mock<IUserContext> userContextMock;
     private readonly Mock<IPubSub> pubSubMock;
     private readonly CreateUserCommandHandler handler;
 
     public CreateUserCommandHandlerTest()
     {
         repositoryMock = new Mock<IUserRepository>();
-        userContextMock = new Mock<IUserContext>();
         pubSubMock = new Mock<IPubSub>();
 
-        handler = new CreateUserCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object);
+        handler = new CreateUserCommandHandler(repositoryMock.Object,  pubSubMock.Object);
     }
 
     [Fact]
@@ -64,10 +62,6 @@ public class CreateUserCommandHandlerTest
         repositoryMock
             .Setup(repo => repo.ExistsAsync<UserAggregate>(request.Id, cancellationToken))
             .ReturnsAsync(false);
-
-        userContextMock
-            .Setup(context => context.IdUser)
-            .Returns(Guid.NewGuid());
 
         // Act
         await handler.Handle(request, cancellationToken);

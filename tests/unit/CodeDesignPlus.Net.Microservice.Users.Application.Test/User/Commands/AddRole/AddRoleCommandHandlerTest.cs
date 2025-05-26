@@ -59,7 +59,7 @@ public class AddRoleCommandHandlerTest
         var handler = new AddRoleCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object);
 
         var command = new AddRoleCommand(Guid.NewGuid(), "Admin");
-        var aggregate = UserAggregate.Create(command.Id, "John", "Doe", "john@fake.com", "1234567890", "JD", true, Guid.NewGuid());
+        var aggregate = UserAggregate.Create(command.Id, "John", "Doe", "john@fake.com", "1234567890", "JD", true);
 
         repositoryMock
             .Setup(repo => repo.FindAsync<UserAggregate>(command.Id, It.IsAny<CancellationToken>()))

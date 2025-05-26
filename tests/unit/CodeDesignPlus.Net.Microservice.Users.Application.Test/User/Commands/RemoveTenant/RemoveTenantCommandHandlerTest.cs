@@ -53,7 +53,7 @@ public class RemoveTenantCommandHandlerTest
         var pubSubMock = new Mock<IPubSub>();
         var handler = new RemoveTenantCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object);
 
-        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", true, Guid.NewGuid());
+        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", true);
         var command = new RemoveTenantCommand(aggregate.Id, Guid.NewGuid());
 
         aggregate.AddTenant(command.IdTenant, "TestTenant", Guid.NewGuid());

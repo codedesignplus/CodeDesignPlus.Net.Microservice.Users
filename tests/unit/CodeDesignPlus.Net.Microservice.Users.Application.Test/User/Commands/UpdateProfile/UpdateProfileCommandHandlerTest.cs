@@ -59,7 +59,7 @@ public class UpdateProfileCommandHandlerTest
 
         var command = new UpdateProfileCommand(Guid.NewGuid(), "John", "Doe", "JD", "joe@fake.com", "1234567890", true, ContactInfo.Create("Cll 3", "City", "State", "Country", "12345", "+57 3107565142", ["joe@fake.com"]), JobInfo.Create("Developer", "Microsoft", "IT", "1234567890", "Custom", SystemClock.Instance.GetCurrentInstant(), "Office Location"));
 
-        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", true, Guid.NewGuid());
+        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", true);
 
         repositoryMock.Setup(r => r.FindAsync<UserAggregate>(command.Id, It.IsAny<CancellationToken>()))
                       .ReturnsAsync(aggregate);
