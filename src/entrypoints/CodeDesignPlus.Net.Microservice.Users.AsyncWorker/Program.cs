@@ -29,7 +29,10 @@ builder.Services.AddMapster();
 builder.Services.AddFluentValidation();
 builder.Services.AddMediatR<CodeDesignPlus.Net.Microservice.Users.Application.Startup>();
 builder.Services.AddHealthChecks();
-builder.Services.AddObservability(builder.Configuration, builder.Environment);
+builder.Services.AddObservability(builder.Configuration, builder.Environment, null, x =>
+{
+    x.AddSource("RabbitMQ.Client");
+});
 
 var app = builder.Build();
 

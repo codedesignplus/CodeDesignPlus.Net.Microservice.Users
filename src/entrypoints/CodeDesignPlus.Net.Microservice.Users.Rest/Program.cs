@@ -10,7 +10,7 @@ using CodeDesignPlus.Net.Vault.Extensions;
 using NodaTime.Serialization.SystemTextJson;
 
 
-    var builder = WebApplication.CreateSlimBuilder(args);
+var builder = WebApplication.CreateSlimBuilder(args);
 
 Serilog.Debugging.SelfLog.Enable(Console.Error);
 
@@ -27,7 +27,10 @@ builder.Services.AddCors();
 builder.Services.AddVault(builder.Configuration);
 builder.Services.AddRedis(builder.Configuration);
 builder.Services.AddMongo<CodeDesignPlus.Net.Microservice.Users.Infrastructure.Startup>(builder.Configuration);
-builder.Services.AddObservability(builder.Configuration, builder.Environment);
+builder.Services.AddObservability(builder.Configuration, builder.Environment, null, x =>
+{
+    x.AddSource("RabbitMQ.Client");
+});
 builder.Services.AddLogger(builder.Configuration);
 builder.Services.AddRabbitMQ<CodeDesignPlus.Net.Microservice.Users.Domain.Startup>(builder.Configuration);
 builder.Services.AddMapster();

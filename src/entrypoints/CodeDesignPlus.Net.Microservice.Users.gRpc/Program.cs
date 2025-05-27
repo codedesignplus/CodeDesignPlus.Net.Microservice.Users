@@ -35,7 +35,10 @@ builder.Services.AddMongo<CodeDesignPlus.Net.Microservice.Users.Infrastructure.S
 builder.Services.AddRedis(builder.Configuration);
 builder.Services.AddRabbitMQ<CodeDesignPlus.Net.Microservice.Users.Domain.Startup>(builder.Configuration);
 builder.Services.AddSecurity(builder.Configuration);
-builder.Services.AddObservability(builder.Configuration, builder.Environment);
+builder.Services.AddObservability(builder.Configuration, builder.Environment, null, x =>
+{
+    x.AddSource("RabbitMQ.Client");
+});
 builder.Services.AddLogger(builder.Configuration);
 builder.Services.AddCache(builder.Configuration);
 builder.Services.AddHealthChecksServices();
