@@ -11,6 +11,7 @@ using CodeDesignPlus.Net.Redis.Cache.Extensions;
 using CodeDesignPlus.Net.Redis.Extensions;
 using CodeDesignPlus.Net.Security.Extensions;
 using CodeDesignPlus.Net.Vault.Extensions;
+using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,7 +38,7 @@ builder.Services.AddRabbitMQ<CodeDesignPlus.Net.Microservice.Users.Domain.Startu
 builder.Services.AddSecurity(builder.Configuration);
 builder.Services.AddObservability(builder.Configuration, builder.Environment, null, x =>
 {
-    x.AddSource("RabbitMQ.Client");
+    x.AddRabbitMQInstrumentation();
 });
 builder.Services.AddLogger(builder.Configuration);
 builder.Services.AddCache(builder.Configuration);

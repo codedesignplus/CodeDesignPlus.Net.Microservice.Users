@@ -8,6 +8,7 @@ using CodeDesignPlus.Net.Microservice.Commons.MediatR;
 using CodeDesignPlus.Net.Redis.Cache.Extensions;
 using CodeDesignPlus.Net.Vault.Extensions;
 using NodaTime.Serialization.SystemTextJson;
+using OpenTelemetry.Trace;
 
 
 var builder = WebApplication.CreateSlimBuilder(args);
@@ -29,7 +30,7 @@ builder.Services.AddRedis(builder.Configuration);
 builder.Services.AddMongo<CodeDesignPlus.Net.Microservice.Users.Infrastructure.Startup>(builder.Configuration);
 builder.Services.AddObservability(builder.Configuration, builder.Environment, null, x =>
 {
-    x.AddSource("RabbitMQ.Client");
+    x.AddRabbitMQInstrumentation();
 });
 builder.Services.AddLogger(builder.Configuration);
 builder.Services.AddRabbitMQ<CodeDesignPlus.Net.Microservice.Users.Domain.Startup>(builder.Configuration);
