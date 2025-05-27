@@ -16,6 +16,8 @@ public class CreateUserHandler(IMediator mediator) : IEventHandler<UserCreatedDo
             data.DisplayName,
             data.Email,
             data.Phone,
+            data.PasswordKey,
+            data.PasswordCipher,
             data.IsActive
         );
 
