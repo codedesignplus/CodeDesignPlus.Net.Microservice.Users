@@ -10,8 +10,8 @@ package Users;
 
 
 service Users {
-  rpc AddTenantToUser (stream AddTenantRequest) returns (google.protobuf.Empty);
-  rpc AddGroupToUser (stream AddGroupRequest) returns (google.protobuf.Empty);
+  rpc AddTenantToUser (AddTenantRequest) returns (google.protobuf.Empty);
+  rpc AddGroupToUser (AddGroupRequest) returns (google.protobuf.Empty);
 }
 
 message AddGroupRequest {
