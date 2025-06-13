@@ -39,19 +39,19 @@ public class UserController(IMediator mediator, IMapper mapper) : ControllerBase
         return Ok(result);
     }
 
-    // /// <summary>
-    // /// Create a new User.
-    // /// </summary>
-    // /// <param name="data">Data for creating the User.</param>
-    // /// <param name="cancellationToken">Cancellation token.</param>
-    // /// <returns>HTTP status code 204 (No Content).</returns>
-    // [HttpPost]
-    // public async Task<IActionResult> CreateUser([FromBody] CreateUserDto data, CancellationToken cancellationToken)
-    // {
-    //     await mediator.Send(mapper.Map<CreateUserCommand>(data), cancellationToken);
+    /// <summary>
+    /// Create a new User.
+    /// </summary>
+    /// <param name="data">Data for creating the User.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>HTTP status code 204 (No Content).</returns>
+    [HttpPost]
+    public async Task<IActionResult> CreateUser([FromBody] CreateUserDto data, CancellationToken cancellationToken)
+    {
+        await mediator.Send(mapper.Map<CreateUserCommand>(data), cancellationToken);
 
-    //     return NoContent();
-    // }
+        return NoContent();
+    }
 
     /// <summary>
     /// Update an existing User.
