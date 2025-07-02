@@ -1,6 +1,6 @@
 namespace CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.DeleteUser;
 
-public class DeleteUsersCommandHandler(IUserRepository repository, IUserContext user, IPubSub pubsub) : IRequestHandler<DeleteUserCommand>
+public class DeleteUsersCommandHandler(IUserRepository repository, IUserContext user, IPubSub pubsub, ICacheManager cacheManager) : IRequestHandler<DeleteUserCommand>
 {
     public async Task Handle(DeleteUserCommand request, CancellationToken cancellationToken)
     {
@@ -15,5 +15,10 @@ public class DeleteUsersCommandHandler(IUserRepository repository, IUserContext 
         await repository.DeleteAsync<UserAggregate>(aggregate.Id, cancellationToken);
 
         await pubsub.PublishAsync(aggregate.GetAndClearEvents(), cancellationToken);
+
+        var exist = await cacheManager.ExistsAsync(request.Id.ToString());
+
+        if (exist)
+            await cacheManager.RemoveAsync(request.Id.ToString());
     }
 }

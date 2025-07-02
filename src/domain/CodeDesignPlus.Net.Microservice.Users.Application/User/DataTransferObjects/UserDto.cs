@@ -15,4 +15,5 @@ public class UserDto : IDtoBase
     public ContactInfo Contact { get; set; } = null!;
     public JobInfo Job { get; set; } = null!;
     public UserPicture? Picture { get; set; } = null!;
+    public bool IsActive { get; set; }
 }

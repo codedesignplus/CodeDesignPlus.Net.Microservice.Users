@@ -1,5 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
+using CodeDesignPlus.Net.Cache.Abstractions;
 using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.RemoveRole;
 using CodeDesignPlus.Net.Microservice.Users.Domain.DomainEvents;
 using Moq;
@@ -16,7 +17,8 @@ public class RemoveRoleCommandHandlerTest
         var repositoryMock = new Mock<IUserRepository>();
         var userContextMock = new Mock<IUserContext>();
         var pubSubMock = new Mock<IPubSub>();
-        var handler = new RemoveRoleCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object);
+        var cacheManagerMock = new Mock<ICacheManager>();
+        var handler = new RemoveRoleCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<CodeDesignPlusException>(() => handler.Handle(null!, CancellationToken.None));
@@ -33,7 +35,8 @@ public class RemoveRoleCommandHandlerTest
         var repositoryMock = new Mock<IUserRepository>();
         var userContextMock = new Mock<IUserContext>();
         var pubSubMock = new Mock<IPubSub>();
-        var handler = new RemoveRoleCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object);
+        var cacheManagerMock = new Mock<ICacheManager>();
+        var handler = new RemoveRoleCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object);
 
         var command = new RemoveRoleCommand(Guid.NewGuid(), "Admin");
 
@@ -55,7 +58,8 @@ public class RemoveRoleCommandHandlerTest
         var repositoryMock = new Mock<IUserRepository>();
         var userContextMock = new Mock<IUserContext>();
         var pubSubMock = new Mock<IPubSub>();
-        var handler = new RemoveRoleCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object);
+        var cacheManagerMock = new Mock<ICacheManager>();
+        var handler = new RemoveRoleCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object);
 
         var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", true);
 

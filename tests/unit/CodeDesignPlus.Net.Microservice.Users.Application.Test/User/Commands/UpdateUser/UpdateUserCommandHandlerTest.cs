@@ -1,3 +1,4 @@
+using CodeDesignPlus.Net.Cache.Abstractions;
 using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.UpdateUser;
 using CodeDesignPlus.Net.Microservice.Users.Domain.DomainEvents;
 
@@ -15,7 +16,8 @@ public class UpdateUserCommandHandlerTest
         repositoryMock = new Mock<IUserRepository>();
         userContextMock = new Mock<IUserContext>();
         pubSubMock = new Mock<IPubSub>();
-        handler = new UpdateUserCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object);
+        var cacheManagerMock = new Mock<ICacheManager>();
+        handler = new UpdateUserCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object);
     }
 
     [Fact]

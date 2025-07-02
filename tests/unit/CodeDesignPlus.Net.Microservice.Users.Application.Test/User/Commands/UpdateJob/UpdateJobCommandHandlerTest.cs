@@ -1,5 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
+using CodeDesignPlus.Net.Cache.Abstractions;
 using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.UpdateJob;
 using CodeDesignPlus.Net.Microservice.Users.Domain.DomainEvents;
 using Moq;
@@ -16,7 +17,8 @@ public class UpdateJobCommandHandlerTest
         var repositoryMock = new Mock<IUserRepository>();
         var userContextMock = new Mock<IUserContext>();
         var pubSubMock = new Mock<IPubSub>();
-        var handler = new UpdateJobCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object);
+        var cacheManagerMock = new Mock<ICacheManager>();
+        var handler = new UpdateJobCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<CodeDesignPlusException>(() => handler.Handle(null!, CancellationToken.None));
@@ -33,7 +35,8 @@ public class UpdateJobCommandHandlerTest
         var repositoryMock = new Mock<IUserRepository>();
         var userContextMock = new Mock<IUserContext>();
         var pubSubMock = new Mock<IPubSub>();
-        var handler = new UpdateJobCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object);
+        var cacheManagerMock = new Mock<ICacheManager>();
+        var handler = new UpdateJobCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object);
 
         var request = new UpdateJobCommand(
             Id: Guid.NewGuid(),
@@ -64,7 +67,8 @@ public class UpdateJobCommandHandlerTest
         var repositoryMock = new Mock<IUserRepository>();
         var userContextMock = new Mock<IUserContext>();
         var pubSubMock = new Mock<IPubSub>();
-        var handler = new UpdateJobCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object);
+        var cacheManagerMock = new Mock<ICacheManager>();
+        var handler = new UpdateJobCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object);
 
         var request = new UpdateJobCommand(
            Id: Guid.NewGuid(),

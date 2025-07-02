@@ -1,6 +1,6 @@
 namespace CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.AddRole;
 
-public class AddRoleCommandHandler(IUserRepository repository, IUserContext user, IPubSub pubsub) : IRequestHandler<AddRoleCommand>
+public class AddRoleCommandHandler(IUserRepository repository, IUserContext user, IPubSub pubsub, ICacheManager cacheManager) : IRequestHandler<AddRoleCommand>
 {
     public async Task Handle(AddRoleCommand request, CancellationToken cancellationToken)
     {
@@ -15,5 +15,10 @@ public class AddRoleCommandHandler(IUserRepository repository, IUserContext user
         await repository.UpdateAsync(aggregate, cancellationToken);
 
         await pubsub.PublishAsync(aggregate.GetAndClearEvents(), cancellationToken);
+
+        var exist = await cacheManager.ExistsAsync(request.Id.ToString());
+
+        if (exist)
+            await cacheManager.RemoveAsync(request.Id.ToString());
     }
 }

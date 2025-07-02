@@ -1,3 +1,4 @@
+using CodeDesignPlus.Net.Cache.Abstractions;
 using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.RemoveTenant;
 using CodeDesignPlus.Net.Microservice.Users.Domain.DomainEvents;
 
@@ -12,7 +13,8 @@ public class RemoveTenantCommandHandlerTest
         var repositoryMock = new Mock<IUserRepository>();
         var userContextMock = new Mock<IUserContext>();
         var pubSubMock = new Mock<IPubSub>();
-        var handler = new RemoveTenantCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object);
+        var cacheManagerMock = new Mock<ICacheManager>();
+        var handler = new RemoveTenantCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<CodeDesignPlusException>(() => handler.Handle(null!, CancellationToken.None));
@@ -29,7 +31,8 @@ public class RemoveTenantCommandHandlerTest
         var repositoryMock = new Mock<IUserRepository>();
         var userContextMock = new Mock<IUserContext>();
         var pubSubMock = new Mock<IPubSub>();
-        var handler = new RemoveTenantCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object);
+        var cacheManagerMock = new Mock<ICacheManager>();
+        var handler = new RemoveTenantCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object);
 
         var command = new RemoveTenantCommand(Guid.NewGuid(), Guid.NewGuid());
 
@@ -51,7 +54,8 @@ public class RemoveTenantCommandHandlerTest
         var repositoryMock = new Mock<IUserRepository>();
         var userContextMock = new Mock<IUserContext>();
         var pubSubMock = new Mock<IPubSub>();
-        var handler = new RemoveTenantCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object);
+        var cacheManagerMock = new Mock<ICacheManager>();
+        var handler = new RemoveTenantCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object);
 
         var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", true);
         var command = new RemoveTenantCommand(aggregate.Id, Guid.NewGuid());

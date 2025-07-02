@@ -1,6 +1,6 @@
 namespace CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.AddTenant;
 
-public class AddTenantCommandHandler(IUserRepository repository, IUserContext user, IPubSub pubsub) : IRequestHandler<AddTenantCommand>
+public class AddTenantCommandHandler(IUserRepository repository, IUserContext user, IPubSub pubsub, ICacheManager cacheManager) : IRequestHandler<AddTenantCommand>
 {
     public async Task Handle(AddTenantCommand request, CancellationToken cancellationToken)
     {
@@ -15,5 +15,10 @@ public class AddTenantCommandHandler(IUserRepository repository, IUserContext us
         await repository.UpdateAsync(aggregate, cancellationToken);
 
         await pubsub.PublishAsync(aggregate.GetAndClearEvents(), cancellationToken);
+
+        var exist = await cacheManager.ExistsAsync(request.Id.ToString());
+
+        if (exist)
+            await cacheManager.RemoveAsync(request.Id.ToString());
     }
 }

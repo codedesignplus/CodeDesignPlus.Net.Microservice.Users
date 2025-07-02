@@ -1,5 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
+using CodeDesignPlus.Net.Cache.Abstractions;
 using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.UpdateProfile;
 using CodeDesignPlus.Net.Microservice.Users.Domain.DomainEvents;
 using CodeDesignPlus.Net.Microservice.Users.Domain.ValueObjects;
@@ -17,7 +18,8 @@ public class UpdateProfileCommandHandlerTest
         var repositoryMock = new Mock<IUserRepository>();
         var userContextMock = new Mock<IUserContext>();
         var pubSubMock = new Mock<IPubSub>();
-        var handler = new UpdateProfileCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object);
+        var cacheManagerMock = new Mock<ICacheManager>();
+        var handler = new UpdateProfileCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<CodeDesignPlusException>(() => handler.Handle(null!, CancellationToken.None));
@@ -34,7 +36,8 @@ public class UpdateProfileCommandHandlerTest
         var repositoryMock = new Mock<IUserRepository>();
         var userContextMock = new Mock<IUserContext>();
         var pubSubMock = new Mock<IPubSub>();
-        var handler = new UpdateProfileCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object);
+        var cacheManagerMock = new Mock<ICacheManager>();
+        var handler = new UpdateProfileCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object);
 
         var command = new UpdateProfileCommand(Guid.NewGuid(), "John", "Doe", "JD", "joe@fake.com", "1234567890", true, ContactInfo.Create("Cll 3", "City", "State", "Country", "12345", "+57 3107565142", ["joe@fake.com"]), JobInfo.Create("Developer", "Microsoft", "IT", "1234567890", "Custom", SystemClock.Instance.GetCurrentInstant(), "Office Location"));
         repositoryMock.Setup(r => r.FindAsync<UserAggregate>(command.Id, It.IsAny<CancellationToken>()))
@@ -55,7 +58,8 @@ public class UpdateProfileCommandHandlerTest
         var repositoryMock = new Mock<IUserRepository>();
         var userContextMock = new Mock<IUserContext>();
         var pubSubMock = new Mock<IPubSub>();
-        var handler = new UpdateProfileCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object);
+        var cacheManagerMock = new Mock<ICacheManager>();
+        var handler = new UpdateProfileCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object);
 
         var command = new UpdateProfileCommand(Guid.NewGuid(), "John", "Doe", "JD", "joe@fake.com", "1234567890", true, ContactInfo.Create("Cll 3", "City", "State", "Country", "12345", "+57 3107565142", ["joe@fake.com"]), JobInfo.Create("Developer", "Microsoft", "IT", "1234567890", "Custom", SystemClock.Instance.GetCurrentInstant(), "Office Location"));
 

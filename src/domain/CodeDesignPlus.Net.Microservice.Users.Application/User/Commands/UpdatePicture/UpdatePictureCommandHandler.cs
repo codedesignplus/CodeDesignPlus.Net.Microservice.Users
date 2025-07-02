@@ -1,6 +1,6 @@
 namespace CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.UpdatePicture;
 
-public class UpdatePictureCommandHandler(IUserRepository repository, IUserContext user, IPubSub pubsub) : IRequestHandler<UpdatePictureCommand>
+public class UpdatePictureCommandHandler(IUserRepository repository, IUserContext user, IPubSub pubsub, ICacheManager cacheManager) : IRequestHandler<UpdatePictureCommand>
 {
     public async Task Handle(UpdatePictureCommand request, CancellationToken cancellationToken)
     {
@@ -15,5 +15,10 @@ public class UpdatePictureCommandHandler(IUserRepository repository, IUserContex
         await repository.UpdateAsync(aggregate, cancellationToken);
 
         await pubsub.PublishAsync(aggregate.GetAndClearEvents(), cancellationToken);
+
+        var exist = await cacheManager.ExistsAsync(request.Id.ToString());
+
+        if (exist)
+            await cacheManager.RemoveAsync(request.Id.ToString());
     }
 }

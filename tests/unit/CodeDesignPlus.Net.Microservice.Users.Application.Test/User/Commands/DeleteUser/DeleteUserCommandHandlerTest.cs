@@ -1,3 +1,4 @@
+using CodeDesignPlus.Net.Cache.Abstractions;
 using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.DeleteUser;
 using CodeDesignPlus.Net.Microservice.Users.Domain.DomainEvents;
 
@@ -12,8 +13,9 @@ public class DeleteUserCommandHandlerTest
         var mockRepository = new Mock<IUserRepository>();
         var mockUserContext = new Mock<IUserContext>();
         var mockPubSub = new Mock<IPubSub>();
+        var cacheManagerMock = new Mock<ICacheManager>();
 
-        var handler = new DeleteUsersCommandHandler(mockRepository.Object, mockUserContext.Object, mockPubSub.Object);
+        var handler = new DeleteUsersCommandHandler(mockRepository.Object, mockUserContext.Object, mockPubSub.Object, cacheManagerMock.Object);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<CodeDesignPlusException>(() => handler.Handle(null!, CancellationToken.None));
@@ -30,13 +32,14 @@ public class DeleteUserCommandHandlerTest
         var mockRepository = new Mock<IUserRepository>();
         var mockUserContext = new Mock<IUserContext>();
         var mockPubSub = new Mock<IPubSub>();
+        var cacheManagerMock = new Mock<ICacheManager>();
         var command = new DeleteUserCommand(Guid.NewGuid());
 
         mockRepository
             .Setup(x => x.FindAsync<UserAggregate>(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((UserAggregate)null!);
 
-        var handler = new DeleteUsersCommandHandler(mockRepository.Object, mockUserContext.Object, mockPubSub.Object);
+        var handler = new DeleteUsersCommandHandler(mockRepository.Object, mockUserContext.Object, mockPubSub.Object, cacheManagerMock.Object);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<CodeDesignPlusException>(() => handler.Handle(command, CancellationToken.None));
@@ -53,6 +56,7 @@ public class DeleteUserCommandHandlerTest
         var mockRepository = new Mock<IUserRepository>();
         var mockUserContext = new Mock<IUserContext>();
         var mockPubSub = new Mock<IPubSub>();
+        var cacheManagerMock = new Mock<ICacheManager>();
         var userId = Guid.NewGuid();
         var aggregate = UserAggregate.Create(userId, "John", "Doe", "john@fake.com", "123456789", "John Doe", true);
         var command = new DeleteUserCommand(userId);
@@ -61,7 +65,7 @@ public class DeleteUserCommandHandlerTest
         mockRepository.Setup(x => x.FindAsync<UserAggregate>(userId, It.IsAny<CancellationToken>()))
                       .ReturnsAsync(aggregate);
 
-        var handler = new DeleteUsersCommandHandler(mockRepository.Object, mockUserContext.Object, mockPubSub.Object);
+        var handler = new DeleteUsersCommandHandler(mockRepository.Object, mockUserContext.Object, mockPubSub.Object, cacheManagerMock.Object);
 
         // Act
         await handler.Handle(command, CancellationToken.None);
