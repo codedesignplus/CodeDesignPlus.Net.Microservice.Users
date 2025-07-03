@@ -33,8 +33,6 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
 
         CreatedAt = SystemClock.Instance.GetCurrentInstant();
         IsActive = isActive;
-
-        this.AddEvent(UserCreatedDomainEvent.Create(id, firstName, lastName, email, phone, DisplayName, isActive));
     }
 
     public static UserAggregate Create(Guid id, string firstName, string lastName, string email, string phone, string? displayName, bool isActive)
