@@ -139,9 +139,14 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         this.AddEvent(RoleRemovedToUserDomainEvent.Create(Id, DisplayName, role));
     }
 
-    public void Delete(Guid idUser)
+    public void Delete(Guid deletedBy)
     {
-        DomainGuard.GuidIsEmpty(idUser, Errors.IdUserIsRequired);
+        DomainGuard.GuidIsEmpty(deletedBy, Errors.IdUserIsRequired);
+        
+        this.IsDeleted = true;
+        this.IsActive = false;
+        this.DeletedAt = SystemClock.Instance.GetCurrentInstant();
+        this.DeletedBy = deletedBy;
 
         this.AddEvent(UserDeletedDomainEvent.Create(Id, FirstName, LastName, Email, Phone, DisplayName, IsActive));
     }
