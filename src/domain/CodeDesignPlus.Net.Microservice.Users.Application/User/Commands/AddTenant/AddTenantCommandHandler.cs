@@ -6,19 +6,20 @@ public class AddTenantCommandHandler(IUserRepository repository, IUserContext us
     {
         ApplicationGuard.IsNull(request, Errors.InvalidRequest);
 
-        var aggregate = await repository.FindAsync<UserAggregate>(request.Id, cancellationToken);
+        var aggregate = await repository.FindAsync<UserAggregate>(request.UserId, cancellationToken);
 
         ApplicationGuard.IsNull(aggregate, Errors.UserNotFound);
 
+        // TODO: Check user.IdUser when this command is executed from consumer
         aggregate.AddTenant(request.Tenant.Id, request.Tenant.Name, user.IdUser);
 
         await repository.UpdateAsync(aggregate, cancellationToken);
 
         await pubsub.PublishAsync(aggregate.GetAndClearEvents(), cancellationToken);
 
-        var exist = await cacheManager.ExistsAsync(request.Id.ToString());
+        var exist = await cacheManager.ExistsAsync(request.UserId.ToString());
 
         if (exist)
-            await cacheManager.RemoveAsync(request.Id.ToString());
+            await cacheManager.RemoveAsync(request.UserId.ToString());
     }
 }

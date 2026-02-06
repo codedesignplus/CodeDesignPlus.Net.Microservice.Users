@@ -145,7 +145,7 @@ public class UserControllerTest : ServerBase<Program>, IClassFixture<Server<Prog
 
         var data = new AddTenantDto()
         {
-            Id = userCreated.Id,
+            UserId = userCreated.Id,
             Tenant = new TenantDto()
             {
                 Id = Guid.NewGuid(),
@@ -159,7 +159,7 @@ public class UserControllerTest : ServerBase<Program>, IClassFixture<Server<Prog
 
         var response = await this.RequestAsync($"http://localhost/api/User/{userCreated.Id}/tenant", content, HttpMethod.Post);
 
-        var user = await this.GetRecordAsync(data.Id);
+        var user = await this.GetRecordAsync(data.UserId);
 
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
@@ -182,7 +182,7 @@ public class UserControllerTest : ServerBase<Program>, IClassFixture<Server<Prog
 
         var data = new AddTenantDto()
         {
-            Id = userCreated.Id,
+            UserId = userCreated.Id,
             Tenant = new TenantDto()
             {
                 Id = Guid.NewGuid(),
@@ -201,7 +201,7 @@ public class UserControllerTest : ServerBase<Program>, IClassFixture<Server<Prog
 
         var response = await this.RequestAsync($"http://localhost/api/User/{userCreated.Id}/tenant/{data.Tenant.Id}", content, HttpMethod.Delete);
 
-        var user = await this.GetRecordAsync(data.Id);
+        var user = await this.GetRecordAsync(data.UserId);
 
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);

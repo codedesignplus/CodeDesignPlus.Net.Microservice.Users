@@ -15,7 +15,7 @@ namespace CodeDesignPlus.Net.Microservice.Users.Application.Test.User.Commands.A
             var command = new AddTenantCommand(Guid.Empty, new TenantDto());
 
             // Act & Assert
-            validator.TestValidate(command).ShouldHaveValidationErrorFor(x => x.Id);
+            validator.TestValidate(command).ShouldHaveValidationErrorFor(x => x.UserId);
         }
 
         [Fact]

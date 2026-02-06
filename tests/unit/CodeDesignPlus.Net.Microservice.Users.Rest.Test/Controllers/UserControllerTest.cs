@@ -182,7 +182,7 @@ public class UserControllerTest
         var userId = Guid.NewGuid();
         var addTenantDto = new CodeDesignPlus.Microservice.Api.Dtos.AddTenantDto
         {
-            Id = Guid.NewGuid(),
+            UserId = Guid.NewGuid(),
             Tenant = new()
             {
                 Id = Guid.NewGuid(),
@@ -191,7 +191,7 @@ public class UserControllerTest
         };
         var addTenantCommand = new AddTenantCommand(
 
-            addTenantDto.Id,
+            addTenantDto.UserId,
             new()
             {
                 Id = addTenantDto.Tenant.Id,

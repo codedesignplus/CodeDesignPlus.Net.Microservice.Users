@@ -94,7 +94,7 @@ public class UserController(IMediator mediator, IMapper mapper) : ControllerBase
     [HttpPost("{id}/tenant")]
     public async Task<IActionResult> AddTenant(Guid id, [FromBody] AddTenantDto data, CancellationToken cancellationToken)
     {
-        data.Id = id;
+        data.UserId = id;
 
         await mediator.Send(mapper.Map<AddTenantCommand>(data), cancellationToken);
 
