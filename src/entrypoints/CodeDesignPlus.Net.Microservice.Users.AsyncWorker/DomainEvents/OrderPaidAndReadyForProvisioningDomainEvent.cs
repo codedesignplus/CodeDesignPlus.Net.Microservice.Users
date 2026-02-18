@@ -2,7 +2,7 @@ using CodeDesignPlus.Net.Microservice.Users.AsyncWorker.Dtos;
 
 namespace CodeDesignPlus.Net.Microservice.Users.AsyncWorker.DomainEvents;
 
-[EventKey<UserAggregate>(1, "OrderPaidAndReadyForProvisioningDomainEvent", "ms-licenses")]
+[EventKey("OrderAggregate", 1, "OrderPaidAndReadyForProvisioningDomainEvent", "ms-licenses")]
 public class OrderPaidAndReadyForProvisioningDomainEvent(
     Guid aggregateId,
     Tenant tenantDetail,
