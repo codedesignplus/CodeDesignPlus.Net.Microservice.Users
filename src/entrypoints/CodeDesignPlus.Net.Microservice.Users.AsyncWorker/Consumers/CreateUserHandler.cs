@@ -4,7 +4,7 @@ using MediatR;
 
 namespace CodeDesignPlus.Net.Microservice.Users.AsyncWorker.Consumers;
 
-[QueueName("User", "createuser")]
+[QueueName<UserAggregate>("CreateUserHandler")]
 public class CreateUserHandler(IMediator mediator) : IEventHandler<UserCreatedDomainEvent>
 {
     public Task HandleAsync(UserCreatedDomainEvent data, CancellationToken token)
