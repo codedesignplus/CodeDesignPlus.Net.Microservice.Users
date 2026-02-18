@@ -17,7 +17,7 @@ public class UserService(IMediator mediator) : Users.UsersBase
         if (user.Roles.Contains(request.Role))
             return new Empty();
 
-        var command = new AddRoleCommand(id, request.Role);
+        var command = new AddRoleCommand(id, request.Role, Guid.NewGuid());
 
         await mediator.Send(command, context.CancellationToken);
 

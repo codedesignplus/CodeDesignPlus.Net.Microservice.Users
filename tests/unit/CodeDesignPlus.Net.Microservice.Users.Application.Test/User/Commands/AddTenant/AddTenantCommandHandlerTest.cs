@@ -19,7 +19,7 @@ public class AddTenantCommandHandlerTest
         var pubSubMock = new Mock<IPubSub>();
         var cacheManagerMock = new Mock<ICacheManager>();
 
-        var handler = new AddTenantCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object);
+        var handler = new AddTenantCommandHandler(repositoryMock.Object, pubSubMock.Object, cacheManagerMock.Object);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<CodeDesignPlusException>(() => handler.Handle(null!, CancellationToken.None));
@@ -42,7 +42,7 @@ public class AddTenantCommandHandlerTest
             .Setup(r => r.FindAsync<UserAggregate>(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((UserAggregate)null!);
 
-        var handler = new AddTenantCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object);
+        var handler = new AddTenantCommandHandler(repositoryMock.Object, pubSubMock.Object, cacheManagerMock.Object);
 
         var command = new AddTenantCommand(Guid.NewGuid(), new TenantDto { Id = Guid.NewGuid(), Name = "TestTenant" });
 
@@ -70,7 +70,7 @@ public class AddTenantCommandHandlerTest
 
         userContextMock.SetupGet(u => u.IdUser).Returns(Guid.NewGuid());
 
-        var handler = new AddTenantCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object);
+        var handler = new AddTenantCommandHandler(repositoryMock.Object, pubSubMock.Object, cacheManagerMock.Object);
 
         var command = new AddTenantCommand(aggregate.Id, new TenantDto { Id = Guid.NewGuid(), Name = "TestTenant" });
 

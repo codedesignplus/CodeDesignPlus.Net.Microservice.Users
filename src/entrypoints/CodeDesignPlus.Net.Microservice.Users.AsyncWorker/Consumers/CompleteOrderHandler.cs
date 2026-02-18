@@ -13,7 +13,7 @@ public class CompleteOrderHandler(IMediator mediator) : IEventHandler<OrderPaidA
 
     public Task HandleAsync(OrderPaidAndReadyForProvisioningDomainEvent data, CancellationToken token)
     {
-        var addRoleTask = mediator.Send(new AddRoleCommand(data.BuyerId, DefaultRole), token);
+        var addRoleTask = mediator.Send(new AddRoleCommand(data.BuyerId, DefaultRole, data.BuyerId), token);
 
         var addTenantTask = mediator.Send(new AddTenantCommand(data.BuyerId, new TenantDto
         {

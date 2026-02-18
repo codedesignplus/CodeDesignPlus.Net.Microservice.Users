@@ -1,7 +1,7 @@
 namespace CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.AddRole;
 
 [DtoGenerator]
-public record AddRoleCommand(Guid Id, string Role) : IRequest;
+public record AddRoleCommand(Guid Id, string Role, Guid IdUser) : IRequest;
 
 public class Validator : AbstractValidator<AddRoleCommand>
 {
@@ -9,5 +9,6 @@ public class Validator : AbstractValidator<AddRoleCommand>
     {
         RuleFor(x => x.Id).NotEmpty().NotNull();
         RuleFor(x => x.Role).NotEmpty().NotNull();
+        RuleFor(x => x.IdUser).NotEmpty().NotNull();
     }
 }

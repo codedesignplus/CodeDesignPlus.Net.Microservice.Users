@@ -18,7 +18,7 @@ public class AddRoleCommandHandlerTest
         var userContextMock = new Mock<IUserContext>();
         var pubSubMock = new Mock<IPubSub>();
         var cacheManagerMock = new Mock<ICacheManager>();
-        var handler = new AddRoleCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object);
+        var handler = new AddRoleCommandHandler(repositoryMock.Object, pubSubMock.Object, cacheManagerMock.Object);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<CodeDesignPlusException>(() => handler.Handle(null!, CancellationToken.None));
@@ -36,9 +36,9 @@ public class AddRoleCommandHandlerTest
         var userContextMock = new Mock<IUserContext>();
         var pubSubMock = new Mock<IPubSub>();
         var cacheManagerMock = new Mock<ICacheManager>();
-        var handler = new AddRoleCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object);
+        var handler = new AddRoleCommandHandler(repositoryMock.Object, pubSubMock.Object, cacheManagerMock.Object);
 
-        var command = new AddRoleCommand(Guid.NewGuid(), "Admin");
+        var command = new AddRoleCommand(Guid.NewGuid(), "Admin", Guid.NewGuid());
 
         repositoryMock
             .Setup(repo => repo.FindAsync<UserAggregate>(command.Id, It.IsAny<CancellationToken>()))
@@ -60,9 +60,9 @@ public class AddRoleCommandHandlerTest
         var userContextMock = new Mock<IUserContext>();
         var pubSubMock = new Mock<IPubSub>();
         var cacheManagerMock = new Mock<ICacheManager>();
-        var handler = new AddRoleCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object);
+        var handler = new AddRoleCommandHandler(repositoryMock.Object, pubSubMock.Object, cacheManagerMock.Object);
 
-        var command = new AddRoleCommand(Guid.NewGuid(), "Admin");
+        var command = new AddRoleCommand(Guid.NewGuid(), "Admin", Guid.NewGuid());
         var aggregate = UserAggregate.Create(command.Id, "John", "Doe", "john@fake.com", "1234567890", "JD", true);
 
         repositoryMock

@@ -246,7 +246,7 @@ public class UserControllerTest
             Id = userId,
             Role = "Admin"
         };
-        var addRoleCommand = new AddRoleCommand(userId, addRoleDto.Role);
+        var addRoleCommand = new AddRoleCommand(userId, addRoleDto.Role, Guid.NewGuid());
         var cancellationToken = CancellationToken.None;
 
         mapperMock
