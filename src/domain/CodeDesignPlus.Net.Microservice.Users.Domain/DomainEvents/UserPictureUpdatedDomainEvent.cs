@@ -1,6 +1,6 @@
 namespace CodeDesignPlus.Net.Microservice.Users.Domain.DomainEvents;
 
-[EventKey<UserAggregate>(1, "UserPictureUpdatedDomainEvent")]
+[EventKey<UserAggregate>(1, "UserPictureUpdatedDomainEvent", autoCreate: false)]
 public class UserPictureUpdatedDomainEvent(
      Guid aggregateId,
      string Name,

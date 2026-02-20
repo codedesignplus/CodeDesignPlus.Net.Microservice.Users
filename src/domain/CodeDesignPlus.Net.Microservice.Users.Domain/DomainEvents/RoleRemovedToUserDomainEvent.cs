@@ -1,6 +1,6 @@
 namespace CodeDesignPlus.Net.Microservice.Users.Domain.DomainEvents;
 
-[EventKey<UserAggregate>(1, "RoleRemovedToUserDomainEvent")]
+[EventKey<UserAggregate>(1, "RoleRemovedToUserDomainEvent", autoCreate: false)]
 public class RoleRemovedToUserDomainEvent(
      Guid aggregateId,
      string? displayName,

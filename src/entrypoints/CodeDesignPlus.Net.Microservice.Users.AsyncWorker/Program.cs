@@ -1,3 +1,4 @@
+using CodeDesignPlus.Net.gRpc.Clients.Extensions;
 using CodeDesignPlus.Net.Logger.Extensions;
 using CodeDesignPlus.Net.Microservice.Commons.FluentValidation;
 using CodeDesignPlus.Net.Microservice.Commons.HealthChecks;
@@ -30,10 +31,8 @@ builder.Services.AddMapster();
 builder.Services.AddFluentValidation();
 builder.Services.AddMediatR<CodeDesignPlus.Net.Microservice.Users.Application.Startup>();
 builder.Services.AddHealthChecks();
-builder.Services.AddObservability(builder.Configuration, builder.Environment, null, x =>
-{
-    x.AddRabbitMQInstrumentation();
-});
+builder.Services.AddObservability(builder.Configuration, builder.Environment);
+builder.Services.AddGrpcClients(builder.Configuration);
 
 var app = builder.Build();
 

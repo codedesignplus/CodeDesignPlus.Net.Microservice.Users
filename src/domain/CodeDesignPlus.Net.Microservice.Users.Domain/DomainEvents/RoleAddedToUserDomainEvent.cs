@@ -1,6 +1,6 @@
 namespace CodeDesignPlus.Net.Microservice.Users.Domain.DomainEvents;
 
-[EventKey<UserAggregate>(1, "RoleAddedToUserDomainEvent")]
+[EventKey<UserAggregate>(1, "RoleAddedToUserDomainEvent", autoCreate: false)]
 public class RoleAddedToUserDomainEvent(
      Guid aggregateId,
      string? displayName,
