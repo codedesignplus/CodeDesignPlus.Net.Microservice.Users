@@ -1,6 +1,6 @@
 namespace CodeDesignPlus.Net.Microservice.Users.Domain.DomainEvents;
 
-[EventKey<UserAggregate>(1, "UserUpdatedDomainEvent", autoCreate: false)]
+[EventKey<UserAggregate>(1, "UserUpdatedDomainEvent")]
 public class UserUpdatedDomainEvent : UserBaseDomainEvent
 {
     public UserUpdatedDomainEvent(

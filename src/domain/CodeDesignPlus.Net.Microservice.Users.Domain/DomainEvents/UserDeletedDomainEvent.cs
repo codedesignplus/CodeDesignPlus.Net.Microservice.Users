@@ -1,6 +1,6 @@
 namespace CodeDesignPlus.Net.Microservice.Users.Domain.DomainEvents;
 
-[EventKey<UserAggregate>(1, "UserDeletedDomainEvent", autoCreate: false)]
+[EventKey<UserAggregate>(1, "UserDeletedDomainEvent")]
 public class UserDeletedDomainEvent : UserBaseDomainEvent
 {
     public UserDeletedDomainEvent(

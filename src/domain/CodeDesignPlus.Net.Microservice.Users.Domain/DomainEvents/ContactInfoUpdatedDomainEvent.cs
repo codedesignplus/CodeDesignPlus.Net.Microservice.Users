@@ -2,7 +2,7 @@ using CodeDesignPlus.Net.Microservice.Users.Domain.ValueObjects;
 
 namespace CodeDesignPlus.Net.Microservice.Users.Domain.DomainEvents;
 
-[EventKey<UserAggregate>(1, "ContactInfoUpdatedDomainEvent", autoCreate: false)]
+[EventKey<UserAggregate>(1, "ContactInfoUpdatedDomainEvent")]
 public class ContactInfoUpdatedDomainEvent(
      Guid aggregateId,
      ContactInfo contact,

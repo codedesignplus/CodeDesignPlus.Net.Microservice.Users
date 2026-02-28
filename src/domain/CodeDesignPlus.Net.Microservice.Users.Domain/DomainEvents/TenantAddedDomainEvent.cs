@@ -2,7 +2,7 @@ using CodeDesignPlus.Net.Microservice.Users.Domain.Entities;
 
 namespace CodeDesignPlus.Net.Microservice.Users.Domain.DomainEvents;
 
-[EventKey<UserAggregate>(1, "TenantAddedDomainEvent", autoCreate: false)]
+[EventKey<UserAggregate>(1, "TenantAddedDomainEvent")]
 public class TenantAddedDomainEvent(
      Guid aggregateId,
      string? displayName,
