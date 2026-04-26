@@ -14,7 +14,7 @@ using CodeDesignPlus.Net.Security.Extensions;
 using CodeDesignPlus.Net.Vault.Extensions;
 using OpenTelemetry.Trace;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateSlimBuilder(args);
 
 Serilog.Debugging.SelfLog.Enable(Console.Error);
 
