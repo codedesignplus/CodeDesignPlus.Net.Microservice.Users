@@ -6,19 +6,19 @@ public class UpdatePictureCommandHandler(IUserRepository repository, IUserContex
     {
         ApplicationGuard.IsNull(request, Errors.InvalidRequest);
 
-        var aggregate = await repository.FindAsync<UserAggregate>(request.Id, cancellationToken);
+        var aggregate = await repository.FindAsync<UserAggregate>(request.UserId, cancellationToken);
 
         ApplicationGuard.IsNull(aggregate, Errors.UserNotFound);
 
-        aggregate.UpdatePicture(request.Id, request.Name, request.Target, user.IdUser);
+        aggregate.UpdatePicture(request.FileId, request.Name, request.Target, user.IdUser);
 
         await repository.UpdateAsync(aggregate, cancellationToken);
 
         await pubsub.PublishAsync(aggregate.GetAndClearEvents(), cancellationToken);
 
-        var exist = await cacheManager.ExistsAsync(request.Id.ToString());
+        var exist = await cacheManager.ExistsAsync(request.UserId.ToString());
 
         if (exist)
-            await cacheManager.RemoveAsync(request.Id.ToString());
+            await cacheManager.RemoveAsync(request.UserId.ToString());
     }
 }

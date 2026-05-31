@@ -213,9 +213,11 @@ public class UserController(IMediator mediator, IMapper mapper) : ControllerBase
     [HttpPatch("{id}/picture")]
     public async Task<IActionResult> UpdatePicture(Guid id, [FromBody] UpdatePictureDto data, CancellationToken cancellationToken)
     {
-        data.Id = id;
+        var command = mapper.Map<UpdatePictureCommand>(data);
+        
+        command = command with { UserId = id };
 
-        await mediator.Send(mapper.Map<UpdatePictureCommand>(data), cancellationToken);
+        await mediator.Send(command, cancellationToken);
 
         return NoContent();
     }
