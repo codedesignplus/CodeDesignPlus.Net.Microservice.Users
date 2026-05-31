@@ -11,11 +11,11 @@ public class GetUsersByIdQueryHandler(IUserRepository repository, IMapper mapper
         if (exists)
             return await cacheManager.GetAsync<UserDto>(request.Id.ToString());
 
-        var tenant = await repository.FindAsync<UserAggregate>(request.Id, cancellationToken);
+        var user = await repository.FindAsync<UserAggregate>(request.Id, cancellationToken);
 
-        ApplicationGuard.IsNull(tenant, Errors.UserNotFound);
+        ApplicationGuard.IsNull(user, Errors.UserNotFound);
 
-        var dto = mapper.Map<UserDto>(tenant);
+        var dto = mapper.Map<UserDto>(user);
 
         await cacheManager.SetAsync(request.Id.ToString(), dto);
 

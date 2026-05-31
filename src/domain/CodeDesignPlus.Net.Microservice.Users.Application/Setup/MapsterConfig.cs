@@ -8,12 +8,14 @@ using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.UpdatePict
 using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.UpdateProfile;
 using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.UpdateUser;
 using CodeDesignPlus.Net.Microservice.Users.Domain.Entities;
+using CodeDesignPlus.Net.Microservice.Users.Domain.ValueObjects;
 
 namespace CodeDesignPlus.Net.Microservice.Users.Application.Setup;
 
 public static class MapsterConfigUsers
 {
-    public static void Configure() { 
+    public static void Configure()
+    {
 
         TypeAdapterConfig<TenantEntity, TenantDto>.NewConfig();
         TypeAdapterConfig<UserAggregate, UserDto>.NewConfig();
@@ -22,15 +24,14 @@ public static class MapsterConfigUsers
         TypeAdapterConfig<UpdateUserDto, UpdateUserCommand>.NewConfig();
         TypeAdapterConfig<UpdatePictureDto, UpdatePictureCommand>.NewConfig();
 
-
         TypeAdapterConfig<AddRoleDto, AddRoleCommand>.NewConfig();
 
         TypeAdapterConfig<AddTenantDto, AddTenantCommand>.NewConfig();
 
-        TypeAdapterConfig<UpdateContactDto,UpdateContactCommand>.NewConfig();
-        TypeAdapterConfig<UpdateJobDto,UpdateJobCommand>.NewConfig();
+        TypeAdapterConfig<UpdateContactDto, UpdateContactCommand>.NewConfig();
+        TypeAdapterConfig<UpdateJobDto, UpdateJobCommand>.NewConfig();
 
-        TypeAdapterConfig<UpdateProfileDto,UpdateProfileCommand>
+        TypeAdapterConfig<UpdateProfileDto, UpdateProfileCommand>
             .NewConfig()
             .MapWith(src => new UpdateProfileCommand(src.Id, src.FirstName, src.LastName, src.DisplayName, src.Email, src.Phone, src.IsActive, src.Contact, src.Job));
     }
