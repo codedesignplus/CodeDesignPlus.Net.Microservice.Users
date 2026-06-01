@@ -128,7 +128,7 @@ public class UserController(IMediator mediator, IMapper mapper) : ControllerBase
     [HttpPost("{id}/role")]
     public async Task<IActionResult> AddRole(Guid id, [FromBody] AddRoleDto data, CancellationToken cancellationToken)
     {
-        data.Id = id;
+        data.IdUser = id;
 
         await mediator.Send(mapper.Map<AddRoleCommand>(data), cancellationToken);
 
