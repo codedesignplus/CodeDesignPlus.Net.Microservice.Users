@@ -10,6 +10,10 @@ public class AddTenantCommandHandler(IUserRepository repository, IPubSub pubsub,
 
         ApplicationGuard.IsNull(aggregate, Errors.UserNotFound);
 
+        // Idempotent: if the user already has the tenant, no-op
+        if (aggregate.Tenants.Any(t => t.Id == request.Tenant.Id))
+            return;
+
         aggregate.AddTenant(request.Tenant.Id, request.Tenant.Name, request.UserId);
 
         await repository.UpdateAsync(aggregate, cancellationToken);

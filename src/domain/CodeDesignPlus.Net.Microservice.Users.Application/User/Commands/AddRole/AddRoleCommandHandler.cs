@@ -10,6 +10,10 @@ public class AddRoleCommandHandler(IUserRepository repository, IPubSub pubsub, I
 
         ApplicationGuard.IsNull(aggregate, Errors.UserNotFound);
 
+        // Idempotent: if the user already has the role, no-op
+        if (aggregate.Roles.Any(r => r == request.Role))
+            return;
+
         aggregate.AddRole(request.Role, request.IdUser);
 
         await repository.UpdateAsync(aggregate, cancellationToken);
