@@ -6,6 +6,7 @@ namespace CodeDesignPlus.Net.Microservice.Users.Domain.DomainEvents;
 public class TenantAddedDomainEvent(
      Guid aggregateId,
      string? displayName,
+     string email,
      TenantEntity tenant,
      Guid? eventId = null,
      Instant? occurredAt = null,
@@ -13,10 +14,11 @@ public class TenantAddedDomainEvent(
 ) : DomainEvent(aggregateId, eventId, occurredAt, metadata)
 {
     public string? DisplayName { get; } = displayName;
+    public string Email { get; } = email;
     public TenantEntity Tenant { get; } = tenant;
 
-    public static TenantAddedDomainEvent Create(Guid aggregateId, string? displayName, TenantEntity tenant)
+    public static TenantAddedDomainEvent Create(Guid aggregateId, string? displayName, string email, TenantEntity tenant)
     {
-        return new TenantAddedDomainEvent(aggregateId, displayName, tenant);
+        return new TenantAddedDomainEvent(aggregateId, displayName, email, tenant);
     }
 }

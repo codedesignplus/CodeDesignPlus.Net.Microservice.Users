@@ -33,6 +33,13 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
 
         CreatedAt = SystemClock.Instance.GetCurrentInstant();
         IsActive = isActive;
+
+        // Publishes UserRegisteredDomainEvent so downstream services can react:
+        //  - ms-microsoftgraph: provisions the identity in Azure AD B2C and emits its own event
+        //    (UserCreatedDomainEvent) that ms-emails consumes to send the PasswordTemp email.
+        // The verb "Registered" avoids colliding with ms-microsoftgraph's own
+        // UserCreatedDomainEvent in shared infrastructure.
+        this.AddEvent(UserRegisteredDomainEvent.Create(Id, FirstName, LastName, Email, Phone, DisplayName, IsActive));
     }
 
     public static UserAggregate Create(Guid id, string firstName, string lastName, string email, string phone, string? displayName, bool isActive)
@@ -94,7 +101,7 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         UpdatedBy = updateBy;
         UpdatedAt = SystemClock.Instance.GetCurrentInstant();
 
-        this.AddEvent(TenantAddedDomainEvent.Create(Id, DisplayName, tenant));
+        this.AddEvent(TenantAddedDomainEvent.Create(Id, DisplayName, Email, tenant));
     }
     public void RemoveTenant(Guid tenantId, Guid updateBy)
     {
