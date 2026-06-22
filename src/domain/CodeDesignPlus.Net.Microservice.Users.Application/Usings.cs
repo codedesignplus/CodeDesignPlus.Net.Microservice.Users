@@ -2,6 +2,7 @@
 global using CodeDesignPlus.Net.Generator.Attributes;
 global using CodeDesignPlus.Net.PubSub.Abstractions;
 global using CodeDesignPlus.Net.Security.Abstractions;
+global using CodeDesignPlus.Net.ValueObjects.Common;
 global using FluentValidation;
 global using Mapster;
 global using MapsterMapper;

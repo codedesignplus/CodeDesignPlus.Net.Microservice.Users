@@ -38,7 +38,7 @@ public class UpdateUserCommandHandlerTest
     public async Task Handle_UserNotFound_ThrowsUserNotFoundException()
     {
         // Arrange
-        var request = new UpdateUserCommand(Guid.NewGuid(), "John", "Doe", "JD", "john@fake.com", "1234567890", true);
+        var request = new UpdateUserCommand(Guid.NewGuid(), "John", "Doe", "JD", "john@fake.com", "1234567890", "1234567890", null, true);
         repositoryMock
             .Setup(repo => repo.FindAsync<UserAggregate>(request.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync((UserAggregate)null!);
@@ -55,9 +55,9 @@ public class UpdateUserCommandHandlerTest
     public async Task Handle_ValidRequest_UpdatesUserAndPublishesEvents()
     {
         // Arrange
-        var request = new UpdateUserCommand(Guid.NewGuid(), "John U", "Doe U", "JDU", "john@fake.com", "1234567890", true);
+        var request = new UpdateUserCommand(Guid.NewGuid(), "John U", "Doe U", "JDU", "john@fake.com", "1234567890", "1234567890", null, true);
 
-        var aggregate = UserAggregate.Create(request.Id, "John", "Doe", "john@fake.com", "1234567890", "JD", true);
+        var aggregate = UserAggregate.Create(request.Id, "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", null, true);
 
         repositoryMock
             .Setup(repo => repo.FindAsync<UserAggregate>(request.Id, It.IsAny<CancellationToken>()))

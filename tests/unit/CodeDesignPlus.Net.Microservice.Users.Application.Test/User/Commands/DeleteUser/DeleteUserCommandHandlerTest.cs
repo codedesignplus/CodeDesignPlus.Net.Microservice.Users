@@ -58,7 +58,7 @@ public class DeleteUserCommandHandlerTest
         var mockPubSub = new Mock<IPubSub>();
         var cacheManagerMock = new Mock<ICacheManager>();
         var userId = Guid.NewGuid();
-        var aggregate = UserAggregate.Create(userId, "John", "Doe", "john@fake.com", "123456789", "John Doe", true);
+        var aggregate = UserAggregate.Create(userId, "John", "Doe", "john@fake.com", "123456789", "John Doe", "1234567890", null, true);
         var command = new DeleteUserCommand(userId);
 
         mockUserContext.Setup(x => x.IdUser).Returns(Guid.NewGuid());

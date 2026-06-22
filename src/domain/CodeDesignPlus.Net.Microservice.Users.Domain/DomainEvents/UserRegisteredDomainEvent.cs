@@ -20,6 +20,8 @@ public class UserRegisteredDomainEvent : UserBaseDomainEvent
         string email,
         string phone,
         string? displayName,
+        string documentNumber,
+        Item<string>? documentType,
         bool isActive,
         Guid? eventId = null,
         Instant? occurredAt = null,
@@ -31,11 +33,13 @@ public class UserRegisteredDomainEvent : UserBaseDomainEvent
         Email = email;
         Phone = phone;
         DisplayName = displayName;
+        DocumentNumber = documentNumber;
+        DocumentType = documentType;
         IsActive = isActive;
     }
 
-    public static UserRegisteredDomainEvent Create(Guid aggregateId, string firstName, string lastName, string email, string phone, string? displayName, bool isActive)
+    public static UserRegisteredDomainEvent Create(Guid aggregateId, string firstName, string lastName, string email, string phone, string? displayName, string documentNumber, Item<string>? documentType, bool isActive)
     {
-        return new UserRegisteredDomainEvent(aggregateId, firstName, lastName, email, phone, displayName, isActive);
+        return new UserRegisteredDomainEvent(aggregateId, firstName, lastName, email, phone, displayName, documentNumber, documentType, isActive);
     }
 }

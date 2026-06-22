@@ -12,47 +12,48 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
     public string Email { get; private set; } = null!;
     public string Phone { get; private set; } = null!;
     public string? DisplayName { get; private set; } = null!;
+    public string DocumentNumber { get; private set; } = null!;
+    public Item<string>? DocumentType { get; private set; }
     public List<TenantEntity> Tenants { get; private set; } = [];
     public string[] Roles { get; private set; } =  [];
     public ContactInfo Contact { get; private set; } = null!;
     public JobInfo Job { get; private set; } = null!;
 
-    public UserAggregate(Guid id, string firstName, string lastName, string email, string phone, string? displayName, bool isActive) : this(id)
+    public UserAggregate(Guid id, string firstName, string lastName, string email, string phone, string? displayName, string documentNumber, Item<string>? documentType, bool isActive) : this(id)
     {
         DomainGuard.GuidIsEmpty(id, Errors.IdUserIsRequired);
         DomainGuard.IsNullOrEmpty(firstName, Errors.FirstNameRequired);
         DomainGuard.IsNullOrEmpty(lastName, Errors.LastNameRequired);
         DomainGuard.IsNullOrEmpty(email, Errors.EmailRequired);
         DomainGuard.IsNullOrEmpty(phone, Errors.PhoneRequired);
+        DomainGuard.IsNullOrEmpty(documentNumber, Errors.DocumentNumberRequired);
 
         FirstName = firstName;
         LastName = lastName;
         Email = email;
         Phone = phone;
         DisplayName = displayName ?? $"{firstName} {lastName}";
+        DocumentNumber = documentNumber;
+        DocumentType = documentType;
 
         CreatedAt = SystemClock.Instance.GetCurrentInstant();
         IsActive = isActive;
 
-        // Publishes UserRegisteredDomainEvent so downstream services can react:
-        //  - ms-microsoftgraph: provisions the identity in Azure AD B2C and emits its own event
-        //    (UserCreatedDomainEvent) that ms-emails consumes to send the PasswordTemp email.
-        // The verb "Registered" avoids colliding with ms-microsoftgraph's own
-        // UserCreatedDomainEvent in shared infrastructure.
-        this.AddEvent(UserRegisteredDomainEvent.Create(Id, FirstName, LastName, Email, Phone, DisplayName, IsActive));
+        this.AddEvent(UserRegisteredDomainEvent.Create(Id, FirstName, LastName, Email, Phone, DisplayName, DocumentNumber, DocumentType, IsActive));
     }
 
-    public static UserAggregate Create(Guid id, string firstName, string lastName, string email, string phone, string? displayName, bool isActive)
+    public static UserAggregate Create(Guid id, string firstName, string lastName, string email, string phone, string? displayName, string documentNumber, Item<string>? documentType, bool isActive)
     {
-        return new UserAggregate(id, firstName, lastName, email, phone, displayName, isActive);
+        return new UserAggregate(id, firstName, lastName, email, phone, displayName, documentNumber, documentType, isActive);
     }
 
-    public void Update(string firstName, string lastName, string email, string phone, string? displayName, bool isActive, Guid updatedBy)
+    public void Update(string firstName, string lastName, string email, string phone, string? displayName, string documentNumber, Item<string>? documentType, bool isActive, Guid updatedBy)
     {
         DomainGuard.IsNullOrEmpty(firstName, Errors.FirstNameRequired);
         DomainGuard.IsNullOrEmpty(lastName, Errors.LastNameRequired);
         DomainGuard.IsNullOrEmpty(email, Errors.EmailRequired);
         DomainGuard.IsNullOrEmpty(phone, Errors.PhoneRequired);
+        DomainGuard.IsNullOrEmpty(documentNumber, Errors.DocumentNumberRequired);
         DomainGuard.GuidIsEmpty(updatedBy, Errors.UpdateByInvalid);
 
         FirstName = firstName;
@@ -60,12 +61,14 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         Email = email;
         Phone = phone;
         DisplayName = displayName;
+        DocumentNumber = documentNumber;
+        DocumentType = documentType;
         IsActive = isActive;
         Picture = Picture;
         UpdatedBy = updatedBy;
         UpdatedAt = SystemClock.Instance.GetCurrentInstant();
 
-        this.AddEvent(UserUpdatedDomainEvent.Create(Id, FirstName, LastName, Email, Phone, DisplayName, IsActive));
+        this.AddEvent(UserUpdatedDomainEvent.Create(Id, FirstName, LastName, Email, Phone, DisplayName, DocumentNumber, DocumentType, IsActive));
     }
 
     public void UpdatePicture(Guid id, string name, string target, Guid updatedBy)
@@ -149,13 +152,13 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
     public void Delete(Guid deletedBy)
     {
         DomainGuard.GuidIsEmpty(deletedBy, Errors.IdUserIsRequired);
-        
+
         this.IsDeleted = true;
         this.IsActive = false;
         this.DeletedAt = SystemClock.Instance.GetCurrentInstant();
         this.DeletedBy = deletedBy;
 
-        this.AddEvent(UserDeletedDomainEvent.Create(Id, FirstName, LastName, Email, Phone, DisplayName, IsActive));
+        this.AddEvent(UserDeletedDomainEvent.Create(Id, FirstName, LastName, Email, Phone, DisplayName, DocumentNumber, DocumentType, IsActive));
     }
 
     public void UpdateContactInfo(string address, string city, string state, string country, string postalCode, string phone, string[] email, Guid updatedBy)
@@ -178,12 +181,13 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         this.AddEvent(JobInfoUpdatedDomainEvent.Create(Id, Job));
     }
 
-    public void UpdateProfile(string firstName, string lastName, string email, string phone, string? displayName, bool isActive, ContactInfo contact, JobInfo job, Guid updatedBy)
+    public void UpdateProfile(string firstName, string lastName, string email, string phone, string? displayName, string documentNumber, Item<string>? documentType, bool isActive, ContactInfo contact, JobInfo job, Guid updatedBy)
     {
         DomainGuard.IsNullOrEmpty(firstName, Errors.FirstNameRequired);
         DomainGuard.IsNullOrEmpty(lastName, Errors.LastNameRequired);
         DomainGuard.IsNullOrEmpty(email, Errors.EmailRequired);
         DomainGuard.IsNullOrEmpty(phone, Errors.PhoneRequired);
+        DomainGuard.IsNullOrEmpty(documentNumber, Errors.DocumentNumberRequired);
         DomainGuard.GuidIsEmpty(updatedBy, Errors.UpdateByInvalid);
 
         FirstName = firstName;
@@ -191,12 +195,14 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         Email = email;
         Phone = phone;
         DisplayName = displayName;
+        DocumentNumber = documentNumber;
+        DocumentType = documentType;
         IsActive = isActive;
         Contact = contact;
         Job = job;
         UpdatedBy = updatedBy;
         UpdatedAt = SystemClock.Instance.GetCurrentInstant();
 
-        this.AddEvent(ProfileUpdatedDomainEvent.Create(Id, FirstName, LastName, Email, Phone, DisplayName, IsActive, Contact, Job));
+        this.AddEvent(ProfileUpdatedDomainEvent.Create(Id, FirstName, LastName, Email, Phone, DisplayName, DocumentNumber, DocumentType, IsActive, Contact, Job));
     }
 }

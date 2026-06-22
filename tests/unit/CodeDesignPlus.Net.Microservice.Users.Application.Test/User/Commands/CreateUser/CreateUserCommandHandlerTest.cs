@@ -36,7 +36,7 @@ public class CreateUserCommandHandlerTest
     public async Task Handle_UserAlreadyExists_ThrowsUserAlreadyExistsException()
     {
         // Arrange
-        var request = new CreateUserCommand(Guid.NewGuid(), "John", "Doe", "JD", "john.doe@fake.com", "1234567890", true);
+        var request = new CreateUserCommand(Guid.NewGuid(), "John", "Doe", "JD", "john.doe@fake.com", "1234567890", "1234567890", null, true);
         var cancellationToken = CancellationToken.None;
 
         repositoryMock
@@ -55,7 +55,7 @@ public class CreateUserCommandHandlerTest
     public async Task Handle_ValidRequest_CreatesUserAndPublishesEvents()
     {
         // Arrange
-        var request = new CreateUserCommand(Guid.NewGuid(), "John", "Doe", "JD", "john.doe@fake.com", "1234567890", true);
+        var request = new CreateUserCommand(Guid.NewGuid(), "John", "Doe", "JD", "john.doe@fake.com", "1234567890", "1234567890", null, true);
 
         var cancellationToken = CancellationToken.None;
 

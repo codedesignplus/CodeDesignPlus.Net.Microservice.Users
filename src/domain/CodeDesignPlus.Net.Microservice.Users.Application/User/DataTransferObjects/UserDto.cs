@@ -10,6 +10,8 @@ public class UserDto : IDtoBase
     public string Email { get; set; } = null!;
     public string Phone { get; set; } = null!;
     public string? DisplayName { get; set; } = null!;
+    public string DocumentNumber { get; set; } = null!;
+    public Item<string>? DocumentType { get; set; }
     public List<TenantDto> Tenants { get; set; } = [];
     public string[] Roles { get; set; } = null!;
     public ContactInfo Contact { get; set; } = null!;

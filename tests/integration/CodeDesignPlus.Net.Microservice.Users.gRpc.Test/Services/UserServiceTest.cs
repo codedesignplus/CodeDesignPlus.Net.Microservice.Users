@@ -35,7 +35,7 @@ public class UserServiceTest : ServerBase<Program>
         var nameTenant = "Tenant 1";
         var userClient = new Users.UsersClient(Channel);
 
-        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", true);
+        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", null, true);
 
         var repository = Services.GetRequiredService<IUserRepository>();
 
@@ -73,7 +73,7 @@ public class UserServiceTest : ServerBase<Program>
         var group = "Admin";
         var userClient = new Users.UsersClient(Channel);
 
-        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", true);
+        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", null, true);
 
         var repository = Services.GetRequiredService<IUserRepository>();
 

@@ -39,7 +39,7 @@ public class UserControllerTest
         mapperMock = new Mock<IMapper>();
         controller = new UserController(mediatorMock.Object, mapperMock.Object);
 
-        this.aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", true);
+        this.aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", null, true);
         this.userDto = new()
         {
             Id = aggregate.Id,
@@ -131,7 +131,7 @@ public class UserControllerTest
     {
         // Arrange
         var userId = Guid.NewGuid();
-        var command = new UpdateUserCommand(Guid.NewGuid(), "John U", "Doe U", "JDU", "john@fake.com", "1234567890", true);
+        var command = new UpdateUserCommand(Guid.NewGuid(), "John U", "Doe U", "JDU", "john@fake.com", "1234567890", "1234567890", null, true);
 
         var updateUserDto = new CodeDesignPlus.Microservice.Api.Dtos.UpdateUserDto()
         {
@@ -384,6 +384,8 @@ public class UserControllerTest
             updateProfileDto.DisplayName,
             updateProfileDto.Email,
             updateProfileDto.Phone,
+            "1234567890",
+            null,
             updateProfileDto.IsActive,
             contactInfo,
             jobInfo

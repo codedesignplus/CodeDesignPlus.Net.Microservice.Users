@@ -19,4 +19,5 @@ public class Errors: IErrorCodes
     public const string ImageRequired = "112 : The image profile is required.";
 
     public const string RoleNotFound = "113 : The role was not found.";
+    public const string DocumentNumberRequired = "114 : The document number is required.";
 }

@@ -10,7 +10,7 @@ public class UpdateUserCommandHandler(IUserRepository repository, IUserContext u
 
         ApplicationGuard.IsNull(aggregate, Errors.UserNotFound);
 
-        aggregate.Update(request.FirstName, request.LastName, request.Email, request.Phone, request.DisplayName, request.IsActive, user.IdUser);
+        aggregate.Update(request.FirstName, request.LastName, request.Email, request.Phone, request.DisplayName, request.DocumentNumber, request.DocumentType, request.IsActive, user.IdUser);
 
         await repository.UpdateAsync(aggregate, cancellationToken);
 

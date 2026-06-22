@@ -15,6 +15,8 @@ public class ProfileUpdatedDomainEvent : UserBaseDomainEvent
         string email,
         string phone,
         string? displayName,
+        string documentNumber,
+        Item<string>? documentType,
         bool isActive,
         ContactInfo contact,
         JobInfo job,
@@ -28,13 +30,15 @@ public class ProfileUpdatedDomainEvent : UserBaseDomainEvent
         this.Email = email;
         this.Phone = phone;
         this.DisplayName = displayName;
+        this.DocumentNumber = documentNumber;
+        this.DocumentType = documentType;
         this.IsActive = isActive;
         this.Contact = contact;
         this.Job = job;
     }
 
-    public static ProfileUpdatedDomainEvent Create(Guid aggregateId,  string firstName, string lastName, string email, string phone, string? displayName, bool isActive, ContactInfo contact, JobInfo job)
+    public static ProfileUpdatedDomainEvent Create(Guid aggregateId, string firstName, string lastName, string email, string phone, string? displayName, string documentNumber, Item<string>? documentType, bool isActive, ContactInfo contact, JobInfo job)
     {
-        return new ProfileUpdatedDomainEvent(aggregateId, firstName, lastName, email, phone, displayName, isActive, contact, job);
+        return new ProfileUpdatedDomainEvent(aggregateId, firstName, lastName, email, phone, displayName, documentNumber, documentType, isActive, contact, job);
     }
 }

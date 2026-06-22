@@ -61,7 +61,7 @@ public class RemoveRoleCommandHandlerTest
         var cacheManagerMock = new Mock<ICacheManager>();
         var handler = new RemoveRoleCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object);
 
-        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", true);
+        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", null, true);
 
         aggregate.AddRole("Admin", Guid.NewGuid());
 

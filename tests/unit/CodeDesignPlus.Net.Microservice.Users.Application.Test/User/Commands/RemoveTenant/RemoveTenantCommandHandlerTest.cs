@@ -57,7 +57,7 @@ public class RemoveTenantCommandHandlerTest
         var cacheManagerMock = new Mock<ICacheManager>();
         var handler = new RemoveTenantCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object);
 
-        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", true);
+        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", null, true);
         var command = new RemoveTenantCommand(aggregate.Id, Guid.NewGuid());
 
         aggregate.AddTenant(command.IdTenant, "TestTenant", Guid.NewGuid());

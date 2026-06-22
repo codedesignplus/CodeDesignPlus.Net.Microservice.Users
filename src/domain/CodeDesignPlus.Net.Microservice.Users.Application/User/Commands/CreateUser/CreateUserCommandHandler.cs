@@ -10,7 +10,7 @@ public class CreateUserCommandHandler(IUserRepository repository, IPubSub pubsub
 
         ApplicationGuard.IsTrue(exist, Errors.UserAlreadyExists);
 
-        var aggregate = UserAggregate.Create(request.Id, request.FirstName, request.LastName, request.Email, request.Phone, request.DisplayName, request.IsActive);
+        var aggregate = UserAggregate.Create(request.Id, request.FirstName, request.LastName, request.Email, request.Phone, request.DisplayName, request.DocumentNumber, request.DocumentType, request.IsActive);
 
         await repository.CreateAsync(aggregate, cancellationToken);
 
