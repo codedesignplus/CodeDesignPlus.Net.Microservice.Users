@@ -6,6 +6,7 @@ using CodeDesignPlus.Net.Microservice.Users.Domain.DomainEvents;
 using CodeDesignPlus.Net.Microservice.Users.Domain.Repositories;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using FailedEvent = CodeDesignPlus.Net.Microservice.Users.Domain.DomainEvents.UserProvisioningFailedForOrderDomainEvent;
 
 namespace CodeDesignPlus.Net.Microservice.Users.AsyncWorker.Consumers;
 
@@ -20,7 +21,15 @@ public class CompleteOrderHandler(IMediator mediator, IUserRepository userReposi
 
         if (!exists)
         {
-            logger.LogInformation("User {Id} not found. Skipping provisioning.", data.BuyerId);
+            logger.LogWarning("User {Id} not found. Publishing provisioning failure for Order {OrderId}.", data.BuyerId, data.AggregateId);
+
+            var failedEvent = FailedEvent.Create(
+                data.BuyerId,
+                data.AggregateId,
+                $"User {data.BuyerId} not found in ms-users"
+            );
+
+            await pubsub.PublishAsync(failedEvent, token);
             return;
         }
 
