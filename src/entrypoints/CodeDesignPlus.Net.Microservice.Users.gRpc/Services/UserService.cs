@@ -1,5 +1,6 @@
 using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.AddRole;
 using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.AddTenant;
+using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.RemoveRole;
 using CodeDesignPlus.Net.Microservice.Users.Application.User.Queries.GetUsersById;
 using Google.Protobuf.WellKnownTypes;
 
@@ -18,6 +19,23 @@ public class UserService(IMediator mediator) : Users.UsersBase
             return new Empty();
 
         var command = new AddRoleCommand(id, request.Role, Guid.NewGuid());
+
+        await mediator.Send(command, context.CancellationToken);
+
+        return new Empty();
+    }
+
+    public override async Task<Empty> RemoveGroupFromUser(RemoveGroupRequest request, ServerCallContext context)
+    {
+        if (!Guid.TryParse(request.Id, out Guid id))
+            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid Id"));
+
+        var user = await mediator.Send(new GetUsersByIdQuery(id), context.CancellationToken);
+
+        if (!user.Roles.Contains(request.Role))
+            return new Empty();
+
+        var command = new RemoveRoleCommand(id, request.Role);
 
         await mediator.Send(command, context.CancellationToken);
 
