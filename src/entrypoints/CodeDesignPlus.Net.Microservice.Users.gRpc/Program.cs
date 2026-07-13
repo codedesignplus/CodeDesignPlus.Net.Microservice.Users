@@ -54,7 +54,7 @@ app.UseHealthChecks();
 
 app.UseAuth();
 
-app.MapGrpcService<UserService>().RequireAuthorization();
+app.MapGrpcService<UserService>().AllowAnonymous();
 
 if (app.Environment.IsDevelopment())
 {
