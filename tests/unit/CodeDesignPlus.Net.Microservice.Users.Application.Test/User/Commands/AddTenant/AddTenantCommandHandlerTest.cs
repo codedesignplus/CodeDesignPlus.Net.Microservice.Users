@@ -74,11 +74,16 @@ public class AddTenantCommandHandlerTest
 
         var command = new AddTenantCommand(aggregate.Id, new TenantDto { Id = Guid.NewGuid(), Name = "TestTenant" });
 
+        repositoryMock
+            .Setup(r => r.AddTenantAsync(It.IsAny<Guid>(), It.IsAny<Domain.Entities.TenantEntity>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
+
         // Act
         await handler.Handle(command, CancellationToken.None);
 
         // Assert
-        repositoryMock.Verify(r => r.UpdateAsync(aggregate, It.IsAny<CancellationToken>()), Times.Once);
-        pubSubMock.Verify(p => p.PublishAsync(It.IsAny<List<TenantAddedDomainEvent>>(), It.IsAny<CancellationToken>()), Times.AtMostOnce);
+        repositoryMock.Verify(r => r.AddTenantAsync(command.UserId, It.IsAny<Domain.Entities.TenantEntity>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Once);
+        repositoryMock.Verify(r => r.UpdateAsync(It.IsAny<UserAggregate>(), It.IsAny<CancellationToken>()), Times.Never);
+        pubSubMock.Verify(p => p.PublishAsync(It.IsAny<IReadOnlyList<IDomainEvent>>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 }

@@ -1,3 +1,6 @@
+using CodeDesignPlus.Net.Microservice.Users.Domain.DomainEvents;
+using CodeDesignPlus.Net.Microservice.Users.Domain.Entities;
+
 namespace CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.AddTenant;
 
 public class AddTenantCommandHandler(IUserRepository repository, IPubSub pubsub, ICacheManager cacheManager) : IRequestHandler<AddTenantCommand>
@@ -10,15 +13,16 @@ public class AddTenantCommandHandler(IUserRepository repository, IPubSub pubsub,
 
         ApplicationGuard.IsNull(aggregate, Errors.UserNotFound);
 
-        // Idempotent: if the user already has the tenant, no-op
-        if (aggregate.Tenants.Any(t => t.Id == request.Tenant.Id))
+        var tenant = new TenantEntity { Id = request.Tenant.Id, Name = request.Tenant.Name };
+
+        var added = await repository.AddTenantAsync(request.UserId, tenant, request.UserId, cancellationToken);
+
+        if (!added)
             return;
 
-        aggregate.AddTenant(request.Tenant.Id, request.Tenant.Name, request.UserId);
-
-        await repository.UpdateAsync(aggregate, cancellationToken);
-
-        await pubsub.PublishAsync(aggregate.GetAndClearEvents(), cancellationToken);
+        await pubsub.PublishAsync(
+            [TenantAddedDomainEvent.Create(aggregate.Id, aggregate.DisplayName, aggregate.Email, tenant)],
+            cancellationToken);
 
         var exist = await cacheManager.ExistsAsync(request.UserId.ToString());
 

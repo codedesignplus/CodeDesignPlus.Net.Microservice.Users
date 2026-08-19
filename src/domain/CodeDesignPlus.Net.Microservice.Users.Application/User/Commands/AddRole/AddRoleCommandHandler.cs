@@ -1,3 +1,5 @@
+using CodeDesignPlus.Net.Microservice.Users.Domain.DomainEvents;
+
 namespace CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.AddRole;
 
 public class AddRoleCommandHandler(IUserRepository repository, IPubSub pubsub, ICacheManager cacheManager) : IRequestHandler<AddRoleCommand>
@@ -10,15 +12,14 @@ public class AddRoleCommandHandler(IUserRepository repository, IPubSub pubsub, I
 
         ApplicationGuard.IsNull(aggregate, Errors.UserNotFound);
 
-        // Idempotent: if the user already has the role, no-op
-        if (aggregate.Roles.Any(r => r == request.Role))
+        var added = await repository.AddRoleAsync(request.Id, request.Role, request.IdUser, cancellationToken);
+
+        if (!added)
             return;
 
-        aggregate.AddRole(request.Role, request.IdUser);
-
-        await repository.UpdateAsync(aggregate, cancellationToken);
-
-        await pubsub.PublishAsync(aggregate.GetAndClearEvents(), cancellationToken);
+        await pubsub.PublishAsync(
+            [RoleAddedToUserDomainEvent.Create(aggregate.Id, aggregate.DisplayName, request.Role)],
+            cancellationToken);
 
         var exist = await cacheManager.ExistsAsync(request.Id.ToString());
 

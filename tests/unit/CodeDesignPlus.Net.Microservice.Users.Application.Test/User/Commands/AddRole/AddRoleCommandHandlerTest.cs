@@ -71,11 +71,18 @@ public class AddRoleCommandHandlerTest
 
         userContextMock.SetupGet(u => u.IdUser).Returns(Guid.NewGuid());
 
+        repositoryMock
+            .Setup(repo => repo.AddRoleAsync(command.Id, command.Role, command.IdUser, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
+
         // Act
         await handler.Handle(command, CancellationToken.None);
 
         // Assert
-        repositoryMock.Verify(repo => repo.UpdateAsync(aggregate, It.IsAny<CancellationToken>()), Times.Once);
-        pubSubMock.Verify(pub => pub.PublishAsync(It.IsAny<List<RoleAddedToUserDomainEvent>>(), It.IsAny<CancellationToken>()), Times.AtMostOnce);
+        // La escritura la hace la base con AddToSet, no un reemplazo del documento entero: asi dos
+        // asignaciones simultaneas no se pisan.
+        repositoryMock.Verify(repo => repo.AddRoleAsync(command.Id, command.Role, command.IdUser, It.IsAny<CancellationToken>()), Times.Once);
+        repositoryMock.Verify(repo => repo.UpdateAsync(It.IsAny<UserAggregate>(), It.IsAny<CancellationToken>()), Times.Never);
+        pubSubMock.Verify(pub => pub.PublishAsync(It.IsAny<IReadOnlyList<IDomainEvent>>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 }
