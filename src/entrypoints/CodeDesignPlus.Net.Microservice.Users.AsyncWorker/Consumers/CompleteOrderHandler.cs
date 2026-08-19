@@ -33,15 +33,17 @@ public class CompleteOrderHandler(IMediator mediator, IUserRepository userReposi
             return;
         }
 
-        var addRoleTask = mediator.Send(new AddRoleCommand(data.BuyerId, DefaultRole, data.BuyerId), token);
+        // Uno detras de otro, no en paralelo. Los dos comandos leen el mismo usuario, cambian una lista
+        // distinta y reescriben el documento entero: lanzados a la vez leen el mismo estado de partida y el
+        // ultimo en guardar borra lo del otro. Ocurrio en una compra real — el rol quedo grabado y la
+        // copropiedad no, asi que el comprador no veia nada al entrar pese a que ambos eventos se publicaron.
+        await mediator.Send(new AddRoleCommand(data.BuyerId, DefaultRole, data.BuyerId), token);
 
-        var addTenantTask = mediator.Send(new AddTenantCommand(data.BuyerId, new TenantDto
+        await mediator.Send(new AddTenantCommand(data.BuyerId, new TenantDto
         {
             Id = data.TenantDetail.Id,
             Name = data.TenantDetail.Name,
         }), token);
-
-        await Task.WhenAll(addRoleTask, addTenantTask);
 
         var provisionedEvent = UserProvisionedForOrderDomainEvent.Create(
             data.BuyerId,
