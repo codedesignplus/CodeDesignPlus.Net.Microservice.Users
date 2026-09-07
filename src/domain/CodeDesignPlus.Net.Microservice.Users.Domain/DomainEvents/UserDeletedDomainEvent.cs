@@ -11,7 +11,7 @@ public class UserDeletedDomainEvent : UserBaseDomainEvent
         string phone,
         string? displayName,
         string documentNumber,
-        Item<string>? documentType,
+        DocumentType? documentType,
         bool isActive,
         Guid? eventId = null,
         Instant? occurredAt = null,
@@ -28,7 +28,7 @@ public class UserDeletedDomainEvent : UserBaseDomainEvent
         IsActive = isActive;
     }
 
-    public static UserDeletedDomainEvent Create(Guid aggregateId, string firstName, string lastName, string email, string phone, string? displayName, string documentNumber, Item<string>? documentType, bool isActive)
+    public static UserDeletedDomainEvent Create(Guid aggregateId, string firstName, string lastName, string email, string phone, string? displayName, string documentNumber, DocumentType? documentType, bool isActive)
     {
         return new UserDeletedDomainEvent(aggregateId, firstName, lastName, email, phone, displayName, documentNumber, documentType, isActive);
     }

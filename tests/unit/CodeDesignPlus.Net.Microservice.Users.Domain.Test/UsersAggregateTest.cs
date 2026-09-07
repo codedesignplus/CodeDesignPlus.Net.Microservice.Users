@@ -24,7 +24,7 @@ public class UserAggregateTest
         var createdBy = Guid.NewGuid();
 
         var documentNumber = "CC123456";
-        var documentType = new Item<string>(Guid.NewGuid(), "Cédula de Ciudadanía");
+        var documentType = new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC");
 
         // Act
         var user = UserAggregate.Create(id, firstName, lastName, email, phone, displayName, documentNumber, documentType, true);

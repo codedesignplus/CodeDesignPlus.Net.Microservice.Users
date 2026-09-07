@@ -1,4 +1,4 @@
-﻿global using CodeDesignPlus.Net.Core.Abstractions;
+global using CodeDesignPlus.Net.Core.Abstractions;
 global using CodeDesignPlus.Net.Core.Abstractions.Attributes;
 global using CodeDesignPlus.Net.Exceptions.Guards;
 global using CodeDesignPlus.Net.Mongo.Abstractions;
@@ -8,5 +8,6 @@ global using System.Text.RegularExpressions;
 global using NodaTime;
 
 global using CodeDesignPlus.Net.Microservice.Users.Domain.DomainEvents;
+global using CodeDesignPlus.Net.Microservice.Users.Domain.ValueObjects;
 
 

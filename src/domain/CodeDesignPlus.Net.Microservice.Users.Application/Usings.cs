@@ -1,4 +1,4 @@
-﻿global using CodeDesignPlus.Net.Exceptions.Guards;
+global using CodeDesignPlus.Net.Exceptions.Guards;
 global using CodeDesignPlus.Net.Generator.Attributes;
 global using CodeDesignPlus.Net.PubSub.Abstractions;
 global using CodeDesignPlus.Net.Security.Abstractions;
@@ -15,6 +15,7 @@ global using CodeDesignPlus.Net.Cache.Abstractions;
 
 global using CodeDesignPlus.Net.Microservice.Users.Application.User.DataTransferObjects;
 global using CodeDesignPlus.Net.Microservice.Users.Domain;
+global using CodeDesignPlus.Net.Microservice.Users.Domain.ValueObjects;
 
 global using CodeDesignPlus.Net.Microservice.Users.Domain.Repositories;
 

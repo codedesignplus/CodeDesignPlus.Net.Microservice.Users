@@ -1,7 +1,7 @@
 namespace CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.UpdateUser;
 
 [DtoGenerator]
-public record UpdateUserCommand(Guid Id, string FirstName, string LastName, string? DisplayName, string Email, string Phone, string DocumentNumber, Item<string>? DocumentType, bool IsActive) : IRequest;
+public record UpdateUserCommand(Guid Id, string FirstName, string LastName, string? DisplayName, string Email, string Phone, string DocumentNumber, DocumentType? DocumentType, bool IsActive) : IRequest;
 
 public class Validator : AbstractValidator<UpdateUserCommand>
 {
@@ -15,5 +15,6 @@ public class Validator : AbstractValidator<UpdateUserCommand>
         RuleFor(x => x.DocumentNumber).NotEmpty().NotNull();
         RuleFor(x => x.DocumentType!.Id).NotEmpty().When(x => x.DocumentType is not null);
         RuleFor(x => x.DocumentType!.Value).NotEmpty().When(x => x.DocumentType is not null);
+        RuleFor(x => x.DocumentType!.Code).NotEmpty().When(x => x.DocumentType is not null);
     }
 }
