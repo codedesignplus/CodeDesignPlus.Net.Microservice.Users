@@ -16,9 +16,10 @@ public class RemoveRoleCommandHandler(IUserRepository repository, IPubSub pubsub
         // revocacion y una asignacion simultaneas se pisan igual que en AddRoleAsync.
         var result = await repository.RemoveRoleAsync(request.Id, request.TenantId, request.Role, request.IdUser, cancellationToken);
 
-        ApplicationGuard.IsTrue(result == RoleAssignmentResult.TenantNotFound, Errors.TenantNotFound);
-
-        if (result == RoleAssignmentResult.NothingToDo)
+        // Que el usuario no pertenezca a esa copropiedad no es un error al retirar: significa que no tiene
+        // nada que perder alli. Tratarlo como fallo llenaria la cola de descartes con revocaciones que ya
+        // estaban cumplidas.
+        if (result is RoleAssignmentResult.NothingToDo or RoleAssignmentResult.TenantNotFound)
             return;
 
         // Se relee despues de escribir, no antes: lo que importa es como quedo el usuario, y el agregado

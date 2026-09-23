@@ -9,8 +9,16 @@ public class Errors: IErrorCodes
     public const string UserNotFound = "201 : The user was not found.";
 
     /// <summary>
-    /// Un rol sin copropiedad no existe, asi que no se puede dar uno en una a la que el usuario no
-    /// pertenece.
+    /// La copropiedad del rol no se pudo resolver en el directorio.
     /// </summary>
-    public const string TenantNotFound = "202 : The user does not belong to that tenant.";
+    /// <remarks>
+    /// El directorio no distingue «no existe» de «ahora mismo no puedo comprobarlo», asi que este error
+    /// cubre los dos. Se reintenta: si el dato era malo acabara en la cola de descartes, donde se ve; si
+    /// era una caida pasajera, el siguiente intento lo resuelve.
+    /// <para>
+    /// <b>No cubre</b> que el usuario todavia no pertenezca a la copropiedad: eso no es un error, es como
+    /// se entra en ella, y el manejador lo resuelve anadiendosela.
+    /// </para>
+    /// </remarks>
+    public const string TenantCouldNotBeResolved = "202 : The tenant of the role could not be resolved.";
 }

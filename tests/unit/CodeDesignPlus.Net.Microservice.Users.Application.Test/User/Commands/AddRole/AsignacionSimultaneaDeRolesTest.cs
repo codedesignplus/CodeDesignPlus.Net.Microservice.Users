@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CodeDesignPlus.Net.Cache.Abstractions;
+using CodeDesignPlus.Net.Security.Abstractions;
 using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.AddRole;
 using CodeDesignPlus.Net.Microservice.Users.Domain.DomainEvents;
 
@@ -41,7 +42,7 @@ public class AsignacionSimultaneaDeRolesTest
         var repositorio = Repositorio(doc);
         var pubsub = new Mock<IPubSub>();
 
-        var handler = new AddRoleCommandHandler(repositorio.Object, pubsub.Object, Mock.Of<ICacheManager>());
+        var handler = new AddRoleCommandHandler(repositorio.Object, Mock.Of<ITenantDirectory>(), pubsub.Object, Mock.Of<ICacheManager>());
 
         await Task.WhenAll(
             handler.Handle(new AddRoleCommand(Usuario, Copropiedad, Propietario, Usuario), CancellationToken.None),
@@ -66,7 +67,7 @@ public class AsignacionSimultaneaDeRolesTest
             .Callback<IReadOnlyList<IDomainEvent>, CancellationToken>((e, _) => eventos.AddRange(e))
             .Returns(Task.CompletedTask);
 
-        var handler = new AddRoleCommandHandler(repositorio.Object, pubsub.Object, Mock.Of<ICacheManager>());
+        var handler = new AddRoleCommandHandler(repositorio.Object, Mock.Of<ITenantDirectory>(), pubsub.Object, Mock.Of<ICacheManager>());
 
         await handler.Handle(new AddRoleCommand(Usuario, Copropiedad, Propietario, Usuario), CancellationToken.None);
         await handler.Handle(new AddRoleCommand(Usuario, Copropiedad, Propietario, Usuario), CancellationToken.None);

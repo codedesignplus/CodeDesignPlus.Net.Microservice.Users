@@ -79,9 +79,11 @@ public class RemoveRoleCommandHandlerTest
     }
 
     [Fact]
-    public async Task Handle_TenantNotFound_ThrowsAndPublishesNothing()
+    public async Task Handle_UserNotInThatTenant_PublishesNothingInsteadOfFailing()
     {
-        // Arrange
+        // Al retirar, que el usuario no pertenezca a esa copropiedad no es un error: significa que no
+        // tiene nada que perder alli. Tratarlo como fallo llenaria la cola de descartes con revocaciones
+        // que ya estaban cumplidas.
         var repositoryMock = new Mock<IUserRepository>();
         var pubSubMock = new Mock<IPubSub>();
         var cacheManagerMock = new Mock<ICacheManager>();
@@ -97,10 +99,10 @@ public class RemoveRoleCommandHandlerTest
         repositoryMock.Setup(r => r.RemoveRoleAsync(command.Id, command.TenantId, command.Role, command.IdUser, It.IsAny<CancellationToken>()))
                       .ReturnsAsync(RoleAssignmentResult.TenantNotFound);
 
-        // Act & Assert
-        var exception = await Assert.ThrowsAsync<CodeDesignPlusException>(() => handler.Handle(command, CancellationToken.None));
+        // Act
+        await handler.Handle(command, CancellationToken.None);
 
-        Assert.Equal(Errors.TenantNotFound.GetCode(), exception.Code);
+        // Assert
         pubSubMock.Verify(p => p.PublishAsync(It.IsAny<IReadOnlyList<IDomainEvent>>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
