@@ -18,6 +18,7 @@ using CodeDesignPlus.Net.Microservice.Users.Application.User.Queries.GetUsersByI
 using CodeDesignPlus.Net.Microservice.Users.Domain;
 using CodeDesignPlus.Net.Microservice.Users.Domain.ValueObjects;
 using CodeDesignPlus.Net.Microservice.Users.Rest.Controllers;
+using CodeDesignPlus.Net.Security.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -28,6 +29,7 @@ public class UserControllerTest
 {
     private readonly Mock<IMediator> mediatorMock;
     private readonly Mock<IMapper> mapperMock;
+    private readonly Mock<IUserContext> userContextMock;
     private readonly UserController controller;
 
     private readonly UserAggregate aggregate;
@@ -37,7 +39,11 @@ public class UserControllerTest
     {
         mediatorMock = new Mock<IMediator>();
         mapperMock = new Mock<IMapper>();
-        controller = new UserController(mediatorMock.Object, mapperMock.Object);
+        userContextMock = new Mock<IUserContext>();
+        userContextMock.SetupGet(x => x.Tenant).Returns(Guid.Parse("20d2459d-674e-476e-adb4-dcb0f7a224fa"));
+        userContextMock.SetupGet(x => x.IdUser).Returns(Guid.NewGuid());
+
+        controller = new UserController(mediatorMock.Object, mapperMock.Object, userContextMock.Object);
 
         this.aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", null, true);
         this.userDto = new()
@@ -244,9 +250,9 @@ public class UserControllerTest
         var addRoleDto = new CodeDesignPlus.Microservice.Api.Dtos.AddRoleDto
         {
             Id = userId,
-            Role = "Admin"
+            Role = Guid.NewGuid()
         };
-        var addRoleCommand = new AddRoleCommand(userId, addRoleDto.Role, Guid.NewGuid());
+        var addRoleCommand = new AddRoleCommand(userId, userContextMock.Object.Tenant, addRoleDto.Role, Guid.NewGuid());
         var cancellationToken = CancellationToken.None;
 
         mapperMock
@@ -260,6 +266,9 @@ public class UserControllerTest
         Assert.IsType<NoContentResult>(result);
 
         mediatorMock.Verify(m => m.Send(addRoleCommand, cancellationToken), Times.Once);
+
+        // La copropiedad no la manda el cliente: sale del contexto, que es la que se esta mirando.
+        Assert.Equal(userContextMock.Object.Tenant, addRoleDto.TenantId);
     }
 
     [Fact]
@@ -267,7 +276,7 @@ public class UserControllerTest
     {
         // Arrange
         var userId = Guid.NewGuid();
-        var role = "Admin";
+        var role = Guid.NewGuid();
         var cancellationToken = CancellationToken.None;
 
         mediatorMock

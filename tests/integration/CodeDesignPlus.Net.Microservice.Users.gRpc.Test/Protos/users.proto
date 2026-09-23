@@ -9,14 +9,19 @@ option csharp_namespace = "CodeDesignPlus.Net.Microservice.Users.gRpc.Test";
 package Users;
 
 
+// El servidor los expone unarios, no como flujo: declararlos aqui como stream hacia que la llamada no
+// casara con el metodo real.
 service Users {
-  rpc AddTenantToUser (stream AddTenantRequest) returns (google.protobuf.Empty);
-  rpc AddGroupToUser (stream AddGroupRequest) returns (google.protobuf.Empty);
+  rpc AddTenantToUser (AddTenantRequest) returns (google.protobuf.Empty);
+  rpc AddGroupToUser (AddGroupRequest) returns (google.protobuf.Empty);
 }
 
 message AddGroupRequest {
   string Id = 1;
+  // El identificador del grupo del proveedor de identidad, no el nombre del rol.
   string Role = 2;
+  // La copropiedad en la que el usuario tiene ese rol.
+  string Tenant = 3;
 }
 
 message AddTenantRequest {

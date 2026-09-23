@@ -15,7 +15,7 @@ public class AddRoleCommandTest
     public void Validator_Should_Have_Error_When_Id_Is_Empty()
     {
         // Arrange
-        var command = new AddRoleCommand(Guid.Empty, "Admin", Guid.NewGuid());
+        var command = new AddRoleCommand(Guid.Empty, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
 
         // Act & Assert
         var result = _validator.TestValidate(command);
@@ -26,7 +26,7 @@ public class AddRoleCommandTest
     public void Validator_Should_Have_Error_When_Role_Is_Empty()
     {
         // Arrange
-        var command = new AddRoleCommand(Guid.NewGuid(), string.Empty, Guid.NewGuid());
+        var command = new AddRoleCommand(Guid.NewGuid(), Guid.NewGuid(), Guid.Empty, Guid.NewGuid());
 
         // Act & Assert
         var result = _validator.TestValidate(command);
@@ -34,10 +34,21 @@ public class AddRoleCommandTest
     }
 
     [Fact]
+    public void Validator_Should_Have_Error_When_TenantId_Is_Empty()
+    {
+        // Arrange: un rol sin copropiedad no existe.
+        var command = new AddRoleCommand(Guid.NewGuid(), Guid.Empty, Guid.NewGuid(), Guid.NewGuid());
+
+        // Act & Assert
+        var result = _validator.TestValidate(command);
+        result.ShouldHaveValidationErrorFor(x => x.TenantId);
+    }
+
+    [Fact]
     public void Validator_Should_Not_Have_Error_When_Command_Is_Valid()
     {
         // Arrange
-        var command = new AddRoleCommand(Guid.NewGuid(), "Admin", Guid.NewGuid());
+        var command = new AddRoleCommand(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
 
         // Act & Assert
         var result = _validator.TestValidate(command);

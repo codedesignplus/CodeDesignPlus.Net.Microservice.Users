@@ -100,32 +100,77 @@ public class UserAggregateTest
     public void AddRole_ShouldAddRoleToUser()
     {
         // Arrange
-        var id = Guid.NewGuid();
-        var user = UserAggregate.Create(id, "John", "Doe", "john.doe@example.com", "1234567890", null, "1234567890", null, true);
-        var role = "Admin";
+        var user = ConUnaCopropiedad(out var tenantId);
+        var role = Guid.NewGuid();
         var updatedBy = Guid.NewGuid();
 
         // Act
-        user.AddRole(role, updatedBy);
+        user.AddRole(tenantId, role, updatedBy);
 
         // Assert
-        Assert.Contains(role, user.Roles);
+        Assert.Contains(role, user.Tenants.Single(x => x.Id == tenantId).Roles);
     }
 
     [Fact]
     public void RemoveRole_ShouldRemoveRoleFromUser()
     {
         // Arrange
-        var id = Guid.NewGuid();
-        var user = UserAggregate.Create(id, "John", "Doe", "john.doe@example.com", "1234567890", null, "1234567890", null, true);
-        var role = "Admin";
-        user.AddRole(role, Guid.NewGuid());
+        var user = ConUnaCopropiedad(out var tenantId);
+        var role = Guid.NewGuid();
+        user.AddRole(tenantId, role, Guid.NewGuid());
 
         // Act
-        user.RemoveRole(role, Guid.NewGuid());
+        user.RemoveRole(tenantId, role, Guid.NewGuid());
 
         // Assert
-        Assert.DoesNotContain(role, user.Roles);
+        Assert.DoesNotContain(role, user.Tenants.Single(x => x.Id == tenantId).Roles);
+    }
+
+    [Fact]
+    public void AddRole_EnUnaCopropiedadQueNoEsSuya_Falla()
+    {
+        // Arrange: un rol sin copropiedad no existe, y darlo en una a la que el usuario no pertenece
+        // seria darselo en ninguna parte.
+        var user = ConUnaCopropiedad(out _);
+
+        // Act
+        var error = Assert.Throws<CodeDesignPlusException>(
+            () => user.AddRole(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid()));
+
+        // Assert
+        Assert.Contains("109", error.Code);
+    }
+
+    [Fact]
+    public void RemoveRole_EnUnaCopropiedad_NoLoQuitaDeLasDemas()
+    {
+        // Arrange
+        var user = ConUnaCopropiedad(out var primera);
+        var segunda = Guid.NewGuid();
+        user.AddTenant(segunda, "Malpelo XXII", Guid.NewGuid());
+
+        var role = Guid.NewGuid();
+        user.AddRole(primera, role, Guid.NewGuid());
+        user.AddRole(segunda, role, Guid.NewGuid());
+
+        // Act
+        user.RemoveRole(primera, role, Guid.NewGuid());
+
+        // Assert: este es el detalle que se olvida. Quitar el papel en una copropiedad no puede
+        // quitarlo en las otras, ni sacar al usuario del grupo del proveedor de identidad.
+        Assert.DoesNotContain(role, user.Tenants.Single(x => x.Id == primera).Roles);
+        Assert.Contains(role, user.Tenants.Single(x => x.Id == segunda).Roles);
+    }
+
+    private static UserAggregate ConUnaCopropiedad(out Guid tenantId)
+    {
+        tenantId = Guid.NewGuid();
+
+        var user = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john.doe@example.com", "1234567890", null, "1234567890", null, true);
+
+        user.AddTenant(tenantId, "Malpelo XXI", Guid.NewGuid());
+
+        return user;
     }
 
     [Fact]

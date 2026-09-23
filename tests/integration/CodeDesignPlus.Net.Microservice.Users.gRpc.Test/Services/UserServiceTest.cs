@@ -29,7 +29,7 @@ public class UserServiceTest : ServerBase<Program>
 
 
     [Fact]
-    public async Task AddTenant_ClientStreaming_ReturnEmpty()
+    public async Task AddTenant_ReturnEmpty()
     {
         var idTenant = Guid.NewGuid();
         var nameTenant = "Tenant 1";
@@ -41,9 +41,7 @@ public class UserServiceTest : ServerBase<Program>
 
         await repository.CreateAsync(aggregate, CancellationToken.None);
 
-        using var streamingCall = userClient.AddTenantToUser();
-
-        await streamingCall.RequestStream.WriteAsync(new AddTenantRequest
+        await userClient.AddTenantToUserAsync(new AddTenantRequest
         {
             Id = aggregate.Id.ToString(),
             Tenant = new Tenant
@@ -52,10 +50,6 @@ public class UserServiceTest : ServerBase<Program>
                 Name = nameTenant
             }
         });
-
-        await Task.Delay(2000);
-
-        await streamingCall.RequestStream.CompleteAsync();
 
         var user = await repository.FindAsync<UserAggregate>(aggregate.Id, CancellationToken.None);
 
@@ -68,32 +62,34 @@ public class UserServiceTest : ServerBase<Program>
 
     
     [Fact]
-    public async Task AddGroup_ClientStreaming_ReturnEmpty()
+    public async Task AddGroup_ReturnEmpty()
     {
-        var group = "Admin";
+        var group = Guid.Parse("1a43656c-f457-4695-8bfd-903be4b66097");
+        var tenantId = Guid.NewGuid();
         var userClient = new Users.UsersClient(Channel);
 
         var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", null, true);
+
+        // La copropiedad primero: un rol cuelga de ella, y darselo a quien no pertenece se rechaza.
+        aggregate.AddTenant(tenantId, "Malpelo XXI", aggregate.Id);
 
         var repository = Services.GetRequiredService<IUserRepository>();
 
         await repository.CreateAsync(aggregate, CancellationToken.None);
 
-        using var streamingCall = userClient.AddGroupToUser();
-
-        await streamingCall.RequestStream.WriteAsync(new AddGroupRequest
+        await userClient.AddGroupToUserAsync(new AddGroupRequest
         {
             Id = aggregate.Id.ToString(),
-            Role = group
+            Role = group.ToString(),
+            Tenant = tenantId.ToString()
         });
-
-        await Task.Delay(2000);
-
-        await streamingCall.RequestStream.CompleteAsync();
 
         var user = await repository.FindAsync<UserAggregate>(aggregate.Id, CancellationToken.None);
 
         Assert.NotNull(user);
-        Assert.Contains(user.Roles, x => x == group);
+
+        // El rol vive dentro de su copropiedad, no en la raiz del usuario.
+        Assert.Contains(group, user.Tenants.Single(x => x.Id == tenantId).Roles);
+        Assert.Empty(user.Roles);
     }
 }

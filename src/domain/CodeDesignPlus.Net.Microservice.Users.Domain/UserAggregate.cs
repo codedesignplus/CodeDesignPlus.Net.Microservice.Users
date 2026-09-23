@@ -15,6 +15,15 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
     public string DocumentNumber { get; private set; } = null!;
     public DocumentType? DocumentType { get; private set; }
     public List<TenantEntity> Tenants { get; private set; } = [];
+
+    /// <summary>
+    /// Los roles de plataforma: los unicos que no cuelgan de ninguna copropiedad.
+    /// </summary>
+    /// <remarks>
+    /// Los roles de copropiedad viven en <see cref="TenantEntity.Roles"/>. Aqui solo queda lo que se es
+    /// en Kappali entera, como quien administra la plataforma: un papel que no depende de que
+    /// copropiedad se este mirando.
+    /// </remarks>
     public string[] Roles { get; private set; } =  [];
     public ContactInfo Contact { get; private set; } = null!;
     public JobInfo Job { get; private set; } = null!;
@@ -120,33 +129,58 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
 
         this.AddEvent(TenantRemovedDomainEvent.Create(Id, DisplayName, tenant));
     }
-    public void AddRole(string role, Guid updatedBy)
+    /// <summary>
+    /// Anade un rol al usuario en una copropiedad concreta.
+    /// </summary>
+    /// <remarks>
+    /// <b>Un rol sin copropiedad no existe.</b> El guard de pertenencia es la mitad del arreglo: hasta
+    /// ahora no habia con que comprobar si el usuario pertenecia a la copropiedad en la que se le estaba
+    /// dando un papel, porque la copropiedad no se pedia.
+    /// </remarks>
+    /// <param name="tenantId">La copropiedad en la que tendra el rol.</param>
+    /// <param name="role">El id del grupo del proveedor de identidad.</param>
+    /// <param name="updatedBy">Quien lo asigna.</param>
+    public void AddRole(Guid tenantId, Guid role, Guid updatedBy)
     {
-        DomainGuard.IsNullOrEmpty(role, Errors.RolesRequired);
+        DomainGuard.GuidIsEmpty(role, Errors.RolesRequired);
         DomainGuard.GuidIsEmpty(updatedBy, Errors.UpdateByInvalid);
 
-        DomainGuard.IsTrue(Roles.Any(r => r == role), Errors.RoleAlreadyExists);
+        var tenant = Tenants.FirstOrDefault(t => t.Id == tenantId);
 
-        Roles = [.. Roles, role];
+        DomainGuard.IsNull(tenant, Errors.TenantNotFound);
+        DomainGuard.IsTrue(tenant.Roles.Contains(role), Errors.RoleAlreadyExists);
+
+        tenant.Roles.Add(role);
         UpdatedBy = updatedBy;
         UpdatedAt = SystemClock.Instance.GetCurrentInstant();
 
-        this.AddEvent(RoleAddedToUserDomainEvent.Create(Id, DisplayName, role));
+        this.AddEvent(RoleAddedToUserDomainEvent.Create(Id, DisplayName, tenantId, role));
     }
-    public void RemoveRole(string role, Guid updateBy)
+    /// <summary>
+    /// Retira un rol del usuario en una copropiedad concreta.
+    /// </summary>
+    /// <remarks>
+    /// Retirarlo de una no lo retira de las demas. Quien lo consuma tiene que tenerlo presente antes de
+    /// sacar al usuario del grupo del proveedor de identidad, que si es global.
+    /// </remarks>
+    /// <param name="tenantId">La copropiedad de la que se retira.</param>
+    /// <param name="role">El id del grupo del proveedor de identidad.</param>
+    /// <param name="updateBy">Quien lo retira.</param>
+    public void RemoveRole(Guid tenantId, Guid role, Guid updateBy)
     {
-        DomainGuard.IsNullOrEmpty(role, Errors.RolesRequired);
+        DomainGuard.GuidIsEmpty(role, Errors.RolesRequired);
 
-        var item = Roles.FirstOrDefault(r => r == role);
+        var tenant = Tenants.FirstOrDefault(t => t.Id == tenantId);
 
-        DomainGuard.IsNull(item, Errors.RoleNotFound);
+        DomainGuard.IsNull(tenant, Errors.TenantNotFound);
+        DomainGuard.IsFalse(tenant.Roles.Contains(role), Errors.RoleNotFound);
 
-        Roles = [.. Roles.Where(r => r != role)];
+        tenant.Roles.Remove(role);
 
         UpdatedBy = updateBy;
         UpdatedAt = SystemClock.Instance.GetCurrentInstant();
 
-        this.AddEvent(RoleRemovedToUserDomainEvent.Create(Id, DisplayName, role));
+        this.AddEvent(RoleRemovedToUserDomainEvent.Create(Id, DisplayName, tenantId, role));
     }
 
     public void Delete(Guid deletedBy)

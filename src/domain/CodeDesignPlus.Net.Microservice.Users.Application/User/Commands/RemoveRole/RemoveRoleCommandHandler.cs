@@ -1,6 +1,8 @@
+using CodeDesignPlus.Net.Microservice.Users.Domain.DomainEvents;
+
 namespace CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.RemoveRole;
 
-public class RemoveRoleCommandHandler(IUserRepository repository, IUserContext user, IPubSub pubsub, ICacheManager cacheManager) : IRequestHandler<RemoveRoleCommand>
+public class RemoveRoleCommandHandler(IUserRepository repository, IPubSub pubsub, ICacheManager cacheManager) : IRequestHandler<RemoveRoleCommand>
 {
     public async Task Handle(RemoveRoleCommand request, CancellationToken cancellationToken)
     {
@@ -10,11 +12,18 @@ public class RemoveRoleCommandHandler(IUserRepository repository, IUserContext u
 
         ApplicationGuard.IsNull(aggregate, Errors.UserNotFound);
 
-        aggregate.RemoveRole(request.Role, user.IdUser);
+        // Se retira con una escritura atomica, no leyendo y guardando el documento entero: si no, una
+        // revocacion y una asignacion simultaneas se pisan igual que en AddRoleAsync.
+        var result = await repository.RemoveRoleAsync(request.Id, request.TenantId, request.Role, request.IdUser, cancellationToken);
 
-        await repository.UpdateAsync(aggregate, cancellationToken);
+        ApplicationGuard.IsTrue(result == RoleAssignmentResult.TenantNotFound, Errors.TenantNotFound);
 
-        await pubsub.PublishAsync(aggregate.GetAndClearEvents(), cancellationToken);
+        if (result == RoleAssignmentResult.NothingToDo)
+            return;
+
+        await pubsub.PublishAsync(
+            [RoleRemovedToUserDomainEvent.Create(aggregate.Id, aggregate.DisplayName, request.TenantId, request.Role)],
+            cancellationToken);
 
         var exist = await cacheManager.ExistsAsync(request.Id.ToString());
 

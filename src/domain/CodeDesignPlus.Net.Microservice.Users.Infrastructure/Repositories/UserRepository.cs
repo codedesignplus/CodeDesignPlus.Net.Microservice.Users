@@ -6,22 +6,27 @@ public class UserRepository(IServiceProvider serviceProvider, IOptions<MongoOpti
     : RepositoryBase(serviceProvider, mongoOptions, logger), IUserRepository
 {
     /// <inheritdoc/>
-    public async Task<bool> AddRoleAsync(Guid id, string role, Guid updatedBy, CancellationToken cancellationToken)
+    public Task<RoleAssignmentResult> AddRoleAsync(Guid id, Guid tenantId, Guid role, Guid updatedBy, CancellationToken cancellationToken)
     {
-        var filter = Builders<UserAggregate>.Filter.Eq(x => x.Id, id);
-
         // AddToSet anade sobre el estado real del documento y no duplica: dos procesos concurrentes anaden
         // cada uno el suyo y ambos sobreviven. Reescribir el documento entero hacia que el ultimo ganara.
         var update = Builders<UserAggregate>.Update
-            .AddToSet(x => x.Roles, role)
+            .AddToSet(RolesDeLaCopropiedad, role)
             .Set(x => x.UpdatedBy, updatedBy)
             .Set(x => x.UpdatedAt, SystemClock.Instance.GetCurrentInstant());
 
-        var result = await GetCollection<UserAggregate>()
-            .UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
+        return ApplyAsync(id, tenantId, update, cancellationToken);
+    }
 
-        // ModifiedCount en cero significa que el rol ya estaba: no es un fallo, es que no habia nada que hacer.
-        return result.ModifiedCount > 0;
+    /// <inheritdoc/>
+    public Task<RoleAssignmentResult> RemoveRoleAsync(Guid id, Guid tenantId, Guid role, Guid updatedBy, CancellationToken cancellationToken)
+    {
+        var update = Builders<UserAggregate>.Update
+            .Pull(RolesDeLaCopropiedad, role)
+            .Set(x => x.UpdatedBy, updatedBy)
+            .Set(x => x.UpdatedAt, SystemClock.Instance.GetCurrentInstant());
+
+        return ApplyAsync(id, tenantId, update, cancellationToken);
     }
 
     /// <inheritdoc/>
@@ -42,5 +47,29 @@ public class UserRepository(IServiceProvider serviceProvider, IOptions<MongoOpti
             .UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
 
         return result.ModifiedCount > 0;
+    }
+
+    /// <summary>
+    /// El operador posicional apunta a la copropiedad que casa con el filtro, asi que la escritura entra
+    /// en la correcta sin tener que saber su indice.
+    /// </summary>
+    private const string RolesDeLaCopropiedad = "Tenants.$.Roles";
+
+    private async Task<RoleAssignmentResult> ApplyAsync(Guid id, Guid tenantId, UpdateDefinition<UserAggregate> update, CancellationToken cancellationToken)
+    {
+        // La pertenencia va dentro del filtro: si el usuario no esta en esa copropiedad no casa ningun
+        // documento, y eso se distingue de que el rol ya estuviera. Comprobarla antes con una lectura
+        // dejaria una ventana entre la comprobacion y la escritura.
+        var filter = Builders<UserAggregate>.Filter.Eq(x => x.Id, id)
+            & Builders<UserAggregate>.Filter.ElemMatch(x => x.Tenants, t => t.Id == tenantId);
+
+        var result = await GetCollection<UserAggregate>()
+            .UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
+
+        if (result.MatchedCount == 0)
+            return RoleAssignmentResult.TenantNotFound;
+
+        // ModifiedCount en cero significa que no habia nada que cambiar: no es un fallo.
+        return result.ModifiedCount > 0 ? RoleAssignmentResult.Applied : RoleAssignmentResult.NothingToDo;
     }
 }

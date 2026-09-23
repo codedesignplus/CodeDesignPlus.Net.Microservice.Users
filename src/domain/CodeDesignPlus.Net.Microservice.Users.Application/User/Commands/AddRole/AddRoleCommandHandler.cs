@@ -12,13 +12,17 @@ public class AddRoleCommandHandler(IUserRepository repository, IPubSub pubsub, I
 
         ApplicationGuard.IsNull(aggregate, Errors.UserNotFound);
 
-        var added = await repository.AddRoleAsync(request.Id, request.Role, request.IdUser, cancellationToken);
+        var result = await repository.AddRoleAsync(request.Id, request.TenantId, request.Role, request.IdUser, cancellationToken);
 
-        if (!added)
+        // No se puede dar un papel en una copropiedad a la que el usuario no pertenece. Se comprueba en el
+        // filtro de la escritura y no antes, para que no quede ventana entre la comprobacion y el cambio.
+        ApplicationGuard.IsTrue(result == RoleAssignmentResult.TenantNotFound, Errors.TenantNotFound);
+
+        if (result == RoleAssignmentResult.NothingToDo)
             return;
 
         await pubsub.PublishAsync(
-            [RoleAddedToUserDomainEvent.Create(aggregate.Id, aggregate.DisplayName, request.Role)],
+            [RoleAddedToUserDomainEvent.Create(aggregate.Id, aggregate.DisplayName, request.TenantId, request.Role)],
             cancellationToken);
 
         var exist = await cacheManager.ExistsAsync(request.Id.ToString());

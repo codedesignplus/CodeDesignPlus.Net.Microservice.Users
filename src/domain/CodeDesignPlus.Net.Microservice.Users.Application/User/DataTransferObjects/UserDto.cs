@@ -13,6 +13,9 @@ public class UserDto : IDtoBase
     public string DocumentNumber { get; set; } = null!;
     public DocumentType? DocumentType { get; set; }
     public List<TenantDto> Tenants { get; set; } = [];
+    /// <summary>
+    /// Los roles de plataforma. Los de copropiedad estan en <see cref="TenantDto.Roles"/>.
+    /// </summary>
     public string[] Roles { get; set; } = null!;
     public ContactInfo Contact { get; set; } = null!;
     public JobInfo Job { get; set; } = null!;

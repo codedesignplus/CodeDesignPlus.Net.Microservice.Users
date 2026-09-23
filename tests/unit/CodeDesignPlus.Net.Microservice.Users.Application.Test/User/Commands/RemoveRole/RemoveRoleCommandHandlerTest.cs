@@ -15,10 +15,9 @@ public class RemoveRoleCommandHandlerTest
     {
         // Arrange
         var repositoryMock = new Mock<IUserRepository>();
-        var userContextMock = new Mock<IUserContext>();
         var pubSubMock = new Mock<IPubSub>();
         var cacheManagerMock = new Mock<ICacheManager>();
-        var handler = new RemoveRoleCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object);
+        var handler = new RemoveRoleCommandHandler(repositoryMock.Object, pubSubMock.Object, cacheManagerMock.Object);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<CodeDesignPlusException>(() => handler.Handle(null!, CancellationToken.None));
@@ -33,12 +32,11 @@ public class RemoveRoleCommandHandlerTest
     {
         // Arrange
         var repositoryMock = new Mock<IUserRepository>();
-        var userContextMock = new Mock<IUserContext>();
         var pubSubMock = new Mock<IPubSub>();
         var cacheManagerMock = new Mock<ICacheManager>();
-        var handler = new RemoveRoleCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object);
+        var handler = new RemoveRoleCommandHandler(repositoryMock.Object, pubSubMock.Object, cacheManagerMock.Object);
 
-        var command = new RemoveRoleCommand(Guid.NewGuid(), "Admin");
+        var command = new RemoveRoleCommand(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
 
         repositoryMock.Setup(r => r.FindAsync<UserAggregate>(command.Id, It.IsAny<CancellationToken>()))
                       .ReturnsAsync((UserAggregate)null!);
@@ -56,27 +54,80 @@ public class RemoveRoleCommandHandlerTest
     {
         // Arrange
         var repositoryMock = new Mock<IUserRepository>();
-        var userContextMock = new Mock<IUserContext>();
         var pubSubMock = new Mock<IPubSub>();
         var cacheManagerMock = new Mock<ICacheManager>();
-        var handler = new RemoveRoleCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object);
+        var handler = new RemoveRoleCommandHandler(repositoryMock.Object, pubSubMock.Object, cacheManagerMock.Object);
 
         var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", null, true);
 
-        aggregate.AddRole("Admin", Guid.NewGuid());
-
-        var command = new RemoveRoleCommand(aggregate.Id, "Admin");
+        var command = new RemoveRoleCommand(aggregate.Id, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
 
         repositoryMock.Setup(r => r.FindAsync<UserAggregate>(command.Id, It.IsAny<CancellationToken>()))
                       .ReturnsAsync(aggregate);
 
-        userContextMock.SetupGet(u => u.IdUser).Returns(Guid.NewGuid());
+        repositoryMock.Setup(r => r.RemoveRoleAsync(command.Id, command.TenantId, command.Role, command.IdUser, It.IsAny<CancellationToken>()))
+                      .ReturnsAsync(RoleAssignmentResult.Applied);
+
+        // Act
+        await handler.Handle(command, CancellationToken.None);
+
+        // Assert: se retira con una escritura atomica, no reescribiendo el documento entero, por la misma
+        // razon que en la asignacion.
+        repositoryMock.Verify(r => r.RemoveRoleAsync(command.Id, command.TenantId, command.Role, command.IdUser, It.IsAny<CancellationToken>()), Times.Once);
+        repositoryMock.Verify(r => r.UpdateAsync(It.IsAny<UserAggregate>(), It.IsAny<CancellationToken>()), Times.Never);
+        pubSubMock.Verify(p => p.PublishAsync(It.IsAny<IReadOnlyList<IDomainEvent>>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_TenantNotFound_ThrowsAndPublishesNothing()
+    {
+        // Arrange
+        var repositoryMock = new Mock<IUserRepository>();
+        var pubSubMock = new Mock<IPubSub>();
+        var cacheManagerMock = new Mock<ICacheManager>();
+        var handler = new RemoveRoleCommandHandler(repositoryMock.Object, pubSubMock.Object, cacheManagerMock.Object);
+
+        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", null, true);
+
+        var command = new RemoveRoleCommand(aggregate.Id, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
+
+        repositoryMock.Setup(r => r.FindAsync<UserAggregate>(command.Id, It.IsAny<CancellationToken>()))
+                      .ReturnsAsync(aggregate);
+
+        repositoryMock.Setup(r => r.RemoveRoleAsync(command.Id, command.TenantId, command.Role, command.IdUser, It.IsAny<CancellationToken>()))
+                      .ReturnsAsync(RoleAssignmentResult.TenantNotFound);
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<CodeDesignPlusException>(() => handler.Handle(command, CancellationToken.None));
+
+        Assert.Equal(Errors.TenantNotFound.GetCode(), exception.Code);
+        pubSubMock.Verify(p => p.PublishAsync(It.IsAny<IReadOnlyList<IDomainEvent>>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Handle_RoleWasNotThere_PublishesNothing()
+    {
+        // Arrange: los consumidores reintentan, asi que la misma revocacion puede llegar mas de una vez.
+        // Anunciarla de nuevo haria creer que acaba de pasar algo que ya habia pasado.
+        var repositoryMock = new Mock<IUserRepository>();
+        var pubSubMock = new Mock<IPubSub>();
+        var cacheManagerMock = new Mock<ICacheManager>();
+        var handler = new RemoveRoleCommandHandler(repositoryMock.Object, pubSubMock.Object, cacheManagerMock.Object);
+
+        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", null, true);
+
+        var command = new RemoveRoleCommand(aggregate.Id, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
+
+        repositoryMock.Setup(r => r.FindAsync<UserAggregate>(command.Id, It.IsAny<CancellationToken>()))
+                      .ReturnsAsync(aggregate);
+
+        repositoryMock.Setup(r => r.RemoveRoleAsync(command.Id, command.TenantId, command.Role, command.IdUser, It.IsAny<CancellationToken>()))
+                      .ReturnsAsync(RoleAssignmentResult.NothingToDo);
 
         // Act
         await handler.Handle(command, CancellationToken.None);
 
         // Assert
-        repositoryMock.Verify(r => r.UpdateAsync(aggregate, It.IsAny<CancellationToken>()), Times.Once);
-        pubSubMock.Verify(p => p.PublishAsync(It.IsAny<List<RoleRemovedToUserDomainEvent>>(), It.IsAny<CancellationToken>()), Times.AtMostOnce);
+        pubSubMock.Verify(p => p.PublishAsync(It.IsAny<IReadOnlyList<IDomainEvent>>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 }

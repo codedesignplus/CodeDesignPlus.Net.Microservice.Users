@@ -222,10 +222,14 @@ public class UserControllerTest : ServerBase<Program>, IClassFixture<Server<Prog
     {
         var userCreated = await this.CreateUserAsync();
 
+        // La copropiedad va primero: un rol cuelga de ella, asi que darselo a quien no pertenece a
+        // ninguna seria darle un papel en ninguna parte.
+        await this.AddTenantAsync(userCreated.Id);
+
         var data = new AddRoleDto
         {
             Id = userCreated.Id,
-            Role = "Admin"
+            Role = Administrador
         };
 
         var json = System.Text.Json.JsonSerializer.Serialize(data, this.options);
@@ -246,7 +250,9 @@ public class UserControllerTest : ServerBase<Program>, IClassFixture<Server<Prog
         Assert.Equal(userCreated.Phone, user.Phone);
         Assert.Equal(userCreated.DisplayName, user.DisplayName);
 
-        Assert.Contains(user.Roles, x => x == data.Role);
+        // El rol esta dentro de su copropiedad, no en la raiz del usuario.
+        Assert.Contains(Administrador, user.Tenants.Single(x => x.Id == Copropiedad).Roles);
+        Assert.Empty(user.Roles);
     }
 
 
@@ -255,11 +261,12 @@ public class UserControllerTest : ServerBase<Program>, IClassFixture<Server<Prog
     {
         var userCreated = await this.CreateUserAsync();
 
+        await this.AddTenantAsync(userCreated.Id);
 
         var data = new AddRoleDto
         {
             Id = userCreated.Id,
-            Role = "Admin"
+            Role = Administrador
         };
 
         var json = System.Text.Json.JsonSerializer.Serialize(data, this.options);
@@ -285,7 +292,7 @@ public class UserControllerTest : ServerBase<Program>, IClassFixture<Server<Prog
         Assert.Equal(userCreated.Phone, user.Phone);
         Assert.Equal(userCreated.DisplayName, user.DisplayName);
 
-        Assert.Empty(user.Roles);
+        Assert.Empty(user.Tenants.Single(x => x.Id == Copropiedad).Roles);
     }
 
 
@@ -496,6 +503,27 @@ public class UserControllerTest : ServerBase<Program>, IClassFixture<Server<Prog
         return System.Text.Json.JsonSerializer.Deserialize<UserDto>(json, this.options)!;
     }
 
+    private static readonly Guid Copropiedad = Guid.Parse("20d2459d-674e-476e-adb4-dcb0f7a224fa");
+    private static readonly Guid Administrador = Guid.Parse("1a43656c-f457-4695-8bfd-903be4b66097");
+
+    /// <summary>
+    /// Mete al usuario en la copropiedad del contexto. Sin esto no se le puede dar ningun rol.
+    /// </summary>
+    private async Task AddTenantAsync(Guid userId)
+    {
+        var data = new AddTenantDto()
+        {
+            UserId = userId,
+            Tenant = new TenantDto() { Id = Copropiedad, Name = "Malpelo XXI" }
+        };
+
+        var json = System.Text.Json.JsonSerializer.Serialize(data, this.options);
+
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        await this.RequestAsync($"http://localhost/api/User/{userId}/tenant", content, HttpMethod.Post);
+    }
+
     private async Task<HttpResponseMessage> RequestAsync(string uri, HttpContent? content, HttpMethod method)
     {
         var httpRequestMessage = new HttpRequestMessage()
@@ -505,6 +533,10 @@ public class UserControllerTest : ServerBase<Program>, IClassFixture<Server<Prog
             Method = method
         };
         httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue("TestAuth");
+
+        // Los roles cuelgan de una copropiedad, asi que el contexto tiene que traerla: sin esta cabecera
+        // el comando se rechaza por copropiedad vacia.
+        httpRequestMessage.Headers.Add("X-Tenant", Copropiedad.ToString());
 
         var response = await Client.SendAsync(httpRequestMessage);
 

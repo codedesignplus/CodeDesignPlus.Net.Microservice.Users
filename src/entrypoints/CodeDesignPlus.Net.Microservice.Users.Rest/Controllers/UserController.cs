@@ -1,4 +1,5 @@
 using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.UpdatePicture;
+using CodeDesignPlus.Net.Security.Abstractions;
 
 namespace CodeDesignPlus.Net.Microservice.Users.Rest.Controllers;
 
@@ -9,7 +10,7 @@ namespace CodeDesignPlus.Net.Microservice.Users.Rest.Controllers;
 /// <param name="mapper">Mapper instance for mapping between DTOs and commands/queries.</param>
 [Route("api/[controller]")]
 [ApiController]
-public class UserController(IMediator mediator, IMapper mapper) : ControllerBase
+public class UserController(IMediator mediator, IMapper mapper, IUserContext user) : ControllerBase
 {
     /// <summary>
     /// Get all Users.
@@ -130,6 +131,11 @@ public class UserController(IMediator mediator, IMapper mapper) : ControllerBase
     {
         data.IdUser = id;
 
+        // La copropiedad sale del contexto y no del cuerpo: es la que el administrador esta mirando, y
+        // pedirla otra vez en el cuerpo abriria la puerta a dar un rol en una copropiedad distinta de la
+        // que se esta viendo.
+        data.TenantId = user.Tenant;
+
         await mediator.Send(mapper.Map<AddRoleCommand>(data), cancellationToken);
 
         return NoContent();
@@ -139,13 +145,14 @@ public class UserController(IMediator mediator, IMapper mapper) : ControllerBase
     /// Remove a role from a User.
     /// </summary>
     /// <param name="id">The unique identifier of the User.</param>
-    /// <param name="role">The role to be removed.</param>
+    /// <param name="role">The identity provider group of the role to be removed.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>>HTTP status code 204 (No Content).</returns>
     [HttpDelete("{id}/role/{role}")]
-    public async Task<IActionResult> RemoveRole(Guid id, string role, CancellationToken cancellationToken)
+    public async Task<IActionResult> RemoveRole(Guid id, Guid role, CancellationToken cancellationToken)
     {
-        var command = new RemoveRoleCommand(id, role);
+        // Se retira de la copropiedad que se esta mirando. En las demas el usuario lo conserva.
+        var command = new RemoveRoleCommand(id, user.Tenant, role, user.IdUser);
 
         await mediator.Send(command, cancellationToken);
 

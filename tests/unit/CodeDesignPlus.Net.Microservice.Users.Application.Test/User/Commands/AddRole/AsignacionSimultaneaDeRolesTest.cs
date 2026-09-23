@@ -21,11 +21,17 @@ namespace CodeDesignPlus.Net.Microservice.Users.Application.Test.User.Commands.A
 public class AsignacionSimultaneaDeRolesTest
 {
     private static readonly Guid Usuario = Guid.Parse("55024fb2-53cd-4ca9-b87d-694d67378182");
+    private static readonly Guid Copropiedad = Guid.Parse("20d2459d-674e-476e-adb4-dcb0f7a224fa");
+    private static readonly Guid Propietario = Guid.Parse("283be9ce-9c97-478b-a5c7-ac906cd085d1");
+    private static readonly Guid Residente = Guid.Parse("d13dc2fd-59ce-4462-ae03-2a830a243c56");
 
-    /// <summary>Imita el documento del usuario: una lista que la base modifica sin releerla entera.</summary>
+    /// <summary>
+    /// Imita la lista de roles de una copropiedad dentro del documento: la base la modifica sin releer el
+    /// documento entero.
+    /// </summary>
     private sealed class Documento
     {
-        public List<string> Roles { get; } = [];
+        public List<Guid> Roles { get; } = [];
     }
 
     [Fact]
@@ -38,12 +44,12 @@ public class AsignacionSimultaneaDeRolesTest
         var handler = new AddRoleCommandHandler(repositorio.Object, pubsub.Object, Mock.Of<ICacheManager>());
 
         await Task.WhenAll(
-            handler.Handle(new AddRoleCommand(Usuario, "Propietario", Usuario), CancellationToken.None),
-            handler.Handle(new AddRoleCommand(Usuario, "Residente", Usuario), CancellationToken.None));
+            handler.Handle(new AddRoleCommand(Usuario, Copropiedad, Propietario, Usuario), CancellationToken.None),
+            handler.Handle(new AddRoleCommand(Usuario, Copropiedad, Residente, Usuario), CancellationToken.None));
 
         Assert.Equal(2, doc.Roles.Count);
-        Assert.Contains("Propietario", doc.Roles);
-        Assert.Contains("Residente", doc.Roles);
+        Assert.Contains(Propietario, doc.Roles);
+        Assert.Contains(Residente, doc.Roles);
     }
 
     [Fact]
@@ -62,8 +68,8 @@ public class AsignacionSimultaneaDeRolesTest
 
         var handler = new AddRoleCommandHandler(repositorio.Object, pubsub.Object, Mock.Of<ICacheManager>());
 
-        await handler.Handle(new AddRoleCommand(Usuario, "Propietario", Usuario), CancellationToken.None);
-        await handler.Handle(new AddRoleCommand(Usuario, "Propietario", Usuario), CancellationToken.None);
+        await handler.Handle(new AddRoleCommand(Usuario, Copropiedad, Propietario, Usuario), CancellationToken.None);
+        await handler.Handle(new AddRoleCommand(Usuario, Copropiedad, Propietario, Usuario), CancellationToken.None);
 
         Assert.Single(doc.Roles);
         Assert.Single(eventos.OfType<RoleAddedToUserDomainEvent>());
@@ -83,16 +89,16 @@ public class AsignacionSimultaneaDeRolesTest
             .ReturnsAsync(() => UserAggregate.Create(Usuario, "Yago", "Valle", "yago@fake.com", "3100000000", "Yago Valle", "1022356894", null, true));
 
         repositorio
-            .Setup(x => x.AddRoleAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-            .Returns(async (Guid _, string rol, Guid __, CancellationToken ___) =>
+            .Setup(x => x.AddRoleAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .Returns(async (Guid _, Guid __, Guid rol, Guid ___, CancellationToken ____) =>
             {
                 await Task.Yield();
 
                 if (doc.Roles.Contains(rol))
-                    return false;
+                    return RoleAssignmentResult.NothingToDo;
 
                 doc.Roles.Add(rol);
-                return true;
+                return RoleAssignmentResult.Applied;
             });
 
         return repositorio;
