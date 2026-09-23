@@ -21,8 +21,15 @@ public class RemoveRoleCommandHandler(IUserRepository repository, IPubSub pubsub
         if (result == RoleAssignmentResult.NothingToDo)
             return;
 
+        // Se relee despues de escribir, no antes: lo que importa es como quedo el usuario, y el agregado
+        // que se leyo al principio todavia tiene el rol puesto.
+        var despues = await repository.FindAsync<UserAggregate>(request.Id, cancellationToken);
+
+        var leQuedaEnOtra = despues is not null
+            && despues.Tenants.Exists(x => x.Id != request.TenantId && x.Roles.Contains(request.Role));
+
         await pubsub.PublishAsync(
-            [RoleRemovedToUserDomainEvent.Create(aggregate.Id, aggregate.DisplayName, request.TenantId, request.Role)],
+            [RoleRemovedToUserDomainEvent.Create(aggregate.Id, aggregate.DisplayName, request.TenantId, request.Role, leQuedaEnOtra)],
             cancellationToken);
 
         var exist = await cacheManager.ExistsAsync(request.Id.ToString());

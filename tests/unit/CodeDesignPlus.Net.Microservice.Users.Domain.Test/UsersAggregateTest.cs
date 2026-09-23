@@ -1,3 +1,4 @@
+using CodeDesignPlus.Net.Microservice.Users.Domain.DomainEvents;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -160,6 +161,12 @@ public class UserAggregateTest
         // quitarlo en las otras, ni sacar al usuario del grupo del proveedor de identidad.
         Assert.DoesNotContain(role, user.Tenants.Single(x => x.Id == primera).Roles);
         Assert.Contains(role, user.Tenants.Single(x => x.Id == segunda).Roles);
+
+        // Y el evento tiene que decirlo, porque es lo unico que impide que el consumidor lo saque del
+        // grupo del proveedor de identidad, que es global.
+        var aviso = user.GetAndClearEvents().OfType<RoleRemovedToUserDomainEvent>().Single();
+
+        Assert.True(aviso.StillHasItElsewhere);
     }
 
     private static UserAggregate ConUnaCopropiedad(out Guid tenantId)

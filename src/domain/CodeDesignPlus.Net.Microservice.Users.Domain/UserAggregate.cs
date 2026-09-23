@@ -1,4 +1,4 @@
-using CodeDesignPlus.Net.Core.Abstractions.Options;
+﻿using CodeDesignPlus.Net.Core.Abstractions.Options;
 using CodeDesignPlus.Net.Microservice.Users.Domain.Entities;
 using CodeDesignPlus.Net.Microservice.Users.Domain.ValueObjects;
 
@@ -180,7 +180,9 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         UpdatedBy = updateBy;
         UpdatedAt = SystemClock.Instance.GetCurrentInstant();
 
-        this.AddEvent(RoleRemovedToUserDomainEvent.Create(Id, DisplayName, tenantId, role));
+        var leQuedaEnOtra = Tenants.Exists(x => x.Id != tenantId && x.Roles.Contains(role));
+
+        this.AddEvent(RoleRemovedToUserDomainEvent.Create(Id, DisplayName, tenantId, role, leQuedaEnOtra));
     }
 
     public void Delete(Guid deletedBy)
