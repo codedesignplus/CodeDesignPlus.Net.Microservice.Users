@@ -1,4 +1,4 @@
-using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.AddRole;
+﻿using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.AddRole;
 using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.AddTenant;
 using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.RemoveRole;
 using CodeDesignPlus.Net.Microservice.Users.Application.User.Queries.GetUsersById;
@@ -16,8 +16,8 @@ public class UserService(IMediator mediator) : Users.UsersBase
         if (!Guid.TryParse(request.Tenant, out Guid tenantId))
             throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid Tenant"));
 
-        // El rol es el identificador del grupo del proveedor de identidad. Antes llegaba el nombre, y
-        // comparar nombres contra lo que trae el token -que son identificadores- no casaba nunca.
+        // El rol es el identificador del catalogo, el mismo en todos los entornos. Antes llegaba el
+        // nombre, y comparar nombres contra identificadores no casa nunca.
         if (!Guid.TryParse(request.Role, out Guid role))
             throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid Role"));
 

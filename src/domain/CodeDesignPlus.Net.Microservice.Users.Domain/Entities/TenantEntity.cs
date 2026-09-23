@@ -1,4 +1,4 @@
-namespace CodeDesignPlus.Net.Microservice.Users.Domain.Entities;
+﻿namespace CodeDesignPlus.Net.Microservice.Users.Domain.Entities;
 
 public class TenantEntity : IEntityBase
 {
@@ -6,11 +6,12 @@ public class TenantEntity : IEntityBase
     public string Name { get; set; } = null!;
 
     /// <summary>
-    /// Los grupos del proveedor de identidad que el usuario tiene <b>en esta copropiedad</b>.
+    /// Los roles que el usuario tiene <b>en esta copropiedad</b>, por su id en el catalogo.
     /// </summary>
     /// <remarks>
-    /// Un rol se identifica por el id de su grupo y no por su nombre: eso es lo que trae el token en el
-    /// claim <c>groups</c> y lo que guarda la audiencia de los avisos.
+    /// Un rol se identifica por su id en el catalogo de ms-roles, que es el mismo en todos los entornos.
+    /// El id del grupo en el proveedor de identidad cambia con cada directorio y solo lo necesita
+    /// ms-microsoftgraph, que lo resuelve a partir de este.
     /// <para>
     /// Los roles viven aqui y no en la raiz del agregado porque no son del usuario, son del usuario
     /// <b>en una copropiedad</b>: quien administra una y en otra solo reside no puede tener el mismo

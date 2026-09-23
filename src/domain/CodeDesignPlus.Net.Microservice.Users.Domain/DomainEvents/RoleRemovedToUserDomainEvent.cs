@@ -1,4 +1,4 @@
-namespace CodeDesignPlus.Net.Microservice.Users.Domain.DomainEvents;
+﻿namespace CodeDesignPlus.Net.Microservice.Users.Domain.DomainEvents;
 
 [EventKey<UserAggregate>(1, "RoleRemovedToUserDomainEvent")]
 public class RoleRemovedToUserDomainEvent(
@@ -20,7 +20,7 @@ public class RoleRemovedToUserDomainEvent(
     public Guid TenantId { get; } = tenantId;
 
     /// <summary>
-    /// El id del grupo del proveedor de identidad, no el nombre del rol.
+    /// El id del rol en el catalogo, que es el mismo en todos los entornos.
     /// </summary>
     public Guid Role { get; } = role;
 

@@ -138,7 +138,7 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
     /// dando un papel, porque la copropiedad no se pedia.
     /// </remarks>
     /// <param name="tenantId">La copropiedad en la que tendra el rol.</param>
-    /// <param name="role">El id del grupo del proveedor de identidad.</param>
+    /// <param name="role">El id del rol en el catalogo, que es el mismo en todos los entornos.</param>
     /// <param name="updatedBy">Quien lo asigna.</param>
     public void AddRole(Guid tenantId, Guid role, Guid updatedBy)
     {
@@ -164,7 +164,7 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
     /// sacar al usuario del grupo del proveedor de identidad, que si es global.
     /// </remarks>
     /// <param name="tenantId">La copropiedad de la que se retira.</param>
-    /// <param name="role">El id del grupo del proveedor de identidad.</param>
+    /// <param name="role">El id del rol en el catalogo, que es el mismo en todos los entornos.</param>
     /// <param name="updateBy">Quien lo retira.</param>
     public void RemoveRole(Guid tenantId, Guid role, Guid updateBy)
     {

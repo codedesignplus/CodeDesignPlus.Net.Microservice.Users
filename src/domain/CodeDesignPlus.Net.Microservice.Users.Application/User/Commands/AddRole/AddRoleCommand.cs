@@ -1,11 +1,11 @@
-namespace CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.AddRole;
+﻿namespace CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.AddRole;
 
 /// <summary>
 /// Asigna un rol a un usuario en una copropiedad.
 /// </summary>
 /// <param name="Id">El usuario.</param>
 /// <param name="TenantId">La copropiedad en la que tendra el rol. Un rol sin copropiedad no existe.</param>
-/// <param name="Role">El id del grupo del proveedor de identidad, no el nombre del rol.</param>
+/// <param name="Role">El id del rol en el catalogo, que es el mismo en todos los entornos.</param>
 /// <param name="IdUser">Quien lo asigna.</param>
 [DtoGenerator]
 public record AddRoleCommand(Guid Id, Guid TenantId, Guid Role, Guid IdUser) : IRequest;
