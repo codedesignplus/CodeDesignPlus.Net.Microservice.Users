@@ -43,8 +43,7 @@ public class RoleAssignmentOptionsValidator : IValidateOptions<RoleAssignmentOpt
             return ValidateOptionsResult.Success;
 
         return ValidateOptionsResult.Fail(
-            $"La seccion '{RoleAssignmentOptions.Section}' no define el identificador del grupo de " +
-            $"{nameof(RoleAssignmentOptions.AdministrationRole)}. Cada entorno tiene su propio directorio, " +
-            "asi que este valor va en el appsettings del entorno o como variable de entorno en el chart.");
+            $"La seccion '{RoleAssignmentOptions.Section}' no define el identificador del rol de " +
+            $"{nameof(RoleAssignmentOptions.AdministrationRole)}. Es el mismo en todos los entornos y vive en el appsettings base.");
     }
 }
