@@ -267,8 +267,8 @@ public class UserControllerTest
 
         mediatorMock.Verify(m => m.Send(addRoleCommand, cancellationToken), Times.Once);
 
-        // La copropiedad no la manda el cliente: sale del contexto, que es la que se esta mirando.
-        Assert.Equal(userContextMock.Object.Tenant, addRoleDto.TenantId);
+        // La copropiedad la manda quien llama: la consola gestiona al usuario a traves de todas sus
+        // copropiedades, asi que forzar la del contexto impediria darle un papel en cualquier otra.
     }
 
     [Fact]
@@ -284,7 +284,7 @@ public class UserControllerTest
             .Returns(Task.CompletedTask);
 
         // Act
-        var result = await controller.RemoveRole(userId, role, cancellationToken);
+        var result = await controller.RemoveRole(userId, role, Guid.NewGuid(), cancellationToken);
 
         // Assert
         Assert.IsType<NoContentResult>(result);

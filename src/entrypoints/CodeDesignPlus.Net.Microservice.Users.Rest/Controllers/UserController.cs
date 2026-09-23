@@ -123,18 +123,22 @@ public class UserController(IMediator mediator, IMapper mapper, IUserContext use
     /// Add a role to a User.
     /// </summary>
     /// <param name="id">The unique identifier of the User.</param>
-    /// <param name="data">>Data for adding the role.</param>
+    /// <param name="data">>Data for adding the role, including the tenant it applies to.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>>HTTP status code 204 (No Content).</returns>
+    /// <remarks>
+    /// La copropiedad viene en el cuerpo y no del contexto: la consola de administracion gestiona a un
+    /// usuario a traves de todas sus copropiedades, asi que forzar la que se esta mirando impediria darle
+    /// un papel en cualquier otra.
+    /// <para>
+    /// Lo que protege no es de donde salga, sino la pertenencia: el agregado rechaza un rol en una
+    /// copropiedad a la que el usuario no pertenece.
+    /// </para>
+    /// </remarks>
     [HttpPost("{id}/role")]
     public async Task<IActionResult> AddRole(Guid id, [FromBody] AddRoleDto data, CancellationToken cancellationToken)
     {
         data.IdUser = id;
-
-        // La copropiedad sale del contexto y no del cuerpo: es la que el administrador esta mirando, y
-        // pedirla otra vez en el cuerpo abriria la puerta a dar un rol en una copropiedad distinta de la
-        // que se esta viendo.
-        data.TenantId = user.Tenant;
 
         await mediator.Send(mapper.Map<AddRoleCommand>(data), cancellationToken);
 
@@ -145,14 +149,16 @@ public class UserController(IMediator mediator, IMapper mapper, IUserContext use
     /// Remove a role from a User.
     /// </summary>
     /// <param name="id">The unique identifier of the User.</param>
-    /// <param name="role">The identity provider group of the role to be removed.</param>
+    /// <param name="role">The catalogue identifier of the role to be removed.</param>
+    /// <param name="tenantId">The tenant it is removed from. In the others the user keeps it.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>>HTTP status code 204 (No Content).</returns>
-    [HttpDelete("{id}/role/{role}")]
-    public async Task<IActionResult> RemoveRole(Guid id, Guid role, CancellationToken cancellationToken)
+    [HttpDelete("{id}/role/{role}/tenant/{tenantId}")]
+    public async Task<IActionResult> RemoveRole(Guid id, Guid role, Guid tenantId, CancellationToken cancellationToken)
     {
-        // Se retira de la copropiedad que se esta mirando. En las demas el usuario lo conserva.
-        var command = new RemoveRoleCommand(id, user.Tenant, role, user.IdUser);
+        // Se retira solo de esa copropiedad. En las demas el usuario lo conserva, y por eso la ruta la
+        // nombra en vez de darla por supuesta.
+        var command = new RemoveRoleCommand(id, tenantId, role, user.IdUser);
 
         await mediator.Send(command, cancellationToken);
 
