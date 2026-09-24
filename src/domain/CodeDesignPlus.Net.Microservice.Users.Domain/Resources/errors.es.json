@@ -6,15 +6,15 @@
     "102": "El identificador del usuario es obligatorio.",
     "103": "Los apellidos son obligatorios.",
     "104": "El correo es obligatorio.",
-    "105": "El telefono es obligatorio.",
+    "105": "El teléfono es obligatorio.",
     "106": "Los roles son obligatorios.",
-    "107": "El identificador de quien modifica no es valido.",
-    "108": "Esa copropiedad ya esta asociada al usuario.",
+    "107": "El identificador de quien modifica no es válido.",
+    "108": "Esa copropiedad ya existe.",
     "109": "No encontramos esa copropiedad.",
     "110": "El usuario ya tiene ese rol.",
-    "111": "La direccion es obligatoria.",
+    "111": "La dirección es obligatoria.",
     "112": "La foto de perfil es obligatoria.",
     "113": "No encontramos ese rol.",
-    "114": "El numero de documento es obligatorio."
+    "114": "El número de documento es obligatorio."
   }
 }

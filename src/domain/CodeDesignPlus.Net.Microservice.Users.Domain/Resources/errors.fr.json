@@ -1,0 +1,20 @@
+{
+  "language": "fr",
+  "errors": {
+    "100": "Erreur inconnue.",
+    "101": "Le prénom est obligatoire.",
+    "102": "L'identifiant de l'utilisateur est obligatoire.",
+    "103": "Le nom de famille est obligatoire.",
+    "104": "L'e-mail est obligatoire.",
+    "105": "Le téléphone est obligatoire.",
+    "106": "Les rôles sont obligatoires.",
+    "107": "L'identifiant de l'auteur de la modification n'est pas valide.",
+    "108": "Cette copropriété existe déjà.",
+    "109": "Copropriété introuvable.",
+    "110": "L'utilisateur a déjà ce rôle.",
+    "111": "L'adresse est obligatoire.",
+    "112": "La photo de profil est obligatoire.",
+    "113": "Rôle introuvable.",
+    "114": "Le numéro de document est obligatoire."
+  }
+}

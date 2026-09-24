@@ -1,0 +1,20 @@
+{
+  "language": "pt",
+  "errors": {
+    "100": "Erro desconhecido.",
+    "101": "O nome é obrigatório.",
+    "102": "O identificador do usuário é obrigatório.",
+    "103": "O sobrenome é obrigatório.",
+    "104": "O é-mail é obrigatório.",
+    "105": "O telefone é obrigatório.",
+    "106": "Os papéis são obrigatórios.",
+    "107": "O identificador de quem altera não é válido.",
+    "108": "Esse condomínio já existe.",
+    "109": "Não encontramos esse condomínio.",
+    "110": "O usuário já tem esse papel.",
+    "111": "O endereço é obrigatório.",
+    "112": "A foto de perfil é obrigatória.",
+    "113": "Não encontramos esse papel.",
+    "114": "O número do documento é obrigatório."
+  }
+}

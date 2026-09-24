@@ -1,0 +1,10 @@
+{
+  "language": "fr",
+  "errors": {
+    "200": "Erreur inconnue.",
+    "201": "La requête n'est pas valide.",
+    "202": "Cet utilisateur existe déjà.",
+    "203": "Utilisateur introuvable.",
+    "204": "Impossible de déterminer la copropriété du rôle."
+  }
+}
