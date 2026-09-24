@@ -1,20 +1,20 @@
 {
   "language": "es",
   "errors": {
-    "100": "",
-    "101": "",
-    "102": "",
-    "103": "",
-    "104": "",
-    "105": "",
-    "106": "",
-    "107": "",
-    "108": "",
-    "109": "",
-    "110": "",
-    "111": "",
-    "112": "",
-    "113": "",
-    "114": ""
+    "100": "Error desconocido.",
+    "101": "El nombre es obligatorio.",
+    "102": "El identificador del usuario es obligatorio.",
+    "103": "Los apellidos son obligatorios.",
+    "104": "El correo es obligatorio.",
+    "105": "El telefono es obligatorio.",
+    "106": "Los roles son obligatorios.",
+    "107": "El identificador de quien modifica no es valido.",
+    "108": "Esa copropiedad ya esta asociada al usuario.",
+    "109": "No encontramos esa copropiedad.",
+    "110": "El usuario ya tiene ese rol.",
+    "111": "La direccion es obligatoria.",
+    "112": "La foto de perfil es obligatoria.",
+    "113": "No encontramos ese rol.",
+    "114": "El numero de documento es obligatorio."
   }
 }
