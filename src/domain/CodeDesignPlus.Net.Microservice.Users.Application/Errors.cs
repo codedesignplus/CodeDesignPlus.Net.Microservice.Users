@@ -4,11 +4,11 @@ namespace CodeDesignPlus.Net.Microservice.Users.Application;
 
 public class Errors: IErrorCodes
 {    
-    public static readonly Error UnknownError = new("200", "UnknownError");
+    public static readonly Error UnknownError = new("200");
 
-    public static readonly Error InvalidRequest = new("201", "The request is invalid.");
-    public static readonly Error UserAlreadyExists = new("202", "The user already exists.");
-    public static readonly Error UserNotFound = new("203", "The user was not found.");
+    public static readonly Error InvalidRequest = new("201");
+    public static readonly Error UserAlreadyExists = new("202");
+    public static readonly Error UserNotFound = new("203");
 
     /// <summary>
     /// La copropiedad del rol no se pudo resolver en el directorio.
@@ -22,5 +22,5 @@ public class Errors: IErrorCodes
     /// se entra en ella, y el manejador lo resuelve anadiendosela.
     /// </para>
     /// </remarks>
-    public static readonly Error TenantCouldNotBeResolved = new("204", "The tenant of the role could not be resolved.");
+    public static readonly Error TenantCouldNotBeResolved = new("204");
 }

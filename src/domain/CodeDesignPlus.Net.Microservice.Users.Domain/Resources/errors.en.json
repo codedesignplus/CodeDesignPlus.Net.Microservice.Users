@@ -1,0 +1,20 @@
+{
+  "language": "en",
+  "errors": {
+    "100": "UnknownError",
+    "101": "The first name is required.",
+    "102": "The user ID is required.",
+    "103": "The last name is required.",
+    "104": "The email is required.",
+    "105": "The phone number is required.",
+    "106": "The roles are required.",
+    "107": "The updated by ID is invalid.",
+    "108": "The tenant already exists.",
+    "109": "The tenant was not found.",
+    "110": "The role already exists.",
+    "111": "The address is required.",
+    "112": "The image profile is required.",
+    "113": "The role was not found.",
+    "114": "The document number is required."
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "language": "en",
+  "errors": {
+    "200": "UnknownError",
+    "201": "The request is invalid.",
+    "202": "The user already exists.",
+    "203": "The user was not found.",
+    "204": "The tenant of the role could not be resolved."
+  }
+}
