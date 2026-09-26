@@ -7,14 +7,14 @@ namespace CodeDesignPlus.Net.Microservice.Users.Application.Options;
 /// Los roles que este microservicio asigna por su cuenta.
 /// </summary>
 /// <remarks>
-/// <b>Un rol se identifica por el id de su grupo en el proveedor de identidad, no por su nombre.</b> Eso
-/// es lo que trae el token en el claim <c>groups</c>, y comparar nombres contra identificadores no casa
-/// nunca.
+/// <b>Un rol se identifica por su id en el catalogo de ms-roles (<c>20000000-…</c>), no por su nombre ni por el id
+/// de su grupo en el proveedor de identidad.</b> El id del catalogo es el mismo en todos los entornos, asi que vive en
+/// el <c>appsettings</c> base; el del grupo de Entra cambia por entorno y solo lo usan el token (claim <c>groups</c>,
+/// para el frontend) y ms-microsoftgraph, que traduce entre los dos. Es tambien el id que llevan los permisos de
+/// ms-rbac y el que compara el SDK al autorizar.
 /// <para>
-/// Los identificadores <b>cambian por entorno</b>, porque cada entorno es un directorio distinto. Por eso
-/// viven en el <c>appsettings</c> de cada uno y el base los deja en blanco: si un entorno no los define,
-/// <see cref="RoleAssignmentOptionsValidator"/> impide que el micro arranque. Arrancar con un valor por
-/// defecto seria peor, porque el comprador quedaria con un rol que no existe y nada fallaria.
+/// Si falta, <see cref="RoleAssignmentOptionsValidator"/> impide que el micro arranque: el comprador quedaria con un
+/// rol que no existe y nada fallaria.
 /// </para>
 /// </remarks>
 public class RoleAssignmentOptions
