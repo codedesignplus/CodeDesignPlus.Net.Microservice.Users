@@ -73,6 +73,18 @@ public class UserRepository(IServiceProvider serviceProvider, IOptions<MongoOpti
         return result.ModifiedCount > 0;
     }
 
+    /// <inheritdoc/>
+    public async Task<bool> SetTenantPurgeAfterAsync(Guid id, Guid tenantId, Instant? purgeAfter, CancellationToken cancellationToken)
+    {
+        var update = Builders<UserAggregate>.Update
+            .Set("Tenants.$.PurgeAfter", purgeAfter)
+            .Set(x => x.UpdatedAt, SystemClock.Instance.GetCurrentInstant());
+
+        var result = await ApplyAsync(id, tenantId, update, cancellationToken);
+
+        return result != RoleAssignmentResult.TenantNotFound;
+    }
+
     /// <summary>
     /// El operador posicional apunta a la copropiedad que casa con el filtro, asi que la escritura entra
     /// en la correcta sin tener que saber su indice.

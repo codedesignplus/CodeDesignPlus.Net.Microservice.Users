@@ -20,4 +20,14 @@ public class TenantEntity : IEntityBase
     /// </para>
     /// </remarks>
     public List<Guid> Roles { get; set; } = [];
+
+    /// <summary>
+    /// Si la copropiedad está eliminada, cuándo se purgan sus datos; <c>null</c> mientras exista.
+    /// </summary>
+    /// <remarks>
+    /// Es una réplica de ms-tenants, que la mantiene con <c>TenantDeleted</c> y <c>TenantRestored</c>. La membresía no
+    /// se quita al eliminar la copropiedad, porque entonces restaurarla no se la devolvería a sus miembros: se marca, y
+    /// el frontend no ofrece en <c>/init</c> una copropiedad marcada. Al purgarse sí se retira (<c>TenantPurged</c>).
+    /// </remarks>
+    public Instant? PurgeAfter { get; set; }
 }

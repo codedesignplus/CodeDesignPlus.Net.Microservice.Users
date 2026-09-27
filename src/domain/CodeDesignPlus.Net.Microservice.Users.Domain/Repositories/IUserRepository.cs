@@ -62,4 +62,15 @@ public interface IUserRepository : IRepositoryBase
     /// </remarks>
     /// <returns><c>true</c> si el usuario pertenecia a la copropiedad y se le quito.</returns>
     Task<bool> RemoveTenantAsync(Guid id, Guid tenantId, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Marca la copropiedad del usuario como eliminada, con su fecha de purga, o le quita la marca si se restauró.
+    /// </summary>
+    /// <remarks>
+    /// Misma razón que <see cref="AddRoleAsync"/>: se escribe solo ese campo de esa copropiedad, sin reescribir el
+    /// documento. Repetirlo es inofensivo.
+    /// </remarks>
+    /// <param name="purgeAfter">La fecha de purga, o <c>null</c> si la copropiedad se restauró.</param>
+    /// <returns><c>true</c> si el usuario pertenece a la copropiedad.</returns>
+    Task<bool> SetTenantPurgeAfterAsync(Guid id, Guid tenantId, Instant? purgeAfter, CancellationToken cancellationToken);
 }

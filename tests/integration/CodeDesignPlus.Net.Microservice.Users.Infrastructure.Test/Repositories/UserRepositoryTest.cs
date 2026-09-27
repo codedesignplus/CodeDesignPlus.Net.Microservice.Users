@@ -1,3 +1,4 @@
+using NodaTime;
 using CodeDesignPlus.Net.Microservice.Users.Domain;
 using CodeDesignPlus.Net.Microservice.Users.Domain.Repositories;
 using CodeDesignPlus.Net.Microservice.Users.Infrastructure.Test.Helpers;
@@ -89,6 +90,30 @@ public class UserRepositoryTest
         Assert.True(removed);
         Assert.Equal([kept], after.Tenants.Select(x => x.Id));
         Assert.Single(after.Tenants.Single().Roles);
+    }
+
+    [Fact]
+    public async Task SetTenantPurgeAfterAsync_MarkAndUnmark_TouchesOnlyThatTenant()
+    {
+        // Arrange
+        var deleted = Guid.NewGuid();
+        var kept = Guid.NewGuid();
+        var member = await MemberAsync(deleted, kept);
+        var purgeAfter = Instant.FromUnixTimeMilliseconds(SystemClock.Instance.GetCurrentInstant().ToUnixTimeMilliseconds()) + Duration.FromDays(30);
+
+        // Act
+        var marked = await repository.SetTenantPurgeAfterAsync(member.Id, deleted, purgeAfter, CancellationToken.None);
+        var afterMark = await repository.FindAsync<UserAggregate>(member.Id, CancellationToken.None);
+
+        await repository.SetTenantPurgeAfterAsync(member.Id, deleted, null, CancellationToken.None);
+        var afterUnmark = await repository.FindAsync<UserAggregate>(member.Id, CancellationToken.None);
+
+        // Assert
+        Assert.True(marked);
+        Assert.Equal(purgeAfter, afterMark.Tenants.Single(x => x.Id == deleted).PurgeAfter);
+        Assert.Null(afterMark.Tenants.Single(x => x.Id == kept).PurgeAfter);
+        Assert.Single(afterMark.Tenants.Single(x => x.Id == deleted).Roles);
+        Assert.Null(afterUnmark.Tenants.Single(x => x.Id == deleted).PurgeAfter);
     }
 
     [Fact]
