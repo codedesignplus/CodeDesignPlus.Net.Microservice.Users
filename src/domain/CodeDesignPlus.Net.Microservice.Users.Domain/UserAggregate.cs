@@ -185,6 +185,36 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         this.AddEvent(RoleRemovedToUserDomainEvent.Create(Id, DisplayName, tenantId, role, leQuedaEnOtra));
     }
 
+    /// <summary>
+    /// Retira al usuario de una copropiedad que se purgo, con todos los roles que tenia en ella.
+    /// </summary>
+    /// <remarks>
+    /// A diferencia de <see cref="RemoveTenant"/>, emite un <see cref="RoleRemovedToUserDomainEvent"/> por cada
+    /// rol: la copropiedad ya no existe, y sin esos eventos ms-microsoftgraph dejaria al usuario en los grupos
+    /// del proveedor de identidad. Cada uno lleva si le queda ese rol en otra copropiedad, que es lo que decide
+    /// si se le saca del grupo, que es global.
+    /// </remarks>
+    /// <param name="tenantId">La copropiedad purgada.</param>
+    public void RemovePurgedTenant(Guid tenantId)
+    {
+        var tenant = Tenants.FirstOrDefault(t => t.Id == tenantId);
+
+        DomainGuard.IsNull(tenant, Errors.TenantNotFound);
+
+        Tenants.Remove(tenant);
+
+        UpdatedAt = SystemClock.Instance.GetCurrentInstant();
+
+        foreach (var role in tenant.Roles)
+        {
+            var stillHasItElsewhere = Tenants.Exists(x => x.Roles.Contains(role));
+
+            this.AddEvent(RoleRemovedToUserDomainEvent.Create(Id, DisplayName, tenantId, role, stillHasItElsewhere));
+        }
+
+        this.AddEvent(TenantRemovedDomainEvent.Create(Id, DisplayName, tenant));
+    }
+
     public void Delete(Guid deletedBy)
     {
         DomainGuard.GuidIsEmpty(deletedBy, Errors.IdUserIsRequired);

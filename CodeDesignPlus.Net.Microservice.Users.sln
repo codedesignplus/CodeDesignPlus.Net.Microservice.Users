@@ -52,6 +52,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeDesignPlus.Net.Microser
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeDesignPlus.Net.Microservice.Users.AsyncWorker.Test", "tests\integration\CodeDesignPlus.Net.Microservice.Users.AsyncWorker.Test\CodeDesignPlus.Net.Microservice.Users.AsyncWorker.Test.csproj", "{36085E81-F5AF-4D83-8891-583C6D81AEA5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeDesignPlus.Net.Microservice.Users.Infrastructure.Test", "tests\integration\CodeDesignPlus.Net.Microservice.Users.Infrastructure.Test\CodeDesignPlus.Net.Microservice.Users.Infrastructure.Test.csproj", "{1A4D35A8-3CF2-4E30-AF44-62890579CECB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -254,6 +256,18 @@ Global
 		{36085E81-F5AF-4D83-8891-583C6D81AEA5}.Release|x64.Build.0 = Release|Any CPU
 		{36085E81-F5AF-4D83-8891-583C6D81AEA5}.Release|x86.ActiveCfg = Release|Any CPU
 		{36085E81-F5AF-4D83-8891-583C6D81AEA5}.Release|x86.Build.0 = Release|Any CPU
+		{1A4D35A8-3CF2-4E30-AF44-62890579CECB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A4D35A8-3CF2-4E30-AF44-62890579CECB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A4D35A8-3CF2-4E30-AF44-62890579CECB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1A4D35A8-3CF2-4E30-AF44-62890579CECB}.Debug|x64.Build.0 = Debug|Any CPU
+		{1A4D35A8-3CF2-4E30-AF44-62890579CECB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1A4D35A8-3CF2-4E30-AF44-62890579CECB}.Debug|x86.Build.0 = Debug|Any CPU
+		{1A4D35A8-3CF2-4E30-AF44-62890579CECB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A4D35A8-3CF2-4E30-AF44-62890579CECB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A4D35A8-3CF2-4E30-AF44-62890579CECB}.Release|x64.ActiveCfg = Release|Any CPU
+		{1A4D35A8-3CF2-4E30-AF44-62890579CECB}.Release|x64.Build.0 = Release|Any CPU
+		{1A4D35A8-3CF2-4E30-AF44-62890579CECB}.Release|x86.ActiveCfg = Release|Any CPU
+		{1A4D35A8-3CF2-4E30-AF44-62890579CECB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -280,6 +294,7 @@ Global
 		{27F7123E-5D4B-49B3-8DBA-0A61FA4E1063} = {EBFDC2CC-2318-45BC-B619-8754439D2541}
 		{6C082B3F-998C-422C-BD4F-3EA446BFD056} = {5769C6DB-68E8-4A8C-B43A-243401CDB4A2}
 		{36085E81-F5AF-4D83-8891-583C6D81AEA5} = {C19E3964-BDFB-41E0-B86C-CA90E3E5F335}
+		{1A4D35A8-3CF2-4E30-AF44-62890579CECB} = {C19E3964-BDFB-41E0-B86C-CA90E3E5F335}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {91BAB16E-7151-425E-919F-2725C0813642}

@@ -211,4 +211,48 @@ public class UserAggregateTest
         Assert.Equal("Developer", user.Job.JobTitle);
         Assert.Equal("Company", user.Job.CompanyName);
     }
+
+    [Fact]
+    public void RemovePurgedTenant_WithRoles_RemovesTheTenantAndAnnouncesEveryRole()
+    {
+        // Arrange
+        var purged = Guid.NewGuid();
+        var other = Guid.NewGuid();
+        var administrator = Guid.NewGuid();
+        var resident = Guid.NewGuid();
+        var user = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john.doe@example.com", "1234567890", null, "1234567890", null, true);
+
+        user.AddTenant(purged, "Malpelo XXI", Guid.NewGuid());
+        user.AddTenant(other, "Malpelo VI", Guid.NewGuid());
+        user.AddRole(purged, administrator, Guid.NewGuid());
+        user.AddRole(purged, resident, Guid.NewGuid());
+        user.AddRole(other, resident, Guid.NewGuid());
+        user.GetAndClearEvents();
+
+        // Act
+        user.RemovePurgedTenant(purged);
+
+        // Assert
+        var events = user.GetAndClearEvents();
+        var removedRoles = events.OfType<RoleRemovedToUserDomainEvent>().ToDictionary(x => x.Role);
+
+        Assert.DoesNotContain(user.Tenants, x => x.Id == purged);
+        Assert.Equal(2, removedRoles.Count);
+        Assert.False(removedRoles[administrator].StillHasItElsewhere);
+        Assert.True(removedRoles[resident].StillHasItElsewhere);
+        Assert.Equal(purged, events.OfType<TenantRemovedDomainEvent>().Single().Tenant.Id);
+    }
+
+    [Fact]
+    public void RemovePurgedTenant_NotAMember_ThrowsTenantNotFound()
+    {
+        // Arrange
+        var user = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john.doe@example.com", "1234567890", null, "1234567890", null, true);
+
+        // Act
+        var exception = Assert.Throws<CodeDesignPlusException>(() => user.RemovePurgedTenant(Guid.NewGuid()));
+
+        // Assert
+        Assert.Equal(Errors.TenantNotFound.GetCode(), exception.Code);
+    }
 }

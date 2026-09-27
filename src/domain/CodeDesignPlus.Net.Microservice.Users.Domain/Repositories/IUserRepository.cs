@@ -43,4 +43,23 @@ public interface IUserRepository : IRepositoryBase
     /// </remarks>
     /// <returns><c>true</c> si la copropiedad no estaba y se anadio.</returns>
     Task<bool> AddTenantAsync(Guid id, TenantEntity tenant, Guid updatedBy, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Los usuarios que pertenecen a una copropiedad, incluidos los dados de baja.
+    /// </summary>
+    /// <remarks>
+    /// Se incluyen los dados de baja porque tambien guardan la membresia: al purgar la copropiedad no debe quedar
+    /// ningun documento que la nombre.
+    /// </remarks>
+    Task<List<UserAggregate>> FindByTenantAsync(Guid tenantId, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Quita una copropiedad al usuario, con sus roles, sin reescribir el documento entero.
+    /// </summary>
+    /// <remarks>
+    /// Misma razon que <see cref="AddRoleAsync"/>: un <c>$pull</c> sobre el estado real, que no pisa lo que otro
+    /// proceso haya escrito en las demas copropiedades del usuario. Repetirlo es inofensivo.
+    /// </remarks>
+    /// <returns><c>true</c> si el usuario pertenecia a la copropiedad y se le quito.</returns>
+    Task<bool> RemoveTenantAsync(Guid id, Guid tenantId, CancellationToken cancellationToken);
 }

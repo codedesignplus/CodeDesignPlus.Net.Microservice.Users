@@ -49,6 +49,30 @@ public class UserRepository(IServiceProvider serviceProvider, IOptions<MongoOpti
         return result.ModifiedCount > 0;
     }
 
+    /// <inheritdoc/>
+    public Task<List<UserAggregate>> FindByTenantAsync(Guid tenantId, CancellationToken cancellationToken)
+    {
+        // GetCollection y no FindAsync: el SDK deja fuera los usuarios dados de baja, y tambien guardan la membresia.
+        var filter = Builders<UserAggregate>.Filter.ElemMatch(x => x.Tenants, t => t.Id == tenantId);
+
+        return GetCollection<UserAggregate>().Find(filter).ToListAsync(cancellationToken);
+    }
+
+    /// <inheritdoc/>
+    public async Task<bool> RemoveTenantAsync(Guid id, Guid tenantId, CancellationToken cancellationToken)
+    {
+        var filter = Builders<UserAggregate>.Filter.Eq(x => x.Id, id)
+            & Builders<UserAggregate>.Filter.ElemMatch(x => x.Tenants, t => t.Id == tenantId);
+
+        var update = Builders<UserAggregate>.Update
+            .PullFilter(x => x.Tenants, t => t.Id == tenantId)
+            .Set(x => x.UpdatedAt, SystemClock.Instance.GetCurrentInstant());
+
+        var result = await GetCollection<UserAggregate>().UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
+
+        return result.ModifiedCount > 0;
+    }
+
     /// <summary>
     /// El operador posicional apunta a la copropiedad que casa con el filtro, asi que la escritura entra
     /// en la correcta sin tener que saber su indice.
