@@ -83,6 +83,34 @@ public class CompleteOrderHandlerTest
     }
 
     [Fact]
+    public async Task HandleAsync_BuyerJoinsTheTenant_MarksItAsAPurchaseSoTheEmailIsNotAnInvitation()
+    {
+        // ms-emails sends "your tenant is ready" instead of "you have been invited" only when the event says the
+        // user bought the tenant (pendings/069).
+        AddTenantCommand? sent = null;
+
+        var mediator = new Mock<IMediator>();
+        mediator
+            .Setup(x => x.Send(It.IsAny<AddTenantCommand>(), It.IsAny<CancellationToken>()))
+            .Callback<object, CancellationToken>((command, _) => sent = (AddTenantCommand)command)
+            .Returns(Task.CompletedTask);
+
+        var repository = new Mock<IUserRepository>();
+        repository
+            .Setup(x => x.ExistsAsync<UserAggregate>(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
+
+        var handler = new CompleteOrderHandler(
+            mediator.Object, repository.Object, new Mock<IPubSub>().Object, Opciones(),
+            new Mock<ILogger<CompleteOrderHandler>>().Object);
+
+        await handler.HandleAsync(Evento(Copropiedad), CancellationToken.None);
+
+        Assert.NotNull(sent);
+        Assert.True(sent!.ByPurchase);
+    }
+
+    [Fact]
     public async Task ElCompradorSeQuedaConSuRolYConSuCopropiedad()
     {
         var doc = new Documento();

@@ -45,7 +45,7 @@ public class CompleteOrderHandler(IMediator mediator, IUserRepository userReposi
         {
             Id = data.TenantDetail.Id,
             Name = data.TenantDetail.Name,
-        }), token);
+        }, byPurchase: true), token);
 
         await mediator.Send(new AddRoleCommand(data.BuyerId, data.TenantDetail.Id, roles.Value.AdministrationRole, data.BuyerId), token);
 

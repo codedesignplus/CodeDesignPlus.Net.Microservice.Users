@@ -86,4 +86,35 @@ public class AddTenantCommandHandlerTest
         repositoryMock.Verify(r => r.UpdateAsync(It.IsAny<UserAggregate>(), It.IsAny<CancellationToken>()), Times.Never);
         pubSubMock.Verify(p => p.PublishAsync(It.IsAny<IReadOnlyList<IDomainEvent>>(), It.IsAny<CancellationToken>()), Times.Once);
     }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Handle_ValidRequest_PublishesWhetherTheUserBoughtTheTenant(bool byPurchase)
+    {
+        // Arrange
+        var repositoryMock = new Mock<IUserRepository>();
+        var pubSubMock = new Mock<IPubSub>();
+        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", null, true);
+        IReadOnlyList<IDomainEvent>? published = null;
+
+        repositoryMock.Setup(r => r.FindAsync<UserAggregate>(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(aggregate);
+        repositoryMock
+            .Setup(r => r.AddTenantAsync(It.IsAny<Guid>(), It.IsAny<Domain.Entities.TenantEntity>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
+        pubSubMock
+            .Setup(p => p.PublishAsync(It.IsAny<IReadOnlyList<IDomainEvent>>(), It.IsAny<CancellationToken>()))
+            .Callback<IReadOnlyList<IDomainEvent>, CancellationToken>((events, _) => published = events)
+            .Returns(Task.CompletedTask);
+
+        var handler = new AddTenantCommandHandler(repositoryMock.Object, pubSubMock.Object, new Mock<ICacheManager>().Object);
+        var command = new AddTenantCommand(aggregate.Id, new TenantDto { Id = Guid.NewGuid(), Name = "TestTenant" }, byPurchase);
+
+        // Act
+        await handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        var tenantAdded = Assert.IsType<TenantAddedDomainEvent>(Assert.Single(published!));
+        Assert.Equal(byPurchase, tenantAdded.ByPurchase);
+    }
 }

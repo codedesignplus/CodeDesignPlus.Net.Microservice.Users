@@ -21,7 +21,7 @@ public class AddTenantCommandHandler(IUserRepository repository, IPubSub pubsub,
             return;
 
         await pubsub.PublishAsync(
-            [TenantAddedDomainEvent.Create(aggregate.Id, aggregate.DisplayName, aggregate.Email, tenant)],
+            [TenantAddedDomainEvent.Create(aggregate.Id, aggregate.DisplayName, aggregate.Email, tenant, request.ByPurchase)],
             cancellationToken);
 
         var exist = await cacheManager.ExistsAsync(request.UserId.ToString());

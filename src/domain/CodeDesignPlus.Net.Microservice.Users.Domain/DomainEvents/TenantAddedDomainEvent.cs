@@ -8,6 +8,7 @@ public class TenantAddedDomainEvent(
      string? displayName,
      string email,
      TenantEntity tenant,
+     bool byPurchase = false,
      Guid? eventId = null,
      Instant? occurredAt = null,
      Dictionary<string, object>? metadata = null
@@ -17,8 +18,13 @@ public class TenantAddedDomainEvent(
     public string Email { get; } = email;
     public TenantEntity Tenant { get; } = tenant;
 
-    public static TenantAddedDomainEvent Create(Guid aggregateId, string? displayName, string email, TenantEntity tenant)
+    /// <summary>
+    /// True when the user joined the tenant by buying it, not by being invited to it.
+    /// </summary>
+    public bool ByPurchase { get; } = byPurchase;
+
+    public static TenantAddedDomainEvent Create(Guid aggregateId, string? displayName, string email, TenantEntity tenant, bool byPurchase = false)
     {
-        return new TenantAddedDomainEvent(aggregateId, displayName, email, tenant);
+        return new TenantAddedDomainEvent(aggregateId, displayName, email, tenant, byPurchase);
     }
 }
