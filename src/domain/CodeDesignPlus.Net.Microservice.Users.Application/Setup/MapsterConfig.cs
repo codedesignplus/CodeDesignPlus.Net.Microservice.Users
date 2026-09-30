@@ -26,7 +26,11 @@ public static class MapsterConfigUsers
 
         TypeAdapterConfig<AddRoleDto, AddRoleCommand>.NewConfig();
 
-        TypeAdapterConfig<AddTenantDto, AddTenantCommand>.NewConfig();
+        // AddTenantCommand has two constructors (the purchase flow sets ByPurchase), so Mapster cannot pick one on its
+        // own: without MapWith every POST /User/{id}/tenant failed with 500 and no invitation reached a tenant.
+        TypeAdapterConfig<AddTenantDto, AddTenantCommand>
+            .NewConfig()
+            .MapWith(src => new AddTenantCommand(src.UserId, src.Tenant));
 
         TypeAdapterConfig<UpdateContactDto, UpdateContactCommand>.NewConfig();
         TypeAdapterConfig<UpdateJobDto, UpdateJobCommand>.NewConfig();
