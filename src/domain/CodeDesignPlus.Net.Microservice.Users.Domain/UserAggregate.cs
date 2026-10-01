@@ -87,12 +87,17 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         DomainGuard.IsNullOrEmpty(target, Errors.ImageRequired);
         DomainGuard.GuidIsEmpty(updatedBy, Errors.UpdateByInvalid);
         
-        Picture = UserPicture.Create(id, name, target);;
+        var previous = Picture?.Id;
+
+        Picture = UserPicture.Create(id, name, target);
 
         UpdatedBy = updatedBy;
         UpdatedAt = SystemClock.Instance.GetCurrentInstant();
 
         this.AddEvent(UserPictureUpdatedDomainEvent.Create(Id, Picture.Name, Picture.Target));
+
+        if (previous is { } old && old != id)
+            ReleasePicture(old, updatedBy);
     }
 
     public void AddTenant(Guid tenantId, string name, Guid updateBy)
@@ -225,6 +230,18 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         this.DeletedBy = deletedBy;
 
         this.AddEvent(UserDeletedDomainEvent.Create(Id, FirstName, LastName, Email, Phone, DisplayName, DocumentNumber, DocumentType, IsActive));
+
+        if (Picture is not null)
+            ReleasePicture(Picture.Id, deletedBy);
+    }
+
+    /// <summary>
+    /// Avisa a ms-filestorage de la foto que el usuario ya no usa, para que la desactive (pendings/172). La foto es de
+    /// la plataforma, no de una copropiedad, y por eso se suelta en <see cref="Guid.Empty"/> (pendings/168).
+    /// </summary>
+    private void ReleasePicture(Guid picture, Guid releasedBy)
+    {
+        this.AddEvent(FilesReleasedDomainEvent.Create(Id, [picture], releasedBy, Guid.Empty));
     }
 
     public void UpdateContactInfo(string address, string city, string state, string country, string postalCode, string phone, string[] email, Guid updatedBy)
