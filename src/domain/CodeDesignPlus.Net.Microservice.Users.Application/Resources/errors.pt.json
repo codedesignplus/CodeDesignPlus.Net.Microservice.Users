@@ -5,6 +5,7 @@
     "201": "A requisição não é válida.",
     "202": "Esse usuário já existe.",
     "203": "Não encontramos esse usuário.",
-    "204": "Não foi possível resolver o condomínio do papel."
+    "204": "Não foi possível resolver o condomínio do papel.",
+    "205": "Já existe um usuário com esse e-mail: procure-o e use a conta dele."
   }
 }

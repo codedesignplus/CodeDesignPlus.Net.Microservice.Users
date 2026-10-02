@@ -108,4 +108,14 @@ public class UserRepository(IServiceProvider serviceProvider, IOptions<MongoOpti
         // ModifiedCount en cero significa que no habia nada que cambiar: no es un fallo.
         return result.ModifiedCount > 0 ? RoleAssignmentResult.Applied : RoleAssignmentResult.NothingToDo;
     }
+
+    /// <inheritdoc/>
+    public Task<bool> ExistsByEmailAsync(string email, CancellationToken cancellationToken)
+    {
+        // Regex anclada y sin distinguir mayúsculas: Azure DocumentDB no admite collation (pendings/150).
+        var pattern = new MongoDB.Bson.BsonRegularExpression($"^{System.Text.RegularExpressions.Regex.Escape(email.Trim())}$", "i");
+        var filter = Builders<UserAggregate>.Filter.Regex(x => x.Email, pattern);
+
+        return GetCollection<UserAggregate>().Find(filter).AnyAsync(cancellationToken);
+    }
 }

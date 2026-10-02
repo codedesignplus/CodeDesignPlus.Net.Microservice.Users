@@ -23,4 +23,9 @@ public class Errors: IErrorCodes
     /// </para>
     /// </remarks>
     public static readonly Error TenantCouldNotBeResolved = new("204");
+
+    /// <summary>
+    /// Ya hay un usuario con ese correo. Quien invita tiene que buscarlo y reutilizar su cuenta (pendings/215).
+    /// </summary>
+    public static readonly Error UserEmailAlreadyExists = new("205");
 }

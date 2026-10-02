@@ -5,6 +5,7 @@
     "201": "La requête n'est pas valide.",
     "202": "Cet utilisateur existe déjà.",
     "203": "Utilisateur introuvable.",
-    "204": "Impossible de déterminer la copropriété du rôle."
+    "204": "Impossible de déterminer la copropriété du rôle.",
+    "205": "Un utilisateur existe déjà avec cet e-mail : recherchez-le et utilisez son compte."
   }
 }

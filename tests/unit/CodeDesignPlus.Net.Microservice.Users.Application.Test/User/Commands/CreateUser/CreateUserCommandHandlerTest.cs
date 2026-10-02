@@ -69,4 +69,25 @@ public class CreateUserCommandHandlerTest
         // Assert
         repositoryMock.Verify(repo => repo.CreateAsync(It.IsAny<UserAggregate>(), cancellationToken), Times.Once);
     }
+
+    /// <summary>
+    /// Un correo, una cuenta: invitar otra vez a la misma persona no crea un segundo usuario (pendings/215).
+    /// </summary>
+    [Fact]
+    public async Task Handle_EmailAlreadyTaken_ThrowsUserEmailAlreadyExists()
+    {
+        // Arrange
+        var request = new CreateUserCommand(Guid.NewGuid(), "Jhon Fredy", "Castaño Ríos", "Jhon Fredy Castaño Ríos", " Porteria1@Fake.com ", "3105550131", "1023456781", null, true);
+
+        repositoryMock.Setup(repo => repo.ExistsAsync<UserAggregate>(request.Id, It.IsAny<CancellationToken>())).ReturnsAsync(false);
+        repositoryMock.Setup(repo => repo.ExistsByEmailAsync(request.Email, It.IsAny<CancellationToken>())).ReturnsAsync(true);
+
+        // Act
+        var exception = await Assert.ThrowsAsync<CodeDesignPlusException>(() => handler.Handle(request, CancellationToken.None));
+
+        // Assert
+        Assert.Equal(Errors.UserEmailAlreadyExists.GetCode(), exception.Code);
+        Assert.Equal(Layer.Application, exception.Layer);
+        repositoryMock.Verify(repo => repo.CreateAsync(It.IsAny<UserAggregate>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
 }

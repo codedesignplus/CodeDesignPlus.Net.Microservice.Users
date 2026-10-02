@@ -73,4 +73,13 @@ public interface IUserRepository : IRepositoryBase
     /// <param name="purgeAfter">La fecha de purga, o <c>null</c> si la copropiedad se restauró.</param>
     /// <returns><c>true</c> si el usuario pertenece a la copropiedad.</returns>
     Task<bool> SetTenantPurgeAfterAsync(Guid id, Guid tenantId, Instant? purgeAfter, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Si ya hay un usuario con ese correo, sin distinguir mayúsculas ni espacios alrededor (pendings/215).
+    /// </summary>
+    /// <remarks>
+    /// La unicidad del correo es una invariante del caso de uso de crear, no de la base: no hay índice único, por
+    /// decisión del usuario.
+    /// </remarks>
+    Task<bool> ExistsByEmailAsync(string email, CancellationToken cancellationToken);
 }

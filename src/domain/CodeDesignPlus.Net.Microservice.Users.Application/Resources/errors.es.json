@@ -5,6 +5,7 @@
     "201": "La petición no es válida.",
     "202": "Ese usuario ya existe.",
     "203": "No encontramos ese usuario.",
-    "204": "No se pudo resolver la copropiedad del rol."
+    "204": "No se pudo resolver la copropiedad del rol.",
+    "205": "Ya hay un usuario con ese correo: búscalo y usa su cuenta."
   }
 }
