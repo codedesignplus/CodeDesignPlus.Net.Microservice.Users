@@ -3,6 +3,7 @@ using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.AddTenant;
 using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.RemoveRole;
 using CodeDesignPlus.Net.Microservice.Users.Application.User.Queries.GetUsersById;
 using Google.Protobuf.WellKnownTypes;
+using CodeDesignPlus.Net.Exceptions.Extensions;
 
 namespace CodeDesignPlus.Net.Microservice.Users.gRpc.Services;
 
@@ -46,7 +47,19 @@ public class UserService(IMediator mediator) : Users.UsersBase
         if (!Guid.TryParse(request.Role, out Guid role))
             throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid Role"));
 
-        var user = await mediator.Send(new GetUsersByIdQuery(id), context.CancellationToken);
+        UserDto user;
+
+        try
+        {
+            user = await mediator.Send(new GetUsersByIdQuery(id), context.CancellationToken);
+        }
+        catch (CodeDesignPlusException exception) when (exception.Code == Application.Errors.UserNotFound.GetCode())
+        {
+            // Un usuario que ya no existe no tiene rol que perder. Pasa al borrar a un portero cuyo contrato ya se
+            // termino: al terminarlo se le quito el ultimo rol y ms-users borro la cuenta (pendings/211). Fallar
+            // aqui solo llenaria la cola de descartes con una revocacion ya cumplida.
+            return new Empty();
+        }
 
         var tenant = user.Tenants.FirstOrDefault(x => x.Id == tenantId);
 
