@@ -59,6 +59,24 @@ public class UserRepository(IServiceProvider serviceProvider, IOptions<MongoOpti
     }
 
     /// <inheritdoc/>
+    public Task<List<UserAggregate>> GetSnapshotPageAsync(Guid? tenant, int page, int pageSize, CancellationToken cancellationToken)
+    {
+        // El filtro va en la consulta: si se descartaran en memoria, una pagina saldria mas corta que su tamano y la foto
+        // se daria por terminada antes de tiempo.
+        var filter = Builders<UserAggregate>.Filter.Eq(x => x.IsDeleted, false);
+
+        if (tenant.HasValue)
+            filter &= Builders<UserAggregate>.Filter.ElemMatch(x => x.Tenants, t => t.Id == tenant.Value);
+
+        return GetCollection<UserAggregate>()
+            .Find(filter)
+            .SortBy(x => x.Id)
+            .Skip((page - 1) * pageSize)
+            .Limit(pageSize)
+            .ToListAsync(cancellationToken);
+    }
+
+    /// <inheritdoc/>
     public async Task<bool> RemoveTenantAsync(Guid id, Guid tenantId, CancellationToken cancellationToken)
     {
         var filter = Builders<UserAggregate>.Filter.Eq(x => x.Id, id)

@@ -82,4 +82,15 @@ public interface IUserRepository : IRepositoryBase
     /// decisión del usuario.
     /// </remarks>
     Task<bool> ExistsByEmailAsync(string email, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Una pagina de los usuarios vivos para la foto que pide una copia al arrancar, en orden estable por id.
+    /// </summary>
+    /// <remarks>
+    /// Los dados de baja no entran: una foto es de agregados vivos.
+    /// </remarks>
+    /// <param name="tenant">Solo los miembros de esa copropiedad, o <c>null</c> para todos.</param>
+    /// <param name="page">La pagina, empezando en 1.</param>
+    /// <param name="pageSize">Cuantos usuarios por pagina.</param>
+    Task<List<UserAggregate>> GetSnapshotPageAsync(Guid? tenant, int page, int pageSize, CancellationToken cancellationToken);
 }

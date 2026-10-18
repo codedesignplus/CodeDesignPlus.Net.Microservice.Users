@@ -288,4 +288,13 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
 
         this.AddEvent(ProfileUpdatedDomainEvent.Create(Id, FirstName, LastName, Email, Phone, DisplayName, DocumentNumber, DocumentType, IsActive, Contact, Job));
     }
+
+    /// <summary>
+    /// La foto del usuario para la copia que la pida al arrancar; no cambia el agregado ni se encola como evento.
+    /// </summary>
+    /// <returns>La foto, con <see cref="Guid.Empty"/> como tenant porque el usuario es de la plataforma.</returns>
+    public UserSnapshotDomainEvent TakeSnapshot()
+    {
+        return new UserSnapshotDomainEvent(Id, Guid.Empty, FirstName, LastName, Email, Phone, DisplayName, DocumentNumber, DocumentType, IsActive, Contact);
+    }
 }

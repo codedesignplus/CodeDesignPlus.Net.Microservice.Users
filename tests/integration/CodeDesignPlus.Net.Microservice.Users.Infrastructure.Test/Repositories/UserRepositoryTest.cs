@@ -74,6 +74,48 @@ public class UserRepositoryTest
     }
 
     [Fact]
+    public async Task GetSnapshotPageAsync_ByTenant_OnlyLiveMembersInStableOrder()
+    {
+        // Arrange
+        var tenant = Guid.NewGuid();
+        var first = await MemberAsync(tenant);
+        var second = await MemberAsync(tenant);
+        var third = await MemberAsync(tenant);
+        var outsider = await MemberAsync(Guid.NewGuid());
+        var deleted = await MemberAsync(tenant);
+
+        deleted.Delete(Guid.NewGuid());
+
+        await repository.UpdateAsync(deleted, CancellationToken.None);
+
+        var expected = new[] { first.Id, second.Id, third.Id }.Order().ToList();
+
+        // Act
+        var page1 = await repository.GetSnapshotPageAsync(tenant, 1, 2, CancellationToken.None);
+        var page2 = await repository.GetSnapshotPageAsync(tenant, 2, 2, CancellationToken.None);
+
+        // Assert
+        Assert.Equal(expected, page1.Concat(page2).Select(x => x.Id));
+        Assert.Equal(2, page1.Count);
+        Assert.DoesNotContain(page1.Concat(page2), x => x.Id == outsider.Id || x.Id == deleted.Id);
+    }
+
+    [Fact]
+    public async Task GetSnapshotPageAsync_AllTenants_IncludesUsersOfEveryTenant()
+    {
+        // Arrange
+        var one = await MemberAsync(Guid.NewGuid());
+        var other = await MemberAsync(Guid.NewGuid());
+
+        // Act
+        var page = await repository.GetSnapshotPageAsync(null, 1, 100, CancellationToken.None);
+
+        // Assert
+        Assert.Contains(page, x => x.Id == one.Id);
+        Assert.Contains(page, x => x.Id == other.Id);
+    }
+
+    [Fact]
     public async Task RemoveTenantAsync_Member_RemovesOnlyThatTenant()
     {
         // Arrange
