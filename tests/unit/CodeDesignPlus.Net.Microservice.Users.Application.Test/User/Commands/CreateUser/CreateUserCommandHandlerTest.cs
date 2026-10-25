@@ -33,7 +33,7 @@ public class CreateUserCommandHandlerTest
     }
 
     [Fact]
-    public async Task Handle_UserAlreadyExists_ThrowsUserAlreadyExistsException()
+    public async Task Handle_UserAlreadyExists_IsTheRetryAndDoesNotCreateItAgain()
     {
         // Arrange
         var request = new CreateUserCommand(Guid.NewGuid(), "John", "Doe", "JD", "john.doe@fake.com", "1234567890", "1234567890", null, true);
@@ -43,12 +43,11 @@ public class CreateUserCommandHandlerTest
             .Setup(repo => repo.ExistsAsync<UserAggregate>(request.Id, cancellationToken))
             .ReturnsAsync(true);
 
-        // Act & Assert
-        var exception = await Assert.ThrowsAsync<CodeDesignPlusException>(() => handler.Handle(request, cancellationToken));
+        // Act: el mismo id es el reintento del mismo formulario (pendings/589, regla 66), no un error.
+        await handler.Handle(request, cancellationToken);
 
-        Assert.Equal(Errors.UserAlreadyExists.GetMessage(), exception.Message);
-        Assert.Equal(Errors.UserAlreadyExists.GetCode(), exception.Code);
-        Assert.Equal(Layer.Application, exception.Layer);
+        // Assert
+        repositoryMock.Verify(x => x.CreateIfAbsentAsync(It.IsAny<UserAggregate>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -67,7 +66,7 @@ public class CreateUserCommandHandlerTest
         await handler.Handle(request, cancellationToken);
 
         // Assert
-        repositoryMock.Verify(repo => repo.CreateAsync(It.IsAny<UserAggregate>(), cancellationToken), Times.Once);
+        repositoryMock.Verify(repo => repo.CreateIfAbsentAsync(It.IsAny<UserAggregate>(), cancellationToken), Times.Once);
     }
 
     /// <summary>
@@ -88,6 +87,6 @@ public class CreateUserCommandHandlerTest
         // Assert
         Assert.Equal(Errors.UserEmailAlreadyExists.GetCode(), exception.Code);
         Assert.Equal(Layer.Application, exception.Layer);
-        repositoryMock.Verify(repo => repo.CreateAsync(It.IsAny<UserAggregate>(), It.IsAny<CancellationToken>()), Times.Never);
+        repositoryMock.Verify(repo => repo.CreateIfAbsentAsync(It.IsAny<UserAggregate>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 }

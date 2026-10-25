@@ -136,4 +136,19 @@ public class UserRepository(IServiceProvider serviceProvider, IOptions<MongoOpti
 
         return GetCollection<UserAggregate>().Find(filter).AnyAsync(cancellationToken);
     }
+
+    /// <inheritdoc />
+    public async Task<bool> CreateIfAbsentAsync(UserAggregate user, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await CreateAsync(user, cancellationToken);
+
+            return true;
+        }
+        catch (MongoWriteException exception) when (exception.WriteError?.Category == ServerErrorCategory.DuplicateKey)
+        {
+            return false;
+        }
+    }
 }

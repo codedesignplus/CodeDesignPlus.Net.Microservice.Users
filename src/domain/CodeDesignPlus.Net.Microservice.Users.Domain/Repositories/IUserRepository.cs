@@ -93,4 +93,12 @@ public interface IUserRepository : IRepositoryBase
     /// <param name="page">La pagina, empezando en 1.</param>
     /// <param name="pageSize">Cuantos usuarios por pagina.</param>
     Task<List<UserAggregate>> GetSnapshotPageAsync(Guid? tenant, int page, int pageSize, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Guarda el registro nuevo si su id no existe todavía (pendings/589, regla 66).
+    /// </summary>
+    /// <param name="user">El agregado nuevo.</param>
+    /// <param name="cancellationToken">Token de cancelación.</param>
+    /// <returns><c>false</c> si otro envío del mismo formulario ya lo guardó: el segundo choca contra la clave primaria.</returns>
+    Task<bool> CreateIfAbsentAsync(UserAggregate user, CancellationToken cancellationToken);
 }
