@@ -27,7 +27,7 @@ public class CreateUserFromSSOHandler(IMediator mediator, IUserRepository userRe
             data.Email,
             data.Phone,
             data.DocumentNumber,
-            null,
+            data.DocumentType,
             data.IsActive
         );
 

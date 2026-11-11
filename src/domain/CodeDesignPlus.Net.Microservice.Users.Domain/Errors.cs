@@ -22,4 +22,5 @@ public class Errors: IErrorCodes
 
     public static readonly Error RoleNotFound = new("113");
     public static readonly Error DocumentNumberRequired = new("114");
+    public static readonly Error DocumentTypeRequired = new("115");
 }

@@ -15,6 +15,7 @@
     "111": "O endereço é obrigatório.",
     "112": "A foto de perfil é obrigatória.",
     "113": "Não encontramos esse papel.",
-    "114": "O número do documento é obrigatório."
+    "114": "O número do documento é obrigatório.",
+    "115": "O tipo de documento é obrigatório."
   }
 }

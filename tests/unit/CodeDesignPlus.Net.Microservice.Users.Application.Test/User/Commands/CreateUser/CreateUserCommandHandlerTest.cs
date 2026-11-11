@@ -36,7 +36,7 @@ public class CreateUserCommandHandlerTest
     public async Task Handle_UserAlreadyExists_IsTheRetryAndDoesNotCreateItAgain()
     {
         // Arrange
-        var request = new CreateUserCommand(Guid.NewGuid(), "John", "Doe", "JD", "john.doe@fake.com", "1234567890", "1234567890", null, true);
+        var request = new CreateUserCommand(Guid.NewGuid(), "John", "Doe", "JD", "john.doe@fake.com", "1234567890", "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
         var cancellationToken = CancellationToken.None;
 
         repositoryMock
@@ -54,7 +54,7 @@ public class CreateUserCommandHandlerTest
     public async Task Handle_ValidRequest_CreatesUserAndPublishesEvents()
     {
         // Arrange
-        var request = new CreateUserCommand(Guid.NewGuid(), "John", "Doe", "JD", "john.doe@fake.com", "1234567890", "1234567890", null, true);
+        var request = new CreateUserCommand(Guid.NewGuid(), "John", "Doe", "JD", "john.doe@fake.com", "1234567890", "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
 
         var cancellationToken = CancellationToken.None;
 
@@ -76,7 +76,7 @@ public class CreateUserCommandHandlerTest
     public async Task Handle_EmailAlreadyTaken_ThrowsUserEmailAlreadyExists()
     {
         // Arrange
-        var request = new CreateUserCommand(Guid.NewGuid(), "Jhon Fredy", "Castaño Ríos", "Jhon Fredy Castaño Ríos", " Porteria1@Fake.com ", "3105550131", "1023456781", null, true);
+        var request = new CreateUserCommand(Guid.NewGuid(), "Jhon Fredy", "Castaño Ríos", "Jhon Fredy Castaño Ríos", " Porteria1@Fake.com ", "3105550131", "1023456781", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
 
         repositoryMock.Setup(repo => repo.ExistsAsync<UserAggregate>(request.Id, It.IsAny<CancellationToken>())).ReturnsAsync(false);
         repositoryMock.Setup(repo => repo.ExistsByEmailAsync(request.Email, It.IsAny<CancellationToken>())).ReturnsAsync(true);

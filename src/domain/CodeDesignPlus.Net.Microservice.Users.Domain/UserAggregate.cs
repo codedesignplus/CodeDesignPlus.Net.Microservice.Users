@@ -13,6 +13,11 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
     public string Phone { get; private set; } = null!;
     public string? DisplayName { get; private set; } = null!;
     public string DocumentNumber { get; private set; } = null!;
+    /// <summary>
+    /// El tipo de documento del catalogo de ms-catalogs. Obligatorio al crear y al actualizar (pendings/663): la
+    /// factura electronica lleva el tipo y el numero del adquiriente y la DIAN no admite uno por defecto. Sigue
+    /// siendo anulable en la propiedad porque hay usuarios guardados sin el; lo completan desde su perfil.
+    /// </summary>
     public DocumentType? DocumentType { get; private set; }
     public List<TenantEntity> Tenants { get; private set; } = [];
 
@@ -28,7 +33,7 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
     public ContactInfo Contact { get; private set; } = null!;
     public JobInfo Job { get; private set; } = null!;
 
-    public UserAggregate(Guid id, string firstName, string lastName, string email, string phone, string? displayName, string documentNumber, DocumentType? documentType, bool isActive) : this(id)
+    public UserAggregate(Guid id, string firstName, string lastName, string email, string phone, string? displayName, string documentNumber, DocumentType documentType, bool isActive) : this(id)
     {
         DomainGuard.GuidIsEmpty(id, Errors.IdUserIsRequired);
         DomainGuard.IsNullOrEmpty(firstName, Errors.FirstNameRequired);
@@ -36,6 +41,8 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         DomainGuard.IsNullOrEmpty(email, Errors.EmailRequired);
         DomainGuard.IsNullOrEmpty(phone, Errors.PhoneRequired);
         DomainGuard.IsNullOrEmpty(documentNumber, Errors.DocumentNumberRequired);
+        DomainGuard.IsNull(documentType, Errors.DocumentTypeRequired);
+        DomainGuard.IsNullOrWhiteSpace(documentType.Code, Errors.DocumentTypeRequired);
 
         FirstName = firstName;
         LastName = lastName;
@@ -51,18 +58,20 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         this.AddEvent(UserRegisteredDomainEvent.Create(Id, FirstName, LastName, Email, Phone, DisplayName, DocumentNumber, DocumentType, IsActive));
     }
 
-    public static UserAggregate Create(Guid id, string firstName, string lastName, string email, string phone, string? displayName, string documentNumber, DocumentType? documentType, bool isActive)
+    public static UserAggregate Create(Guid id, string firstName, string lastName, string email, string phone, string? displayName, string documentNumber, DocumentType documentType, bool isActive)
     {
         return new UserAggregate(id, firstName, lastName, email, phone, displayName, documentNumber, documentType, isActive);
     }
 
-    public void Update(string firstName, string lastName, string email, string phone, string? displayName, string documentNumber, DocumentType? documentType, bool isActive, Guid updatedBy)
+    public void Update(string firstName, string lastName, string email, string phone, string? displayName, string documentNumber, DocumentType documentType, bool isActive, Guid updatedBy)
     {
         DomainGuard.IsNullOrEmpty(firstName, Errors.FirstNameRequired);
         DomainGuard.IsNullOrEmpty(lastName, Errors.LastNameRequired);
         DomainGuard.IsNullOrEmpty(email, Errors.EmailRequired);
         DomainGuard.IsNullOrEmpty(phone, Errors.PhoneRequired);
         DomainGuard.IsNullOrEmpty(documentNumber, Errors.DocumentNumberRequired);
+        DomainGuard.IsNull(documentType, Errors.DocumentTypeRequired);
+        DomainGuard.IsNullOrWhiteSpace(documentType.Code, Errors.DocumentTypeRequired);
         DomainGuard.GuidIsEmpty(updatedBy, Errors.UpdateByInvalid);
 
         FirstName = firstName;
@@ -264,13 +273,15 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         this.AddEvent(JobInfoUpdatedDomainEvent.Create(Id, Job));
     }
 
-    public void UpdateProfile(string firstName, string lastName, string email, string phone, string? displayName, string documentNumber, DocumentType? documentType, bool isActive, ContactInfo contact, JobInfo job, Guid updatedBy)
+    public void UpdateProfile(string firstName, string lastName, string email, string phone, string? displayName, string documentNumber, DocumentType documentType, bool isActive, ContactInfo contact, JobInfo job, Guid updatedBy)
     {
         DomainGuard.IsNullOrEmpty(firstName, Errors.FirstNameRequired);
         DomainGuard.IsNullOrEmpty(lastName, Errors.LastNameRequired);
         DomainGuard.IsNullOrEmpty(email, Errors.EmailRequired);
         DomainGuard.IsNullOrEmpty(phone, Errors.PhoneRequired);
         DomainGuard.IsNullOrEmpty(documentNumber, Errors.DocumentNumberRequired);
+        DomainGuard.IsNull(documentType, Errors.DocumentTypeRequired);
+        DomainGuard.IsNullOrWhiteSpace(documentType.Code, Errors.DocumentTypeRequired);
         DomainGuard.GuidIsEmpty(updatedBy, Errors.UpdateByInvalid);
 
         FirstName = firstName;

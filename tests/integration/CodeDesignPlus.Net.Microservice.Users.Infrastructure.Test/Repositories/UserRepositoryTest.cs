@@ -1,6 +1,7 @@
 using NodaTime;
 using CodeDesignPlus.Net.Microservice.Users.Domain;
 using CodeDesignPlus.Net.Microservice.Users.Domain.Repositories;
+using CodeDesignPlus.Net.Microservice.Users.Domain.ValueObjects;
 using CodeDesignPlus.Net.Microservice.Users.Infrastructure.Test.Helpers;
 using CodeDesignPlus.Net.Mongo.Extensions;
 using Microsoft.Extensions.Configuration;
@@ -39,7 +40,7 @@ public class UserRepositoryTest
 
     private async Task<UserAggregate> MemberAsync(params Guid[] tenants)
     {
-        var user = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", $"{Guid.NewGuid():N}@example.com", "3107845123", null, "1234567890", null, true);
+        var user = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", $"{Guid.NewGuid():N}@example.com", "3107845123", null, "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
 
         foreach (var tenant in tenants)
         {

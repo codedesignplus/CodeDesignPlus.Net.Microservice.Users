@@ -63,7 +63,7 @@ public class AddTenantCommandHandlerTest
         var pubSubMock = new Mock<IPubSub>();
         var cacheManagerMock = new Mock<ICacheManager>();
 
-        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", null, true);
+        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
 
         repositoryMock.Setup(r => r.FindAsync<UserAggregate>(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                       .ReturnsAsync(aggregate);
@@ -95,7 +95,7 @@ public class AddTenantCommandHandlerTest
         // Arrange
         var repositoryMock = new Mock<IUserRepository>();
         var pubSubMock = new Mock<IPubSub>();
-        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", null, true);
+        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
         IReadOnlyList<IDomainEvent>? published = null;
 
         repositoryMock.Setup(r => r.FindAsync<UserAggregate>(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(aggregate);

@@ -15,6 +15,7 @@
     "111": "The address is required.",
     "112": "The image profile is required.",
     "113": "The role was not found.",
-    "114": "The document number is required."
+    "114": "The document number is required.",
+    "115": "The document type is required."
   }
 }

@@ -47,11 +47,11 @@ public class UserAggregateTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var user = UserAggregate.Create(id, "John", "Doe", "john.doe@example.com", "1234567890", null, "1234567890", null, true);
+        var user = UserAggregate.Create(id, "John", "Doe", "john.doe@example.com", "1234567890", null, "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
         var updatedBy = Guid.NewGuid();
 
         // Act
-        user.Update("Jane", "Smith", "jane.smith@example.com", "0987654321", "Jane Smith", "9876543210", null, false, updatedBy);
+        user.Update("Jane", "Smith", "jane.smith@example.com", "0987654321", "Jane Smith", "9876543210", new DocumentType(Guid.NewGuid(), "Cédula de Extranjería", "CE"), false, updatedBy);
 
         // Assert
         Assert.Equal("Jane", user.FirstName);
@@ -67,7 +67,7 @@ public class UserAggregateTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var user = UserAggregate.Create(id, "John", "Doe", "john.doe@example.com", "1234567890", null, "1234567890", null, true);
+        var user = UserAggregate.Create(id, "John", "Doe", "john.doe@example.com", "1234567890", null, "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
         var tenantId = Guid.NewGuid();
         var tenantName = "Tenant1";
         var updatedBy = Guid.NewGuid();
@@ -86,7 +86,7 @@ public class UserAggregateTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var user = UserAggregate.Create(id, "John", "Doe", "john.doe@example.com", "1234567890", null, "1234567890", null, true);
+        var user = UserAggregate.Create(id, "John", "Doe", "john.doe@example.com", "1234567890", null, "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
         var tenantId = Guid.NewGuid();
         user.AddTenant(tenantId, "Tenant1", Guid.NewGuid());
 
@@ -173,7 +173,7 @@ public class UserAggregateTest
     {
         tenantId = Guid.NewGuid();
 
-        var user = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john.doe@example.com", "1234567890", null, "1234567890", null, true);
+        var user = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john.doe@example.com", "1234567890", null, "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
 
         user.AddTenant(tenantId, "Malpelo XXI", Guid.NewGuid());
 
@@ -185,7 +185,7 @@ public class UserAggregateTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var user = UserAggregate.Create(id, "John", "Doe", "john.doe@example.com", "1234567890", null, "1234567890", null, true);
+        var user = UserAggregate.Create(id, "John", "Doe", "john.doe@example.com", "1234567890", null, "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
         var updatedBy = Guid.NewGuid();
 
         // Act
@@ -201,7 +201,7 @@ public class UserAggregateTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var user = UserAggregate.Create(id, "John", "Doe", "john.doe@example.com", "1234567890", null, "1234567890", null, true);
+        var user = UserAggregate.Create(id, "John", "Doe", "john.doe@example.com", "1234567890", null, "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
         var updatedBy = Guid.NewGuid();
 
         // Act
@@ -220,7 +220,7 @@ public class UserAggregateTest
         var other = Guid.NewGuid();
         var administrator = Guid.NewGuid();
         var resident = Guid.NewGuid();
-        var user = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john.doe@example.com", "1234567890", null, "1234567890", null, true);
+        var user = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john.doe@example.com", "1234567890", null, "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
 
         user.AddTenant(purged, "Malpelo XXI", Guid.NewGuid());
         user.AddTenant(other, "Malpelo VI", Guid.NewGuid());
@@ -247,7 +247,7 @@ public class UserAggregateTest
     public void RemovePurgedTenant_NotAMember_ThrowsTenantNotFound()
     {
         // Arrange
-        var user = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john.doe@example.com", "1234567890", null, "1234567890", null, true);
+        var user = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john.doe@example.com", "1234567890", null, "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
 
         // Act
         var exception = Assert.Throws<CodeDesignPlusException>(() => user.RemovePurgedTenant(Guid.NewGuid()));

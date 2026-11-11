@@ -58,7 +58,7 @@ public class RemoveRoleCommandHandlerTest
         var cacheManagerMock = new Mock<ICacheManager>();
         var handler = new RemoveRoleCommandHandler(repositoryMock.Object, pubSubMock.Object, cacheManagerMock.Object);
 
-        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", null, true);
+        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
 
         var command = new RemoveRoleCommand(aggregate.Id, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
 
@@ -89,7 +89,7 @@ public class RemoveRoleCommandHandlerTest
         var cacheManagerMock = new Mock<ICacheManager>();
         var handler = new RemoveRoleCommandHandler(repositoryMock.Object, pubSubMock.Object, cacheManagerMock.Object);
 
-        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", null, true);
+        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
 
         var command = new RemoveRoleCommand(aggregate.Id, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
 
@@ -116,7 +116,7 @@ public class RemoveRoleCommandHandlerTest
         var cacheManagerMock = new Mock<ICacheManager>();
         var handler = new RemoveRoleCommandHandler(repositoryMock.Object, pubSubMock.Object, cacheManagerMock.Object);
 
-        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", null, true);
+        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
 
         var command = new RemoveRoleCommand(aggregate.Id, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
 

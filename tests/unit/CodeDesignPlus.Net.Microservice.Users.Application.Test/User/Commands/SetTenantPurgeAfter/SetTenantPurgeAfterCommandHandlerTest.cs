@@ -22,7 +22,7 @@ public class SetTenantPurgeAfterCommandHandlerTest
 
     private static UserAggregate Member()
     {
-        var user = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john.doe@example.com", "1234567890", null, "1234567890", null, true);
+        var user = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john.doe@example.com", "1234567890", null, "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
 
         user.AddTenant(Tenant, "Malpelo XXI", Guid.NewGuid());
 

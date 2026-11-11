@@ -67,7 +67,7 @@ public class AddRoleCommandHandlerTest
         var handler = new AddRoleCommandHandler(repositoryMock.Object, tenantDirectoryMock.Object, pubSubMock.Object, cacheManagerMock.Object);
 
         var command = new AddRoleCommand(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
-        var aggregate = UserAggregate.Create(command.Id, "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", null, true);
+        var aggregate = UserAggregate.Create(command.Id, "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
 
         repositoryMock
             .Setup(repo => repo.FindAsync<UserAggregate>(command.Id, It.IsAny<CancellationToken>()))
@@ -103,7 +103,7 @@ public class AddRoleCommandHandlerTest
         var handler = new AddRoleCommandHandler(repositoryMock.Object, tenantDirectoryMock.Object, pubSubMock.Object, cacheManagerMock.Object);
 
         var command = new AddRoleCommand(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
-        var aggregate = UserAggregate.Create(command.Id, "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", null, true);
+        var aggregate = UserAggregate.Create(command.Id, "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
 
         repositoryMock
             .Setup(repo => repo.FindAsync<UserAggregate>(command.Id, It.IsAny<CancellationToken>()))
@@ -144,7 +144,7 @@ public class AddRoleCommandHandlerTest
         var handler = new AddRoleCommandHandler(repositoryMock.Object, tenantDirectoryMock.Object, pubSubMock.Object, cacheManagerMock.Object);
 
         var command = new AddRoleCommand(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
-        var aggregate = UserAggregate.Create(command.Id, "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", null, true);
+        var aggregate = UserAggregate.Create(command.Id, "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
 
         repositoryMock
             .Setup(repo => repo.FindAsync<UserAggregate>(command.Id, It.IsAny<CancellationToken>()))
@@ -178,7 +178,7 @@ public class AddRoleCommandHandlerTest
         var handler = new AddRoleCommandHandler(repositoryMock.Object, tenantDirectoryMock.Object, pubSubMock.Object, cacheManagerMock.Object);
 
         var command = new AddRoleCommand(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
-        var aggregate = UserAggregate.Create(command.Id, "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", null, true);
+        var aggregate = UserAggregate.Create(command.Id, "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
 
         repositoryMock
             .Setup(repo => repo.FindAsync<UserAggregate>(command.Id, It.IsAny<CancellationToken>()))

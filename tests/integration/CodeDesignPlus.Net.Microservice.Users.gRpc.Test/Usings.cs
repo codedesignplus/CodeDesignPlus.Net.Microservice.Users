@@ -6,3 +6,4 @@ global using NodaTime;
 
 global using CodeDesignPlus.Net.Microservice.Users.Domain;
 global using CodeDesignPlus.Net.Microservice.Users.Domain.Repositories;
+global using CodeDesignPlus.Net.Microservice.Users.Domain.ValueObjects;

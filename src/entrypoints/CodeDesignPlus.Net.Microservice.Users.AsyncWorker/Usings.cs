@@ -9,3 +9,4 @@ global using CodeDesignPlus.Net.Core.Abstractions;
 global using CodeDesignPlus.Net.Core.Abstractions.Attributes;
 global using CodeDesignPlus.Net.Microservice.Users.Domain;
 
+global using CodeDesignPlus.Net.Microservice.Users.Domain.ValueObjects;

@@ -12,7 +12,7 @@ public class PictureReleaseTest
 
     private static UserAggregate UserWithPicture(Guid picture)
     {
-        var user = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john.doe@example.com", "1234567890", null, "1234567890", null, true);
+        var user = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john.doe@example.com", "1234567890", null, "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
         user.UpdatePicture(picture, "john.jpg", "users", UpdatedBy);
         user.GetAndClearEvents();
 
@@ -40,7 +40,7 @@ public class PictureReleaseTest
     [Fact]
     public void UpdatePicture_FirstPicture_ReleasesNothing()
     {
-        var user = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john.doe@example.com", "1234567890", null, "1234567890", null, true);
+        var user = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john.doe@example.com", "1234567890", null, "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
 
         user.UpdatePicture(Guid.NewGuid(), "john.jpg", "users", UpdatedBy);
 

@@ -87,7 +87,7 @@ public class AsignacionSimultaneaDeRolesTest
 
         repositorio
             .Setup(x => x.FindAsync<UserAggregate>(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(() => UserAggregate.Create(Usuario, "Yago", "Valle", "yago@fake.com", "3100000000", "Yago Valle", "1022356894", null, true));
+            .ReturnsAsync(() => UserAggregate.Create(Usuario, "Yago", "Valle", "yago@fake.com", "3100000000", "Yago Valle", "1022356894", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true));
 
         repositorio
             .Setup(x => x.AddRoleAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))

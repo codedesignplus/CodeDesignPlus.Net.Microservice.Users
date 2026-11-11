@@ -16,3 +16,4 @@ global using CodeDesignPlus.Net.Microservice.Users.Application.User.DataTransfer
 
 global using CodeDesignPlus.Net.Microservice.Users.Domain;
 global using CodeDesignPlus.Net.Microservice.Users.Domain.Repositories;
+global using CodeDesignPlus.Net.Microservice.Users.Domain.ValueObjects;

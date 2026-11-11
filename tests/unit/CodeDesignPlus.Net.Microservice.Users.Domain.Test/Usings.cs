@@ -7,3 +7,4 @@ global using NodaTime;
 
 global using CodeDesignPlus.Net.Microservice.Users.Domain.DomainEvents;
 
+global using CodeDesignPlus.Net.Microservice.Users.Domain.ValueObjects;

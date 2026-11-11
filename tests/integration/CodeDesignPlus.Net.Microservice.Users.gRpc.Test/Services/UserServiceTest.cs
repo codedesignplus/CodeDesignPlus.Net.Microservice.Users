@@ -35,7 +35,7 @@ public class UserServiceTest : ServerBase<Program>
         var nameTenant = "Tenant 1";
         var userClient = new Users.UsersClient(Channel);
 
-        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", null, true);
+        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
 
         var repository = Services.GetRequiredService<IUserRepository>();
 
@@ -68,7 +68,7 @@ public class UserServiceTest : ServerBase<Program>
         var tenantId = Guid.NewGuid();
         var userClient = new Users.UsersClient(Channel);
 
-        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", null, true);
+        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
 
         // La copropiedad primero: un rol cuelga de ella, y darselo a quien no pertenece se rechaza.
         aggregate.AddTenant(tenantId, "Malpelo XXI", aggregate.Id);

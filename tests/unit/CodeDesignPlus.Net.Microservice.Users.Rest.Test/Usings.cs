@@ -12,3 +12,4 @@ global using CodeDesignPlus.Net.Serializers;
 global using NodaTime;
 
 global using CodeDesignPlus.Net.Microservice.Users.Rest.Controllers;
+global using CodeDesignPlus.Net.Microservice.Users.Domain.ValueObjects;

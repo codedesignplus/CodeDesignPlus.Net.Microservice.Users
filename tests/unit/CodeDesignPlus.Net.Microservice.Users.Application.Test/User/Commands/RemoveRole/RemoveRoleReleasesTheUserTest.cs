@@ -27,7 +27,7 @@ public class RemoveRoleReleasesTheUserTest
     /// </summary>
     private static UserAggregate After(params (Guid Tenant, Guid[] Roles)[] tenants)
     {
-        var user = UserAggregate.Create(Guid.NewGuid(), "Jhon Fredy", "Castaño Ríos", "porteria@fake.com", "3105550131", "Jhon Fredy Castaño Ríos", "1023456781", null, true);
+        var user = UserAggregate.Create(Guid.NewGuid(), "Jhon Fredy", "Castaño Ríos", "porteria@fake.com", "3105550131", "Jhon Fredy Castaño Ríos", "1023456781", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
 
         foreach (var (tenant, roles) in tenants)
         {

@@ -41,7 +41,7 @@ public class GetUsersByIdQueryHandlerTest
     {
         // Arrange
         var request = new GetUsersByIdQuery(Guid.NewGuid());        
-        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", null, true);
+        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
         var userDto = new UserDto
         {
             Id = aggregate.Id,
@@ -71,7 +71,7 @@ public class GetUsersByIdQueryHandlerTest
     {
         // Arrange
          var request = new GetUsersByIdQuery(Guid.NewGuid());        
-        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", null, true);
+        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
         var userDto = new UserDto
         {
             Id = aggregate.Id,
@@ -101,7 +101,7 @@ public class GetUsersByIdQueryHandlerTest
     {
         // Arrange
         var request = new GetUsersByIdQuery(Guid.NewGuid());        
-        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", null, true);
+        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
         var userDto = new UserDto
         {
             Id = aggregate.Id,

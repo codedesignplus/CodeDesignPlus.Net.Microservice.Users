@@ -15,6 +15,7 @@
     "111": "L'adresse est obligatoire.",
     "112": "La photo de profil est obligatoire.",
     "113": "Rôle introuvable.",
-    "114": "Le numéro de document est obligatoire."
+    "114": "Le numéro de document est obligatoire.",
+    "115": "Le type de document est obligatoire."
   }
 }
