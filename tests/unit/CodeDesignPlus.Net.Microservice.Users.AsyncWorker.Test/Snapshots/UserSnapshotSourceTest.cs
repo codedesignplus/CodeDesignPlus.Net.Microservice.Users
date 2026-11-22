@@ -33,7 +33,7 @@ public class UserSnapshotSourceTest
         // Arrange
         var tenant = Guid.NewGuid();
         var documentType = new DocumentType(Guid.NewGuid(), "Cedula de ciudadania", "CC");
-        var user = UserAggregate.Create(Guid.NewGuid(), "Andres", "Rojas", "andres@example.com", "3107845123", null, "1012345678", documentType, true);
+        var user = UserAggregate.Create(Guid.NewGuid(), "Andres", "Rojas", "andres@example.com", "3107845123", null, "1012345678", documentType, true, DocumentCheckDigitRules.None);
 
         user.UpdateContactInfo("Calle 5 # 3-10", "Bogota", "Cundinamarca", "Colombia", "110111", "3107845123", ["andres@example.com"], Guid.NewGuid());
 

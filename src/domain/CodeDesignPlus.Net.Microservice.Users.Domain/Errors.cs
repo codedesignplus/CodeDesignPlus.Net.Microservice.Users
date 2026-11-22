@@ -23,4 +23,24 @@ public class Errors: IErrorCodes
     public static readonly Error RoleNotFound = new("113");
     public static readonly Error DocumentNumberRequired = new("114");
     public static readonly Error DocumentTypeRequired = new("115");
+
+    /// <summary>
+    /// El tipo de documento lleva dígito de verificación y el número vino sin guion. Argumentos: el número y su dígito.
+    /// </summary>
+    public static readonly Error DocumentCheckDigitIsMissing = new("116");
+
+    /// <summary>
+    /// El dígito de verificación no es el del número. Argumentos: el número, el dígito que le corresponde y el escrito.
+    /// </summary>
+    public static readonly Error DocumentCheckDigitDoesNotMatch = new("117");
+
+    /// <summary>
+    /// El número de un documento con dígito de verificación no es «solo dígitos, guion y un dígito».
+    /// </summary>
+    public static readonly Error DocumentNumberFormatIsInvalid = new("118");
+
+    /// <summary>
+    /// El agregado recibió el documento sin las reglas del dígito de verificación: es un error de programación.
+    /// </summary>
+    public static readonly Error DocumentRulesRequired = new("119");
 }

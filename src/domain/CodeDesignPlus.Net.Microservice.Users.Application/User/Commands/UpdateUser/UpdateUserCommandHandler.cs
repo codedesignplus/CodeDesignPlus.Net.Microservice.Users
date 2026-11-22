@@ -1,6 +1,6 @@
 namespace CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.UpdateUser;
 
-public class UpdateUserCommandHandler(IUserRepository repository, IUserContext user, IPubSub pubsub, ICacheManager cacheManager) : IRequestHandler<UpdateUserCommand>
+public class UpdateUserCommandHandler(IUserRepository repository, IUserContext user, IPubSub pubsub, ICacheManager cacheManager, IOptions<UserDocumentOptions> documentOptions) : IRequestHandler<UpdateUserCommand>
 {
     public async Task Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
@@ -10,7 +10,7 @@ public class UpdateUserCommandHandler(IUserRepository repository, IUserContext u
 
         ApplicationGuard.IsNull(aggregate, Errors.UserNotFound);
 
-        aggregate.Update(request.FirstName, request.LastName, request.Email, request.Phone, request.DisplayName, request.DocumentNumber, request.DocumentType, request.IsActive, user.IdUser);
+        aggregate.Update(request.FirstName, request.LastName, request.Email, request.Phone, request.DisplayName, request.DocumentNumber, request.DocumentType, request.IsActive, user.IdUser, documentOptions.Value.ToRules());
 
         await repository.UpdateAsync(aggregate, cancellationToken);
 

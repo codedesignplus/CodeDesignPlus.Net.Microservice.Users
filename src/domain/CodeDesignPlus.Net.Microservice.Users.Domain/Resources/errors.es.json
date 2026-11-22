@@ -16,6 +16,10 @@
     "112": "La foto de perfil es obligatoria.",
     "113": "No encontramos ese rol.",
     "114": "El número de documento es obligatorio.",
-    "115": "El tipo de documento es obligatorio."
+    "115": "El tipo de documento es obligatorio.",
+    "116": "Este tipo de documento se escribe con guion y dígito de verificación. Si {0} es el número sin el dígito, escríbelo así: {0}-{1}.",
+    "117": "El dígito de verificación no corresponde: el de {0} es {1}, no {2}. Escríbelo así: {0}-{1}.",
+    "118": "Este tipo de documento se escribe solo con dígitos, seguidos de un guion y el dígito de verificación, sin puntos ni espacios.",
+    "119": "Faltan las reglas del dígito de verificación del documento."
   }
 }

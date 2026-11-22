@@ -40,7 +40,7 @@ public class UserRepositoryTest
 
     private async Task<UserAggregate> MemberAsync(params Guid[] tenants)
     {
-        var user = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", $"{Guid.NewGuid():N}@example.com", "3107845123", null, "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
+        var user = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", $"{Guid.NewGuid():N}@example.com", "3107845123", null, "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true, DocumentCheckDigitRules.None);
 
         foreach (var tenant in tenants)
         {

@@ -37,7 +37,7 @@ public class RemovePurgedTenantCommandHandlerTest
 
     private static UserAggregate Member()
     {
-        var user = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john.doe@example.com", "1234567890", null, "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
+        var user = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john.doe@example.com", "1234567890", null, "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true, DocumentCheckDigitRules.None);
 
         user.AddTenant(Purged, "Malpelo XXI", Guid.NewGuid());
         user.AddRole(Purged, Administrator, Guid.NewGuid());

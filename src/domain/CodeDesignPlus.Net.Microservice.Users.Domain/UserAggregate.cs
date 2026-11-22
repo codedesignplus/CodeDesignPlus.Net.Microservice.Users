@@ -33,7 +33,7 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
     public ContactInfo Contact { get; private set; } = null!;
     public JobInfo Job { get; private set; } = null!;
 
-    public UserAggregate(Guid id, string firstName, string lastName, string email, string phone, string? displayName, string documentNumber, DocumentType documentType, bool isActive) : this(id)
+    public UserAggregate(Guid id, string firstName, string lastName, string email, string phone, string? displayName, string documentNumber, DocumentType documentType, bool isActive, DocumentCheckDigitRules documentRules) : this(id)
     {
         DomainGuard.GuidIsEmpty(id, Errors.IdUserIsRequired);
         DomainGuard.IsNullOrEmpty(firstName, Errors.FirstNameRequired);
@@ -43,6 +43,8 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         DomainGuard.IsNullOrEmpty(documentNumber, Errors.DocumentNumberRequired);
         DomainGuard.IsNull(documentType, Errors.DocumentTypeRequired);
         DomainGuard.IsNullOrWhiteSpace(documentType.Code, Errors.DocumentTypeRequired);
+        DomainGuard.IsNull(documentRules, Errors.DocumentRulesRequired);
+        documentRules.Ensure(documentType.Code, documentNumber);
 
         FirstName = firstName;
         LastName = lastName;
@@ -58,12 +60,12 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         this.AddEvent(UserRegisteredDomainEvent.Create(Id, FirstName, LastName, Email, Phone, DisplayName, DocumentNumber, DocumentType, IsActive));
     }
 
-    public static UserAggregate Create(Guid id, string firstName, string lastName, string email, string phone, string? displayName, string documentNumber, DocumentType documentType, bool isActive)
+    public static UserAggregate Create(Guid id, string firstName, string lastName, string email, string phone, string? displayName, string documentNumber, DocumentType documentType, bool isActive, DocumentCheckDigitRules documentRules)
     {
-        return new UserAggregate(id, firstName, lastName, email, phone, displayName, documentNumber, documentType, isActive);
+        return new UserAggregate(id, firstName, lastName, email, phone, displayName, documentNumber, documentType, isActive, documentRules);
     }
 
-    public void Update(string firstName, string lastName, string email, string phone, string? displayName, string documentNumber, DocumentType documentType, bool isActive, Guid updatedBy)
+    public void Update(string firstName, string lastName, string email, string phone, string? displayName, string documentNumber, DocumentType documentType, bool isActive, Guid updatedBy, DocumentCheckDigitRules documentRules)
     {
         DomainGuard.IsNullOrEmpty(firstName, Errors.FirstNameRequired);
         DomainGuard.IsNullOrEmpty(lastName, Errors.LastNameRequired);
@@ -72,6 +74,8 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         DomainGuard.IsNullOrEmpty(documentNumber, Errors.DocumentNumberRequired);
         DomainGuard.IsNull(documentType, Errors.DocumentTypeRequired);
         DomainGuard.IsNullOrWhiteSpace(documentType.Code, Errors.DocumentTypeRequired);
+        DomainGuard.IsNull(documentRules, Errors.DocumentRulesRequired);
+        documentRules.Ensure(documentType.Code, documentNumber);
         DomainGuard.GuidIsEmpty(updatedBy, Errors.UpdateByInvalid);
 
         FirstName = firstName;
@@ -273,7 +277,7 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         this.AddEvent(JobInfoUpdatedDomainEvent.Create(Id, Job));
     }
 
-    public void UpdateProfile(string firstName, string lastName, string email, string phone, string? displayName, string documentNumber, DocumentType documentType, bool isActive, ContactInfo contact, JobInfo job, Guid updatedBy)
+    public void UpdateProfile(string firstName, string lastName, string email, string phone, string? displayName, string documentNumber, DocumentType documentType, bool isActive, ContactInfo contact, JobInfo job, Guid updatedBy, DocumentCheckDigitRules documentRules)
     {
         DomainGuard.IsNullOrEmpty(firstName, Errors.FirstNameRequired);
         DomainGuard.IsNullOrEmpty(lastName, Errors.LastNameRequired);
@@ -282,6 +286,8 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         DomainGuard.IsNullOrEmpty(documentNumber, Errors.DocumentNumberRequired);
         DomainGuard.IsNull(documentType, Errors.DocumentTypeRequired);
         DomainGuard.IsNullOrWhiteSpace(documentType.Code, Errors.DocumentTypeRequired);
+        DomainGuard.IsNull(documentRules, Errors.DocumentRulesRequired);
+        documentRules.Ensure(documentType.Code, documentNumber);
         DomainGuard.GuidIsEmpty(updatedBy, Errors.UpdateByInvalid);
 
         FirstName = firstName;

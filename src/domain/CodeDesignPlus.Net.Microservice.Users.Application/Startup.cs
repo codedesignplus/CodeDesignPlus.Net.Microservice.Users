@@ -18,6 +18,12 @@ namespace CodeDesignPlus.Net.Microservice.Users.Application
             services.AddOptions<RoleAssignmentOptions>()
                 .Bind(configuration.GetSection(RoleAssignmentOptions.Section))
                 .ValidateOnStart();
+
+            services.AddSingleton<IValidateOptions<UserDocumentOptions>, UserDocumentOptionsValidator>();
+
+            services.AddOptions<UserDocumentOptions>()
+                .Bind(configuration.GetSection(UserDocumentOptions.Section))
+                .ValidateOnStart();
         }
     }
 }

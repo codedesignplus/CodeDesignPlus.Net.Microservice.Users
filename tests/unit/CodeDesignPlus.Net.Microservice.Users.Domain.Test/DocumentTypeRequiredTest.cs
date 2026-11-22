@@ -23,7 +23,7 @@ public class DocumentTypeRequiredTest
     public void Create_WithoutDocumentType_ThrowsDocumentTypeRequired(DocumentType? documentType)
     {
         // Act
-        var exception = Assert.Throws<CodeDesignPlusException>(() => UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john.doe@example.com", "3105550131", null, "1023456781", documentType!, true));
+        var exception = Assert.Throws<CodeDesignPlusException>(() => UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john.doe@example.com", "3105550131", null, "1023456781", documentType!, true, DocumentCheckDigitRules.None));
 
         // Assert
         Assert.Equal(Errors.DocumentTypeRequired.GetCode(), exception.Code);
@@ -34,10 +34,10 @@ public class DocumentTypeRequiredTest
     public void Update_WithoutDocumentType_ThrowsDocumentTypeRequired(DocumentType? documentType)
     {
         // Arrange
-        var user = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john.doe@example.com", "3105550131", null, "1023456781", Cedula, true);
+        var user = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john.doe@example.com", "3105550131", null, "1023456781", Cedula, true, DocumentCheckDigitRules.None);
 
         // Act
-        var exception = Assert.Throws<CodeDesignPlusException>(() => user.Update("John", "Doe", "john.doe@example.com", "3105550131", null, "1023456781", documentType!, true, Guid.NewGuid()));
+        var exception = Assert.Throws<CodeDesignPlusException>(() => user.Update("John", "Doe", "john.doe@example.com", "3105550131", null, "1023456781", documentType!, true, Guid.NewGuid(), DocumentCheckDigitRules.None));
 
         // Assert
         Assert.Equal(Errors.DocumentTypeRequired.GetCode(), exception.Code);
@@ -48,12 +48,12 @@ public class DocumentTypeRequiredTest
     public void UpdateProfile_WithoutDocumentType_ThrowsDocumentTypeRequired(DocumentType? documentType)
     {
         // Arrange
-        var user = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john.doe@example.com", "3105550131", null, "1023456781", Cedula, true);
+        var user = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john.doe@example.com", "3105550131", null, "1023456781", Cedula, true, DocumentCheckDigitRules.None);
         var contact = ContactInfo.Create("Calle 1", "Bogotá", "Cundinamarca", "Colombia", "110111", "3105550131", ["john.doe@example.com"]);
         var job = JobInfo.Create("Contador", "Kappali", "Finanzas", "1", "Empleado", SystemClock.Instance.GetCurrentInstant(), "Bogotá");
 
         // Act
-        var exception = Assert.Throws<CodeDesignPlusException>(() => user.UpdateProfile("John", "Doe", "john.doe@example.com", "3105550131", null, "1023456781", documentType!, true, contact, job, Guid.NewGuid()));
+        var exception = Assert.Throws<CodeDesignPlusException>(() => user.UpdateProfile("John", "Doe", "john.doe@example.com", "3105550131", null, "1023456781", documentType!, true, contact, job, Guid.NewGuid(), DocumentCheckDigitRules.None));
 
         // Assert
         Assert.Equal(Errors.DocumentTypeRequired.GetCode(), exception.Code);
@@ -63,11 +63,11 @@ public class DocumentTypeRequiredTest
     public void Update_WithDocumentType_KeepsIt()
     {
         // Arrange
-        var user = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john.doe@example.com", "3105550131", null, "1023456781", Cedula, true);
+        var user = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john.doe@example.com", "3105550131", null, "1023456781", Cedula, true, DocumentCheckDigitRules.None);
         var nit = new DocumentType(Guid.NewGuid(), "Número de Identificación Tributaria", "NIT");
 
         // Act
-        user.Update("John", "Doe", "john.doe@example.com", "3105550131", null, "901888777-3", nit, true, Guid.NewGuid());
+        user.Update("John", "Doe", "john.doe@example.com", "3105550131", null, "901888777-3", nit, true, Guid.NewGuid(), DocumentCheckDigitRules.None);
 
         // Assert
         Assert.Equal(nit, user.DocumentType);

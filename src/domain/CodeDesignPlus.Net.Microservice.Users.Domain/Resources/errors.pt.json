@@ -16,6 +16,10 @@
     "112": "A foto de perfil é obrigatória.",
     "113": "Não encontramos esse papel.",
     "114": "O número do documento é obrigatório.",
-    "115": "O tipo de documento é obrigatório."
+    "115": "O tipo de documento é obrigatório.",
+    "116": "Este tipo de documento é escrito com hífen e dígito verificador. Se {0} é o número sem o dígito, escreva assim: {0}-{1}.",
+    "117": "O dígito verificador não corresponde: o de {0} é {1}, não {2}. Escreva assim: {0}-{1}.",
+    "118": "Este tipo de documento é escrito apenas com dígitos, seguidos de um hífen e do dígito verificador, sem pontos nem espaços.",
+    "119": "Faltam as regras do dígito verificador do documento."
   }
 }

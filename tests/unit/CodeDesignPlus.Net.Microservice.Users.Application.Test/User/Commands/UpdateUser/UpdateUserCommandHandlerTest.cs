@@ -17,7 +17,7 @@ public class UpdateUserCommandHandlerTest
         userContextMock = new Mock<IUserContext>();
         pubSubMock = new Mock<IPubSub>();
         var cacheManagerMock = new Mock<ICacheManager>();
-        handler = new UpdateUserCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object);
+        handler = new UpdateUserCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object, Microsoft.Extensions.Options.Options.Create(new UserDocumentOptions()));
     }
 
     [Fact]
@@ -57,7 +57,7 @@ public class UpdateUserCommandHandlerTest
         // Arrange
         var request = new UpdateUserCommand(Guid.NewGuid(), "John U", "Doe U", "JDU", "john@fake.com", "1234567890", "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
 
-        var aggregate = UserAggregate.Create(request.Id, "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
+        var aggregate = UserAggregate.Create(request.Id, "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true, DocumentCheckDigitRules.None);
 
         repositoryMock
             .Setup(repo => repo.FindAsync<UserAggregate>(request.Id, It.IsAny<CancellationToken>()))

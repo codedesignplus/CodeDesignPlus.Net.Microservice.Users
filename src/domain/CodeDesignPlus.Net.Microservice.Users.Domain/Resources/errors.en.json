@@ -16,6 +16,10 @@
     "112": "The image profile is required.",
     "113": "The role was not found.",
     "114": "The document number is required.",
-    "115": "The document type is required."
+    "115": "The document type is required.",
+    "116": "This document type is written with a hyphen and a check digit. If {0} is the number without the digit, write it like this: {0}-{1}.",
+    "117": "The check digit does not match: the one for {0} is {1}, not {2}. Write it like this: {0}-{1}.",
+    "118": "This document type is written with digits only, followed by a hyphen and the check digit, with no dots or spaces.",
+    "119": "The document check digit rules are missing."
   }
 }

@@ -14,7 +14,7 @@ public class CreateUserCommandHandlerTest
         repositoryMock = new Mock<IUserRepository>();
         pubSubMock = new Mock<IPubSub>();
 
-        handler = new CreateUserCommandHandler(repositoryMock.Object,  pubSubMock.Object);
+        handler = new CreateUserCommandHandler(repositoryMock.Object, pubSubMock.Object, Microsoft.Extensions.Options.Options.Create(new UserDocumentOptions()));
     }
 
     [Fact]

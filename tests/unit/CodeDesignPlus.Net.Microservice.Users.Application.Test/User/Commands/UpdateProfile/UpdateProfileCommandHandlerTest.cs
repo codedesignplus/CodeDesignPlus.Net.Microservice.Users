@@ -19,7 +19,7 @@ public class UpdateProfileCommandHandlerTest
         var userContextMock = new Mock<IUserContext>();
         var pubSubMock = new Mock<IPubSub>();
         var cacheManagerMock = new Mock<ICacheManager>();
-        var handler = new UpdateProfileCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object);
+        var handler = new UpdateProfileCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object, Microsoft.Extensions.Options.Options.Create(new UserDocumentOptions()));
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<CodeDesignPlusException>(() => handler.Handle(null!, CancellationToken.None));
@@ -37,7 +37,7 @@ public class UpdateProfileCommandHandlerTest
         var userContextMock = new Mock<IUserContext>();
         var pubSubMock = new Mock<IPubSub>();
         var cacheManagerMock = new Mock<ICacheManager>();
-        var handler = new UpdateProfileCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object);
+        var handler = new UpdateProfileCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object, Microsoft.Extensions.Options.Options.Create(new UserDocumentOptions()));
 
         var command = new UpdateProfileCommand(Guid.NewGuid(), "John", "Doe", "JD", "joe@fake.com", "1234567890", "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true, ContactInfo.Create("Cll 3", "City", "State", "Country", "12345", "+57 3107565142", ["joe@fake.com"]), JobInfo.Create("Developer", "Microsoft", "IT", "1234567890", "Custom", SystemClock.Instance.GetCurrentInstant(), "Office Location"));
         repositoryMock.Setup(r => r.FindAsync<UserAggregate>(command.Id, It.IsAny<CancellationToken>()))
@@ -59,11 +59,11 @@ public class UpdateProfileCommandHandlerTest
         var userContextMock = new Mock<IUserContext>();
         var pubSubMock = new Mock<IPubSub>();
         var cacheManagerMock = new Mock<ICacheManager>();
-        var handler = new UpdateProfileCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object);
+        var handler = new UpdateProfileCommandHandler(repositoryMock.Object, userContextMock.Object, pubSubMock.Object, cacheManagerMock.Object, Microsoft.Extensions.Options.Options.Create(new UserDocumentOptions()));
 
         var command = new UpdateProfileCommand(Guid.NewGuid(), "John", "Doe", "JD", "joe@fake.com", "1234567890", "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true, ContactInfo.Create("Cll 3", "City", "State", "Country", "12345", "+57 3107565142", ["joe@fake.com"]), JobInfo.Create("Developer", "Microsoft", "IT", "1234567890", "Custom", SystemClock.Instance.GetCurrentInstant(), "Office Location"));
 
-        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
+        var aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true, DocumentCheckDigitRules.None);
 
         repositoryMock.Setup(r => r.FindAsync<UserAggregate>(command.Id, It.IsAny<CancellationToken>()))
                       .ReturnsAsync(aggregate);

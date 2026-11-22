@@ -16,6 +16,10 @@
     "112": "La photo de profil est obligatoire.",
     "113": "Rôle introuvable.",
     "114": "Le numéro de document est obligatoire.",
-    "115": "Le type de document est obligatoire."
+    "115": "Le type de document est obligatoire.",
+    "116": "Ce type de document s'écrit avec un tiret et un chiffre de vérification. Si {0} est le numéro sans le chiffre, écrivez-le ainsi : {0}-{1}.",
+    "117": "Le chiffre de vérification ne correspond pas : celui de {0} est {1}, et non {2}. Écrivez-le ainsi : {0}-{1}.",
+    "118": "Ce type de document s'écrit uniquement avec des chiffres, suivis d'un tiret et du chiffre de vérification, sans points ni espaces.",
+    "119": "Les règles du chiffre de vérification du document sont manquantes."
   }
 }

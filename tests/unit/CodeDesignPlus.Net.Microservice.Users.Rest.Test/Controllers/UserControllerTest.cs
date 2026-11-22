@@ -45,7 +45,7 @@ public class UserControllerTest
 
         controller = new UserController(mediatorMock.Object, mapperMock.Object, userContextMock.Object);
 
-        this.aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true);
+        this.aggregate = UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john@fake.com", "1234567890", "JD", "1234567890", new DocumentType(Guid.NewGuid(), "Cédula de Ciudadanía", "CC"), true, DocumentCheckDigitRules.None);
         this.userDto = new()
         {
             Id = aggregate.Id,

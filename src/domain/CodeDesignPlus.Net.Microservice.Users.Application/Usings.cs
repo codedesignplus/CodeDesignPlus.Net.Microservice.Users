@@ -18,4 +18,6 @@ global using CodeDesignPlus.Net.Microservice.Users.Domain;
 global using CodeDesignPlus.Net.Microservice.Users.Domain.ValueObjects;
 
 global using CodeDesignPlus.Net.Microservice.Users.Domain.Repositories;
+global using CodeDesignPlus.Net.Microservice.Users.Application.Options;
+global using Microsoft.Extensions.Options;
 

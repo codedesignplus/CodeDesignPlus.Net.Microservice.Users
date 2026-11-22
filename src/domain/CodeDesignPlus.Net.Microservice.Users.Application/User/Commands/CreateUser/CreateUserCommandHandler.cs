@@ -1,6 +1,6 @@
 namespace CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.CreateUser;
 
-public class CreateUserCommandHandler(IUserRepository repository, IPubSub pubsub) : IRequestHandler<CreateUserCommand>
+public class CreateUserCommandHandler(IUserRepository repository, IPubSub pubsub, IOptions<UserDocumentOptions> documentOptions) : IRequestHandler<CreateUserCommand>
 {
     public async Task Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
@@ -16,7 +16,7 @@ public class CreateUserCommandHandler(IUserRepository repository, IPubSub pubsub
 
         ApplicationGuard.IsTrue(emailTaken, Errors.UserEmailAlreadyExists);
 
-        var aggregate = UserAggregate.Create(request.Id, request.FirstName, request.LastName, request.Email, request.Phone, request.DisplayName, request.DocumentNumber, request.DocumentType, request.IsActive);
+        var aggregate = UserAggregate.Create(request.Id, request.FirstName, request.LastName, request.Email, request.Phone, request.DisplayName, request.DocumentNumber, request.DocumentType, request.IsActive, documentOptions.Value.ToRules());
 
         // Dos envíos que llegan a la vez pasan los dos la comprobación de arriba; el segundo choca contra el id y no publica.
         if (!await repository.CreateIfAbsentAsync(aggregate, cancellationToken))
