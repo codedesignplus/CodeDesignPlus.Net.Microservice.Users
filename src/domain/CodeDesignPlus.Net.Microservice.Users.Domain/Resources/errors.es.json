@@ -20,6 +20,8 @@
     "116": "Este tipo de documento se escribe con guion y dígito de verificación. Si {0} es el número sin el dígito, escríbelo así: {0}-{1}.",
     "117": "El dígito de verificación no corresponde: el de {0} es {1}, no {2}. Escríbelo así: {0}-{1}.",
     "118": "Este tipo de documento se escribe solo con dígitos, seguidos de un guion y el dígito de verificación, sin puntos ni espacios.",
-    "119": "Faltan las reglas del dígito de verificación del documento."
+    "119": "Faltan las reglas del dígito de verificación del documento.",
+    "120": "Este tipo de documento se escribe con guion y dígito de verificación. Escríbelo así: {0}-{1}.",
+    "121": "Este tipo de documento lleva {0} dígitos antes del guion, y el número que escribiste tiene {1}."
   }
 }
