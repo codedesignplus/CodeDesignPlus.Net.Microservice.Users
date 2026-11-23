@@ -43,15 +43,4 @@ public class Errors: IErrorCodes
     /// El agregado recibió el documento sin las reglas del dígito de verificación: es un error de programación.
     /// </summary>
     public static readonly Error DocumentRulesRequired = new("119");
-
-    /// <summary>
-    /// El número vino sin guion y su tipo tiene longitud fija, así que se sabe cuál es el dígito. Argumentos: el número
-    /// sin el dígito y su dígito.
-    /// </summary>
-    public static readonly Error DocumentCheckDigitIsNotSeparated = new("120");
-
-    /// <summary>
-    /// El número antes del guion no tiene la longitud de su tipo. Argumentos: la longitud del tipo y la escrita.
-    /// </summary>
-    public static readonly Error DocumentBaseLengthIsInvalid = new("121");
 }

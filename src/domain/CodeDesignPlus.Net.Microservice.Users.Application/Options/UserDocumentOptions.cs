@@ -29,21 +29,12 @@ public class UserDocumentOptions
     public List<int> CheckDigitWeights { get; set; } = [];
 
     /// <summary>
-    /// Cuántos dígitos lleva el número antes del guion, por código de tipo de documento, para los tipos que la tienen fija.
-    /// </summary>
-    /// <remarks>
-    /// Es opcional. Con ella, el rechazo de un número sin guion propone la escritura correcta (separa el dígito que vino
-    /// pegado) y un número con guion de otra longitud se rechaza. Un tipo sin entrada se valida solo por su dígito.
-    /// </remarks>
-    public Dictionary<string, int> CheckDigitBaseLengths { get; set; } = [];
-
-    /// <summary>
     /// Las reglas del dígito de verificación como las entiende el dominio.
     /// </summary>
     /// <returns>Los tipos y los pesos configurados.</returns>
     public DocumentCheckDigitRules ToRules()
     {
-        return new DocumentCheckDigitRules(this.CheckDigitDocumentTypes, this.CheckDigitWeights) { BaseLengths = this.CheckDigitBaseLengths };
+        return new DocumentCheckDigitRules(this.CheckDigitDocumentTypes, this.CheckDigitWeights);
     }
 }
 
@@ -52,8 +43,7 @@ public class UserDocumentOptions
 /// </summary>
 /// <remarks>
 /// Se valida al arrancar y no al usarse: con tipos y sin pesos, todo documento de esos tipos se rechazaría sin que nadie
-/// supiera por qué, y con un peso que no es positivo el dígito calculado sería otro. Una longitud de un tipo que no lleva
-/// dígito no se aplicaría nunca, y una que no cabe en los pesos rechazaría todo documento de ese tipo.
+/// supiera por qué, y con un peso que no es positivo el dígito calculado sería otro.
 /// </remarks>
 public class UserDocumentOptionsValidator : IValidateOptions<UserDocumentOptions>
 {
@@ -78,19 +68,6 @@ public class UserDocumentOptionsValidator : IValidateOptions<UserDocumentOptions
         if (options.CheckDigitWeights.Exists(weight => weight <= 0))
         {
             return ValidateOptionsResult.Fail($"La seccion '{UserDocumentOptions.Section}' tiene un peso que no es positivo en {nameof(UserDocumentOptions.CheckDigitWeights)}.");
-        }
-
-        foreach (var (code, length) in options.CheckDigitBaseLengths)
-        {
-            if (!options.CheckDigitDocumentTypes.Exists(type => string.Equals(type.Trim(), code.Trim(), StringComparison.OrdinalIgnoreCase)))
-            {
-                return ValidateOptionsResult.Fail($"La seccion '{UserDocumentOptions.Section}' define en {nameof(UserDocumentOptions.CheckDigitBaseLengths)} la longitud del tipo '{code}', que no esta en {nameof(UserDocumentOptions.CheckDigitDocumentTypes)}.");
-            }
-
-            if (length <= 0 || length > options.CheckDigitWeights.Count)
-            {
-                return ValidateOptionsResult.Fail($"La seccion '{UserDocumentOptions.Section}' define en {nameof(UserDocumentOptions.CheckDigitBaseLengths)} una longitud de {length} para el tipo '{code}': tiene que estar entre 1 y la cantidad de pesos ({options.CheckDigitWeights.Count}).");
-            }
         }
 
         return ValidateOptionsResult.Success;

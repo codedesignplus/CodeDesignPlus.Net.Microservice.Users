@@ -20,8 +20,6 @@
     "116": "Ce type de document s'écrit avec un tiret et un chiffre de vérification. Si {0} est le numéro sans le chiffre, écrivez-le ainsi : {0}-{1}.",
     "117": "Le chiffre de vérification ne correspond pas : celui de {0} est {1}, et non {2}. Écrivez-le ainsi : {0}-{1}.",
     "118": "Ce type de document s'écrit uniquement avec des chiffres, suivis d'un tiret et du chiffre de vérification, sans points ni espaces.",
-    "119": "Les règles du chiffre de vérification du document sont manquantes.",
-    "120": "Ce type de document s'écrit avec un tiret et un chiffre de vérification. Écrivez-le ainsi : {0}-{1}.",
-    "121": "Ce type de document comporte {0} chiffres avant le tiret, et le numéro que vous avez saisi en comporte {1}."
+    "119": "Les règles du chiffre de vérification du document sont manquantes."
   }
 }
