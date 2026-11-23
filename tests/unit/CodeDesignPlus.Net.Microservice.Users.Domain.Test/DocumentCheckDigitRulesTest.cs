@@ -95,22 +95,67 @@ public class DocumentCheckDigitRulesTest
     public void Ensure_NumberWithoutDash_ThrowsMissingWithTheDigit()
     {
         // Act
-        var exception = Assert.Throws<CodeDesignPlusException>(() => Rules.Ensure(WithCheckDigit, "901888777"));
+        var exception = Assert.Throws<CodeDesignPlusException>(() => Rules.Ensure(WithCheckDigit, "900765432"));
 
         // Assert
         Assert.Equal(Errors.DocumentCheckDigitIsMissing.GetCode(), exception.Code);
-        Assert.Equal("Este tipo de documento se escribe con guion y dígito de verificación. Si 901888777 es el número sin el dígito, escríbelo así: 901888777-3.", exception.Error!.Value.GetMessage("es"));
+        Assert.Equal("Este tipo de documento se escribe con guion y dígito de verificación. Si 900765432 es el número sin el dígito, escríbelo así: 900765432-6.", exception.Error!.Value.GetMessage("es"));
+    }
+
+    [Theory]
+    [InlineData("9018887773", "Este tipo de documento se escribe con guion y dígito de verificación. Si 9018887773 ya incluye el dígito, escríbelo así: 901888777-3. Si no lo incluye, así: 9018887773-5.")]
+    [InlineData("9007654326", "Este tipo de documento se escribe con guion y dígito de verificación. Si 9007654326 ya incluye el dígito, escríbelo así: 900765432-6. Si no lo incluye, así: 9007654326-6.")]
+    [InlineData("901888777", "Este tipo de documento se escribe con guion y dígito de verificación. Si 901888777 ya incluye el dígito, escríbelo así: 90188877-7. Si no lo incluye, así: 901888777-3.")]
+    [InlineData("32", "Este tipo de documento se escribe con guion y dígito de verificación. Si 32 ya incluye el dígito, escríbelo así: 3-2. Si no lo incluye, así: 32-6.")]
+    public void Ensure_LastDigitIsTheCheckDigitOfTheRest_GivesBothReadings(string documentNumber, string expected)
+    {
+        // Act
+        var exception = Assert.Throws<CodeDesignPlusException>(() => Rules.Ensure(WithCheckDigit, documentNumber));
+
+        // Assert
+        Assert.Equal(Errors.DocumentCheckDigitMayBeAttached.GetCode(), exception.Code);
+        Assert.Equal(expected, exception.Error!.Value.GetMessage("es"));
+    }
+
+    [Theory]
+    [InlineData("9018887775")]
+    [InlineData("3")]
+    public void Ensure_LastDigitIsNotTheCheckDigitOfTheRest_DoesNotGuess(string documentNumber)
+    {
+        // Act
+        var exception = Assert.Throws<CodeDesignPlusException>(() => Rules.Ensure(WithCheckDigit, documentNumber));
+
+        // Assert
+        Assert.Equal(Errors.DocumentCheckDigitIsMissing.GetCode(), exception.Code);
+        Assert.StartsWith($"Este tipo de documento se escribe con guion y dígito de verificación. Si {documentNumber} es el número sin el dígito, escríbelo así: {documentNumber}-", exception.Error!.Value.GetMessage("es"));
     }
 
     [Fact]
-    public void Ensure_NumberWithTheDigitAttached_DoesNotGuessWhichDigitItIs()
+    public void Ensure_NumberWithDash_IsNeverReadAsAttached()
     {
         // Act
-        var exception = Assert.Throws<CodeDesignPlusException>(() => Rules.Ensure(WithCheckDigit, "9018887773"));
+        var exception = Record.Exception(() => Rules.Ensure(WithCheckDigit, "9018887773-5"));
 
         // Assert
-        Assert.Equal(Errors.DocumentCheckDigitIsMissing.GetCode(), exception.Code);
-        Assert.StartsWith("Este tipo de documento se escribe con guion y dígito de verificación. Si 9018887773 es el número sin el dígito", exception.Error!.Value.GetMessage("es"));
+        Assert.Null(exception);
+    }
+
+    [Theory]
+    [InlineData("es")]
+    [InlineData("en")]
+    [InlineData("fr")]
+    [InlineData("pt")]
+    public void Errors_EveryLanguage_GivesBothReadings(string language)
+    {
+        // Act
+        var message = Errors.DocumentCheckDigitMayBeAttached.With("9018887773", "901888777", '3', 5).GetMessage(language);
+
+        // Assert
+        Assert.Contains("901888777-3", message);
+        Assert.Contains("9018887773-5", message);
+        Assert.True(message.IndexOf("901888777-3", StringComparison.Ordinal) < message.IndexOf("9018887773-5", StringComparison.Ordinal));
+        Assert.DoesNotContain("{", message);
+        Assert.Equal(language == "en", message == Errors.DocumentCheckDigitMayBeAttached.With("9018887773", "901888777", '3', 5).ToEnglish());
     }
 
     [Fact]
@@ -166,7 +211,7 @@ public class DocumentCheckDigitRulesTest
     public void Create_TaxIdWithoutCheckDigit_Throws()
     {
         // Act
-        var exception = Assert.Throws<CodeDesignPlusException>(() => UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john.doe@example.com", "3105550131", null, "901888777", TaxId, true, Rules));
+        var exception = Assert.Throws<CodeDesignPlusException>(() => UserAggregate.Create(Guid.NewGuid(), "John", "Doe", "john.doe@example.com", "3105550131", null, "900765432", TaxId, true, Rules));
 
         // Assert
         Assert.Equal(Errors.DocumentCheckDigitIsMissing.GetCode(), exception.Code);
@@ -215,7 +260,7 @@ public class DocumentCheckDigitRulesTest
         var job = JobInfo.Create("Title", "Company", "Department", "1", "Type", SystemClock.Instance.GetCurrentInstant(), "Office");
 
         // Act
-        var exception = Assert.Throws<CodeDesignPlusException>(() => user.UpdateProfile("John", "Doe", "john.doe@example.com", "3105550131", null, "901888777", TaxId, true, contact, job, Guid.NewGuid(), Rules));
+        var exception = Assert.Throws<CodeDesignPlusException>(() => user.UpdateProfile("John", "Doe", "john.doe@example.com", "3105550131", null, "900765432", TaxId, true, contact, job, Guid.NewGuid(), Rules));
 
         // Assert
         Assert.Equal(Errors.DocumentCheckDigitIsMissing.GetCode(), exception.Code);

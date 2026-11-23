@@ -68,7 +68,9 @@ public sealed record DocumentCheckDigitRules(IReadOnlyCollection<string> Documen
     /// </summary>
     /// <remarks>
     /// El error dice qué corregir y cuál es el dígito. A un número sin guion no se le adivina si el último dígito es el de
-    /// verificación pegado: el error dice cómo se escribe si lo recibido es el número sin el dígito.
+    /// verificación pegado, porque el número no tiene una longitud fija. Si el último dígito es justo el de verificación de
+    /// los anteriores, puede traerlo pegado o no, y el error da las dos escrituras, primero la de separarlo. Si no lo es,
+    /// el error dice cómo se escribe si lo recibido es el número sin el dígito.
     /// </remarks>
     /// <param name="documentTypeCode">El código del tipo de documento.</param>
     /// <param name="documentNumber">El número como se escribió.</param>
@@ -90,6 +92,10 @@ public sealed record DocumentCheckDigitRules(IReadOnlyCollection<string> Documen
         var isWellFormed = checkDigit is not null && (isMissing || (dash == value.Length - 2 && char.IsAsciiDigit(value[^1])));
 
         DomainGuard.IsFalse(isWellFormed, Errors.DocumentNumberFormatIsInvalid);
+
+        var mayBeAttached = isMissing && this.Compute(number[..^1]) == number[^1] - '0';
+
+        DomainGuard.IsTrue(mayBeAttached, Errors.DocumentCheckDigitMayBeAttached.With(number, number[..^1], number[^1], checkDigit));
         DomainGuard.IsTrue(isMissing, Errors.DocumentCheckDigitIsMissing.With(number, checkDigit));
         DomainGuard.IsTrue(value[^1] - '0' != checkDigit, Errors.DocumentCheckDigitDoesNotMatch.With(number, checkDigit, value[^1]));
     }

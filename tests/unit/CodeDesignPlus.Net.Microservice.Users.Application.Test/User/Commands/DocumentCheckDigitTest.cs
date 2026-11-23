@@ -38,7 +38,7 @@ public class DocumentCheckDigitTest
     public async Task CreateUser_TaxIdWithoutCheckDigit_ThrowsAndDoesNotSave()
     {
         // Arrange
-        var command = new CreateUserCommand(Guid.NewGuid(), "John", "Doe", "JD", "john@fake.com", "3105550131", "901888777", TaxId, true);
+        var command = new CreateUserCommand(Guid.NewGuid(), "John", "Doe", "JD", "john@fake.com", "3105550131", "900765432", TaxId, true);
         var handler = new CreateUserCommandHandler(repository.Object, pubSub.Object, Configured);
 
         // Act
@@ -46,6 +46,22 @@ public class DocumentCheckDigitTest
 
         // Assert
         Assert.Equal(Domain.Errors.DocumentCheckDigitIsMissing.GetCode(), exception.Code);
+        repository.Verify(x => x.CreateIfAbsentAsync(It.IsAny<UserAggregate>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task CreateUser_TaxIdThatMayHaveTheDigitAttached_GivesBothReadingsAndDoesNotSave()
+    {
+        // Arrange
+        var command = new CreateUserCommand(Guid.NewGuid(), "John", "Doe", "JD", "john@fake.com", "3105550131", "9018887773", TaxId, true);
+        var handler = new CreateUserCommandHandler(repository.Object, pubSub.Object, Configured);
+
+        // Act
+        var exception = await Assert.ThrowsAsync<CodeDesignPlusException>(() => handler.Handle(command, CancellationToken.None));
+
+        // Assert
+        Assert.Equal(Domain.Errors.DocumentCheckDigitMayBeAttached.GetCode(), exception.Code);
+        Assert.Contains("901888777-3", exception.Error!.Value.GetMessage("es"));
         repository.Verify(x => x.CreateIfAbsentAsync(It.IsAny<UserAggregate>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
@@ -86,7 +102,7 @@ public class DocumentCheckDigitTest
         var user = this.ExistingUser();
         var contact = ContactInfo.Create("Street 1", "City", "State", "Country", "110111", "3105550131", ["john@fake.com"]);
         var job = JobInfo.Create("Title", "Company", "Department", "1", "Type", SystemClock.Instance.GetCurrentInstant(), "Office");
-        var command = new UpdateProfileCommand(user.Id, "John", "Doe", "JD", "john@fake.com", "3105550131", "901888777", TaxId, true, contact, job);
+        var command = new UpdateProfileCommand(user.Id, "John", "Doe", "JD", "john@fake.com", "3105550131", "900765432", TaxId, true, contact, job);
         var handler = new UpdateProfileCommandHandler(repository.Object, userContext.Object, pubSub.Object, cache.Object, Configured);
 
         // Act

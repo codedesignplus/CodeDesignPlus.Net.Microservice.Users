@@ -43,4 +43,10 @@ public class Errors: IErrorCodes
     /// El agregado recibió el documento sin las reglas del dígito de verificación: es un error de programación.
     /// </summary>
     public static readonly Error DocumentRulesRequired = new("119");
+
+    /// <summary>
+    /// El número vino sin guion y su último dígito es el de verificación de los anteriores: puede traerlo pegado o no.
+    /// Argumentos: lo escrito, lo escrito sin el último dígito, ese último dígito y el dígito de todo lo escrito.
+    /// </summary>
+    public static readonly Error DocumentCheckDigitMayBeAttached = new("120");
 }
