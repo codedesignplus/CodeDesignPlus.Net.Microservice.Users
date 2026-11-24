@@ -7,7 +7,10 @@
 /// <param name="TenantId">La copropiedad de la que se retira. Retirarlo de una no lo retira de las demas.</param>
 /// <param name="Role">El id del rol en el catalogo, que es el mismo en todos los entornos.</param>
 /// <param name="IdUser">Quien lo retira.</param>
-public record RemoveRoleCommand(Guid Id, Guid TenantId, Guid Role, Guid IdUser) : IRequest;
+/// <param name="KeepAccount">
+/// Si al usuario no le queda nada, desactiva la cuenta en vez de borrarla. Por omisión se borra, como siempre.
+/// </param>
+public record RemoveRoleCommand(Guid Id, Guid TenantId, Guid Role, Guid IdUser, bool KeepAccount = false) : IRequest;
 
 public class Validator : AbstractValidator<RemoveRoleCommand>
 {

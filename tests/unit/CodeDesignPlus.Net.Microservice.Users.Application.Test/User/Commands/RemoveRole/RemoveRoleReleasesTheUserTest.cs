@@ -105,4 +105,40 @@ public class RemoveRoleReleasesTheUserTest
         repository.Verify(r => r.DeleteAsync<UserAggregate>(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Never);
         Assert.Equal([typeof(RoleRemovedToUserDomainEvent)], published.Select(e => e.GetType()));
     }
+    /// <summary>
+    /// Quien retira el último rol puede pedir que la cuenta se desactive en vez de borrarse: el arrendatario que se va
+    /// conserva la cuenta, sin poder entrar, mientras se le puede devolver el rol.
+    /// </summary>
+    [Fact]
+    public async Task Handle_LastRoleKeepingTheAccount_DeactivatesInsteadOfDeleting()
+    {
+        // Arrange
+        var after = After((Tenant, []));
+        var (handler, repository, published) = Arrange(after);
+
+        // Act
+        await handler.Handle(new RemoveRoleCommand(after.Id, Tenant, Role, Admin, KeepAccount: true), CancellationToken.None);
+
+        // Assert
+        repository.Verify(r => r.DeleteAsync<UserAggregate>(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Never);
+        repository.Verify(r => r.UpdateAsync(after, It.IsAny<CancellationToken>()), Times.Once);
+        Assert.Equal((false, true, false), (after.IsActive, published.Any(e => e is UserDeactivatedDomainEvent), published.Any(e => e is UserDeletedDomainEvent)));
+    }
+
+    /// <summary>
+    /// Con otra copropiedad todavía, pedir conservar la cuenta no la desactiva: le queda algo.
+    /// </summary>
+    [Fact]
+    public async Task Handle_KeepAccountButAnotherTenantLeft_TheAccountStaysActive()
+    {
+        // Arrange
+        var after = After((Tenant, []), (OtherTenant, [OtherRole]));
+        var (handler, _, published) = Arrange(after);
+
+        // Act
+        await handler.Handle(new RemoveRoleCommand(after.Id, Tenant, Role, Admin, KeepAccount: true), CancellationToken.None);
+
+        // Assert
+        Assert.Equal((true, false), (after.IsActive, published.Any(e => e is UserDeactivatedDomainEvent)));
+    }
 }

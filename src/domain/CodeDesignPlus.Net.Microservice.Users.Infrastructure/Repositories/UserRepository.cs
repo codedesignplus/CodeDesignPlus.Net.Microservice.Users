@@ -92,6 +92,26 @@ public class UserRepository(IServiceProvider serviceProvider, IOptions<MongoOpti
     }
 
     /// <inheritdoc/>
+    public async Task<bool> ReactivateReleasedAsync(Guid id, Guid updatedBy, CancellationToken cancellationToken)
+    {
+        // La condición va en el filtro: solo se reactiva la cuenta que desactivó el sistema, nunca la que desactivó una
+        // persona, y sin una lectura previa que deje ventana entre comprobar y escribir.
+        var filter = Builders<UserAggregate>.Filter.Eq(x => x.Id, id)
+            & Builders<UserAggregate>.Filter.Eq(x => x.IsActive, false)
+            & Builders<UserAggregate>.Filter.Ne(x => x.ReleasedAt, null);
+
+        var update = Builders<UserAggregate>.Update
+            .Set(x => x.IsActive, true)
+            .Set(x => x.ReleasedAt, null)
+            .Set(x => x.UpdatedBy, updatedBy)
+            .Set(x => x.UpdatedAt, SystemClock.Instance.GetCurrentInstant());
+
+        var result = await GetCollection<UserAggregate>().UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
+
+        return result.ModifiedCount > 0;
+    }
+
+    /// <inheritdoc/>
     public async Task<bool> SetTenantPurgeAfterAsync(Guid id, Guid tenantId, Instant? purgeAfter, CancellationToken cancellationToken)
     {
         var update = Builders<UserAggregate>.Update

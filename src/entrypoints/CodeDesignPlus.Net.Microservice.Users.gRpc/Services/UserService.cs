@@ -1,5 +1,6 @@
 ﻿using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.AddRole;
 using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.AddTenant;
+using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.DeleteReleasedUser;
 using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.RemoveRole;
 using CodeDesignPlus.Net.Microservice.Users.Application.User.Queries.GetUsersById;
 using Google.Protobuf.WellKnownTypes;
@@ -67,11 +68,27 @@ public class UserService(IMediator mediator) : Users.UsersBase
         if (tenant is null || !tenant.Roles.Contains(role))
             return new Empty();
 
-        var command = new RemoveRoleCommand(id, tenantId, role, Guid.NewGuid());
+        var command = new RemoveRoleCommand(id, tenantId, role, Guid.NewGuid(), request.KeepAccount);
 
         await mediator.Send(command, context.CancellationToken);
 
         return new Empty();
+    }
+
+    /// <summary>
+    /// Borra la cuenta que quedó desactivada por no tener nada, si sigue así.
+    /// </summary>
+    /// <param name="request">El usuario.</param>
+    /// <param name="context">El contexto de la llamada.</param>
+    /// <returns>Si se borró.</returns>
+    public override async Task<DeleteReleasedUserResponse> DeleteReleasedUser(DeleteReleasedUserRequest request, ServerCallContext context)
+    {
+        if (!Guid.TryParse(request.Id, out Guid id))
+            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid Id"));
+
+        var deleted = await mediator.Send(new DeleteReleasedUserCommand(id, Guid.NewGuid()), context.CancellationToken);
+
+        return new DeleteReleasedUserResponse { Deleted = deleted };
     }
 
     public override async Task<Empty> AddTenantToUser(AddTenantRequest request, ServerCallContext context)

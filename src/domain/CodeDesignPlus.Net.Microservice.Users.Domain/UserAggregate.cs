@@ -33,6 +33,19 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
     public ContactInfo Contact { get; private set; } = null!;
     public JobInfo Job { get; private set; } = null!;
 
+    /// <summary>
+    /// Cuándo se desactivó la cuenta porque al usuario no le quedó nada: ninguna copropiedad ni rol de plataforma.
+    /// </summary>
+    /// <remarks>
+    /// Nulo si la cuenta está activa o si la desactivó una persona. Distingue las dos desactivaciones: la que hizo el
+    /// sistema al retirar el último rol se deshace sola cuando el usuario recibe un rol de nuevo, y solo esa se puede borrar
+    /// después con <c>DeleteReleasedUser</c>; la que decidió un administrador no la deshace nadie más que él.
+    /// <para>
+    /// Miembro suelto y no argumento del constructor: los usuarios guardados no lo traen (regla 31).
+    /// </para>
+    /// </remarks>
+    public Instant? ReleasedAt { get; private set; }
+
     public UserAggregate(Guid id, string firstName, string lastName, string email, string phone, string? displayName, string documentNumber, DocumentType documentType, bool isActive, DocumentCheckDigitRules documentRules) : this(id)
     {
         DomainGuard.GuidIsEmpty(id, Errors.IdUserIsRequired);
@@ -85,6 +98,7 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         DisplayName = displayName;
         DocumentNumber = documentNumber;
         DocumentType = documentType;
+        ReleasedAt = isActive == IsActive ? ReleasedAt : null;
         IsActive = isActive;
         Picture = Picture;
         UpdatedBy = updatedBy;
@@ -233,6 +247,36 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         this.AddEvent(TenantRemovedDomainEvent.Create(Id, DisplayName, tenant));
     }
 
+    /// <summary>
+    /// Desactiva la cuenta del usuario al que no le queda nada, en vez de borrarla.
+    /// </summary>
+    /// <remarks>
+    /// Lo pide quien retira el último rol con <c>KeepAccount</c>: la cuenta deja de poder entrar (ms-microsoftgraph la
+    /// deshabilita en el proveedor de identidad), pero sigue existiendo para que se le pueda devolver un rol o borrar más
+    /// tarde con <c>DeleteReleasedUser</c>.
+    /// </remarks>
+    /// <param name="updatedBy">Quien lo pide.</param>
+    public void Release(Guid updatedBy)
+    {
+        DomainGuard.GuidIsEmpty(updatedBy, Errors.UpdateByInvalid);
+
+        IsActive = false;
+        ReleasedAt = SystemClock.Instance.GetCurrentInstant();
+        UpdatedBy = updatedBy;
+        UpdatedAt = ReleasedAt;
+
+        this.AddEvent(UserDeactivatedDomainEvent.Create(Id, DisplayName));
+    }
+
+    /// <summary>
+    /// Si la cuenta está desactivada porque al usuario no le quedó nada, y sigue sin nada.
+    /// </summary>
+    /// <returns><c>true</c> si se puede borrar con <c>DeleteReleasedUser</c>.</returns>
+    public bool IsReleasedAndUnused()
+    {
+        return !IsActive && ReleasedAt is not null && Tenants.Count == 0 && Roles.Length == 0;
+    }
+
     public void Delete(Guid deletedBy)
     {
         DomainGuard.GuidIsEmpty(deletedBy, Errors.IdUserIsRequired);
@@ -297,6 +341,7 @@ public class UserAggregate(Guid id) : AggregateRootBase(id)
         DisplayName = displayName;
         DocumentNumber = documentNumber;
         DocumentType = documentType;
+        ReleasedAt = isActive == IsActive ? ReleasedAt : null;
         IsActive = isActive;
         Contact = contact;
         Job = job;

@@ -64,6 +64,19 @@ public interface IUserRepository : IRepositoryBase
     Task<bool> RemoveTenantAsync(Guid id, Guid tenantId, CancellationToken cancellationToken);
 
     /// <summary>
+    /// Vuelve a activar la cuenta que el sistema desactivó porque al usuario no le quedaba nada, sin reescribir el documento.
+    /// </summary>
+    /// <remarks>
+    /// Misma razón que <see cref="AddRoleAsync"/>: se llama justo después de asignar un rol y no debe pisar lo que otro
+    /// proceso escriba a la vez. Una cuenta activa, o desactivada por una persona, no se toca. Repetirlo es inofensivo.
+    /// </remarks>
+    /// <param name="id">El usuario.</param>
+    /// <param name="updatedBy">Quien asigna el rol que la reactiva.</param>
+    /// <param name="cancellationToken">Token de cancelación.</param>
+    /// <returns><c>true</c> si la cuenta estaba desactivada por eso y se reactivó.</returns>
+    Task<bool> ReactivateReleasedAsync(Guid id, Guid updatedBy, CancellationToken cancellationToken);
+
+    /// <summary>
     /// Marca la copropiedad del usuario como eliminada, con su fecha de purga, o le quita la marca si se restauró.
     /// </summary>
     /// <remarks>

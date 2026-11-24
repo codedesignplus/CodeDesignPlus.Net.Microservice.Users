@@ -43,9 +43,16 @@ public class AddRoleCommandHandler(
         if (result == RoleAssignmentResult.NothingToDo)
             return;
 
-        await pubsub.PublishAsync(
-            [RoleAddedToUserDomainEvent.Create(aggregate.Id, aggregate.DisplayName, request.TenantId, request.Role)],
-            cancellationToken);
+        // La cuenta que el sistema desactivó porque no le quedaba nada vuelve a entrar en cuanto tiene un papel: sin esto,
+        // un arrendatario que firma un contrato nuevo tendría el rol y no podría iniciar sesión.
+        var reactivated = await repository.ReactivateReleasedAsync(request.Id, request.IdUser, cancellationToken);
+
+        List<IDomainEvent> events = [RoleAddedToUserDomainEvent.Create(aggregate.Id, aggregate.DisplayName, request.TenantId, request.Role)];
+
+        if (reactivated)
+            events.Add(UserReactivatedDomainEvent.Create(aggregate.Id, aggregate.DisplayName));
+
+        await pubsub.PublishAsync(events, cancellationToken);
 
         var exist = await cacheManager.ExistsAsync(request.Id.ToString());
 

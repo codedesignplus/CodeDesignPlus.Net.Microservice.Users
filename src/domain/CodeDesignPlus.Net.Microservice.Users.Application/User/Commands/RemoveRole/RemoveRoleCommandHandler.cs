@@ -51,6 +51,11 @@ public class RemoveRoleCommandHandler(IUserRepository repository, IPubSub pubsub
     /// <remarks>
     /// Vale para toda revocación, no solo la de portería: un contador, un consejero o un propietario que se queda
     /// sin papel en ninguna copropiedad no tiene para qué conservar la cuenta.
+    /// <para>
+    /// Salvo que quien retira el rol pida <see cref="RemoveRoleCommand.KeepAccount"/>: entonces la cuenta se desactiva y no
+    /// se borra. Sirve a quien todavía puede devolverle un rol, o necesita que la cuenta exista un tiempo más, y la borra
+    /// después con <c>DeleteReleasedUser</c>.
+    /// </para>
     /// </remarks>
     private async Task ReleaseIfNothingLeftAsync(UserAggregate user, RemoveRoleCommand request, CancellationToken cancellationToken)
     {
@@ -61,7 +66,13 @@ public class RemoveRoleCommandHandler(IUserRepository repository, IPubSub pubsub
 
         user.RemoveTenant(request.TenantId, request.IdUser);
 
-        if (user.Tenants.Count == 0 && user.Roles.Length == 0)
+        if (user.Tenants.Count == 0 && user.Roles.Length == 0 && request.KeepAccount)
+        {
+            user.Release(request.IdUser);
+
+            await repository.UpdateAsync(user, cancellationToken);
+        }
+        else if (user.Tenants.Count == 0 && user.Roles.Length == 0)
         {
             user.Delete(request.IdUser);
 
