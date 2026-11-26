@@ -1,5 +1,7 @@
 using CodeDesignPlus.Net.Microservice.Users.Application.User.Commands.UpdatePicture;
 using CodeDesignPlus.Net.Security.Abstractions;
+using CodeDesignPlus.Net.Core.Abstractions.Models.Pager;
+using CodeDesignPlus.Net.Microservice.Users.Application.User.DataTransferObjects;
 
 namespace CodeDesignPlus.Net.Microservice.Users.Rest.Controllers;
 
@@ -19,6 +21,7 @@ public class UserController(IMediator mediator, IMapper mapper, IUserContext use
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Collection of Users.</returns>
     [HttpGet]
+    [ProducesResponseType<Pagination<UserDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetUsers([FromQuery] C.Criteria criteria, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new GetAllUsersQuery(criteria), cancellationToken);
@@ -33,6 +36,7 @@ public class UserController(IMediator mediator, IMapper mapper, IUserContext use
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The User.</returns>
     [HttpGet("{id}")]
+    [ProducesResponseType<UserDto>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetUserById(Guid id, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new GetUsersByIdQuery(id), cancellationToken);
